@@ -8,9 +8,7 @@ This is for two qubits system.
 '''
 
 import numpy as np
-import scipy as sp
-from numpy import array, kron, genfromtxt, trace, dot, identity
-from scipy.optimize import minimize, minimize_scalar
+from numpy import array, kron, trace, dot, identity
 
 
 """ 
@@ -37,50 +35,41 @@ matrix of bases for two qubits:
     bases (numpy.array ((4*4)*16)) 
 
 """
-bases = array(
+# bases = array(
+#     [
+#     kron(bH,bH),kron(bH,bV),kron(bV,bH),kron(bV,bV),
+#     kron(bH,bD),kron(bH,bL),kron(bD,bH),kron(bR,bH),
+#     kron(bD,bD),kron(bR,bD),kron(bR,bL),kron(bD,bR),
+#     kron(bD,bV),kron(bR,bV),kron(bV,bD),kron(bV,bL)
+#     ]
+#     )
+
+bases =array(
     [
-    kron(bH,bH),kron(bH,bV),kron(bV,bH),kron(bV,bV),
-    kron(bH,bD),kron(bH,bL),kron(bD,bH),kron(bR,bH),
-    kron(bD,bD),kron(bR,bD),kron(bR,bL),kron(bD,bR),
-    kron(bD,bV),kron(bR,bV),kron(bV,bD),kron(bV,bL)
+    kron(bH,bH),kron(bH,bV),kron(bV,bV),kron(bV,bH),
+    kron(bR,bH),kron(bR,bV),kron(bD,bV),kron(bD,bH),
+    kron(bD,bR),kron(bD,bD),kron(bR,bD),kron(bH,bD),
+    kron(bV,bD),kron(bV,bL),kron(bH,bL),kron(bR,bL)
     ]
     )
 
 
-
-""" 
-definition of Phase flip matrix: 
-    
-    Sflip (numpy.array (4*4)) 
-
 """
-Sfilp = array(
-    [
-    [0, 0, 0, -1],
-    [0, 0 , 1, 0],
-    [0, 1, 0, 0],
-    [-1, 0, 0, 0]
-    ]
-    )
-
-
-
-"""
-get exparimental datas
+get experimental datas
 
 """
 
-def getDatasFromFile(fileOfExparimentalDatas, numberOfQubits):
+def getDatasFromFile(fileOfExperimentalDatas, numberOfQubits):
     """
-    getDatasFromFile(fileOfExparimentalDatas, numberOfQubits):
+    getDatasFromFile(fileOfExperimentalDatas, numberOfQubits):
 
-        This function is getting datas from file of exparient consequense,
+        This function is getting datas from file of experiment consequense,
         and return matrix (np.array (numberOfQubits*numberOfQubits)) of them.
 
     """
-    matrixOfExparimentalDatas = np.zeros([numberOfQubits,numberOfQubits], dtype=np.complex)
-    # TODO: modify matrixOfExparimentalDatas by given data file.
-    return matrixOfExparimentalDatas
+    matrixOfExperimentalDatas = np.zeros([numberOfQubits,numberOfQubits], dtype=np.complex)
+    # TODO: modify matrixOfExperimentalDatas by given data file.
+    return matrixOfExperimentalDatas
 
 
 
@@ -88,7 +77,7 @@ def getDatasFromFile(fileOfExparimentalDatas, numberOfQubits):
 Iterative algorithm 
 
 """
-def doIterativeAlgorithm(matrix, maxNumberOfIteration):
+def doIterativeAlgorithm(matrix, maxNumberOfIteration, listAsExperimentalDatas):
     """
     doIterativeAlgorithm():
 
@@ -98,42 +87,61 @@ def doIterativeAlgorithm(matrix, maxNumberOfIteration):
     """
 
     i = 0
+    dimH = 4
+    m = 0
+    n = 1
+    s = 1
+    epsilon = 10000000
+    TolFun = 10e-10
+    dimH = 4
+    m = 0
 
-    prob = [trace(dot(matrix,base[i])) for i in range(16)]
-    nprob = prob/sum(prob)
-    Rot = sum([ndata[i]/prob[i]*base[i] for i in range(16)])
+    dataList = listAsExperimentalDatas
+    totalCountOfData = sum(dataList)
+    nDataList = dataList/totalCountOfData # nDataList is a list of normarized data
+
+    # matrix = np.identity(4) # Input Density Matrix in Diluted MLE  (Identity)
+    diff = 100
+    Trdis = 100
 
     modifiedMatrix = matrix.copy()
-
     if modifiedMatrix is matrix:
         print("Matrix failed to be copyed deeply for doing iterative algorithm.")
-        break
+        return -1
 
-    while i <= maxNumberOfIteration:
-        # TODO: modify
+    while Trdis > TolFun and i <= maxNumberOfIteration:
+
+        probList = [trace(dot(matrix,bases[i])) for i in range(16)]
+        nProbList = probList/sum(probList)
+        # TODO: Why is probList used not nProbList here?
+        Rot = sum([(nDataList[i]/probList[i])*bases[i] for i in range(16)])
+
+
         """ Normalization Matrix for Measurement Bases """
-        U = Inverse[sum(base)]/sum(prob)
-        dRotL = (identity(dimH) + epsilon*dot(U,Rot)/(1 + epsilon)
-        dRotR = (identity(dimH) + epsilon*Rot.U)/(1 + epsilon)
+        U = np.linalg.inv(sum(bases))/sum(probList)
+        dRotL = (identity(dimH) + epsilon*dot(U,Rot))/(1 + epsilon)
+        dRotR = (identity(dimH) + epsilon*dot(Rot,U))/(1 + epsilon)
 
 
         """ Calculation of output density matrix """
-        modifiedMatrix = dot(dot(dRotL,matrix),dRotR)/trace(dot(dot(dRotL,matrix),dRotR)
-        Trdis = sum(abs(Eigenvalues[matrix - modifiedMatrix]))/2
+        modifiedMatrix = dot(dot(dRotL,matrix),dRotR)/trace(dot(dot(dRotL,matrix),dRotR))
+        eigValueArray, eigVectors = np.linalg.eig(matrix - modifiedMatrix)
+        Trdis = sum(np.absolute(eigValueArray))/2
 
 
         """ Likelihood Function """
-        Lhin = Total[Table[ndata[[i]]*Log[nprob[[i]]], {i, 16}]]
-        prob = Table[Tr[modifiedMatrix.base[[i]]], {i, 1, 16}]
-        nprob = prob/Total[prob]
-        Lhout = Total[Table[ndata[[i]]*Log[nprob[[i]]], {i, 16}]]
-        diff = Re[Lhout - Lhin]
+        Lhin = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
+        probList = [trace(dot(modifiedMatrix,bases[i])) for i in range(16)]
+        nProbList = probList/sum(probList)
+        Lhout = sum([nDataList[i]*(np.log(nProbList[i])) for i in range(16)])
+        diff = np.real(Lhout - Lhin)
 
-        matrix = modifiedMatrix  
+        matrix = modifiedMatrix.copy()
+        if modifiedMatrix is matrix:
+            print("Matrix failed to be copyed deeply for doing iterative algorithm.")
+            return -1
         
         i += 1
-
-    modifiedMatrix = matrixAfter
 
     return modifiedMatrix
 
@@ -141,23 +149,13 @@ def doIterativeAlgorithm(matrix, maxNumberOfIteration):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
-    print(bases)
+    listOfExperimentalDatas = array([101599, 17900, 92913, 3263, 52733, 56453, 50266, 57325, 52234, 18951, 49106, 59811, 54621, 47110, 62711, 18847])
+
+    matrix = np.identity(4)/4
+
+    maxNumberOfIteration = 10000
+
+    finalMatrix = doIterativeAlgorithm(matrix, maxNumberOfIteration, listOfExperimentalDatas)
+
+    print(finalMatrix)

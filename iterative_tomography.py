@@ -102,39 +102,41 @@ def doIterativeAlgorithm(matrix, maxNumberOfIteration, listAsExperimentalDatas):
 
     # matrix = np.identity(4) # Input Density Matrix in Diluted MLE  (Identity)
     diff = 100
-    Trdis = 100
+    traceDistance = 100
 
     modifiedMatrix = matrix.copy()
     if modifiedMatrix is matrix:
         print("Matrix failed to be copyed deeply for doing iterative algorithm.")
         return -1
 
-    while Trdis > TolFun and i <= maxNumberOfIteration:
+    while traceDistance > TolFun and i <= maxNumberOfIteration:
 
         probList = [trace(dot(matrix,bases[i])) for i in range(16)]
         nProbList = probList/sum(probList)
         # TODO: Why is probList used not nProbList here?
-        Rot = sum([(nDataList[i]/probList[i])*bases[i] for i in range(16)])
+        rotationMatrix = sum([(nDataList[i]/probList[i])*bases[i] for i in range(16)])
+        # rotationMatrix = sum([(nDataList[i]/nProbList[i])*bases[i] for i in range(16)])
 
 
-        """ Normalization Matrix for Measurement Bases """
+        """ Normalization of Matrices for Measurement Bases """
         U = np.linalg.inv(sum(bases))/sum(probList)
-        dRotL = (identity(dimH) + epsilon*dot(U,Rot))/(1 + epsilon)
-        dRotR = (identity(dimH) + epsilon*dot(Rot,U))/(1 + epsilon)
+        deltaRotationMatrixLeft = (identity(dimH) + epsilon*dot(U,rotationMatrix)) / (1 + epsilon)
+        deltaRotationMatrixRight = (identity(dimH) + epsilon*dot(rotationMatrix,U)) / (1 + epsilon)
 
 
-        """ Calculation of output density matrix """
-        modifiedMatrix = dot(dot(dRotL,matrix),dRotR)/trace(dot(dot(dRotL,matrix),dRotR))
+        """ Calculation of updated density matrix """
+        modifiedMatrix = dot(dot(deltaRotationMatrixLeft,matrix),deltaRotationMatrixRight) / trace(dot(dot(deltaRotationMatrixLeft,matrix),deltaRotationMatrixRight))
         eigValueArray, eigVectors = np.linalg.eig(matrix - modifiedMatrix)
-        Trdis = sum(np.absolute(eigValueArray))/2
+        traceDistance = sum(np.absolute(eigValueArray)) / 2
 
 
-        """ Likelihood Function """
-        Lhin = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
-        probList = [trace(dot(modifiedMatrix,bases[i])) for i in range(16)]
+        """ Update Likelihood Function, and Compared with older one """
+        LikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
+        # probList = [trace(dot(modifiedMatrix,bases[i])) for i in range(16)]
+        probList = [trace(dot(bases[i],modifiedMatrix)) for i in range(16)]
         nProbList = probList/sum(probList)
-        Lhout = sum([nDataList[i]*(np.log(nProbList[i])) for i in range(16)])
-        diff = np.real(Lhout - Lhin)
+        modifiedLikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
+        diff = np.real(modifiedLikelihoodFunction - LikelihoodFunction)
 
         matrix = modifiedMatrix.copy()
         if modifiedMatrix is matrix:
@@ -150,9 +152,11 @@ def doIterativeAlgorithm(matrix, maxNumberOfIteration, listAsExperimentalDatas):
 
 
 if __name__ == "__main__":
-    listOfExperimentalDatas = array([101599, 17900, 92913, 3263, 52733, 56453, 50266, 57325, 52234, 18951, 49106, 59811, 54621, 47110, 62711, 18847])
+    # listOfExperimentalDatas = array([101599, 17900, 92913, 3263, 52733, 56453, 50266, 57325, 52234, 18951, 49106, 59811, 54621, 47110, 62711, 18847])
 
-    matrix = np.identity(4)/4
+    listOfExperimentalDatas = array(list(map(float, input().split())))
+    
+    matrix = np.identity(4)
 
     maxNumberOfIteration = 10000
 

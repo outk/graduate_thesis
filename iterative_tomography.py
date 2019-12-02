@@ -8,7 +8,7 @@ This is for two qubits system.
 '''
 
 import numpy as np
-from numpy import array, kron, trace, dot, identity
+from numpy import array, kron, trace, identity
 
 
 
@@ -38,7 +38,6 @@ matrix of bases for two qubits:
 
 
 ------------------
-
 A order of this bases array is one of most important things in calcuration.
 So you must match each other between this and data set.
 
@@ -93,7 +92,9 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
     iter = 0
     dimH = 4
-    epsilon = 10000000
+    # TODO: why is epsilon so big number?
+    # epsilon = 10000000
+    epsilon = 10e-2
     TolFun = 10e-10
     diff = 100
     traceDistance = 100
@@ -107,7 +108,8 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
     while traceDistance > TolFun and iter <= maxNumberOfIteration:
 
-        probList = [trace(dot(matrix,bases[i])) for i in range(16)]
+        # probList = [trace(matrix@bases[i]) for i in range(16)]
+        probList = [trace(bases[i]@matrix) for i in range(16)]
         nProbList = probList / sum(probList)
         # TODO: Why is probList used not nProbList here?
         rotationMatrix = sum([(nDataList[i] / probList[i])*bases[i] for i in range(16)])
@@ -116,20 +118,21 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
         """ Normalization of Matrices for Measurement Bases """
         U = np.linalg.inv(sum(bases)) / sum(probList)
-        deltaRotationMatrixLeft = (identity(dimH) + epsilon*dot(U,rotationMatrix)) / (1 + epsilon)
-        deltaRotationMatrixRight = (identity(dimH) + epsilon*dot(rotationMatrix,U)) / (1 + epsilon)
+        # TODO: why is not 'U' multipled root(1/2)?
+        deltaRotationMatrixLeft = (identity(dimH) + epsilon*U@rotationMatrix) / (1 + epsilon)
+        deltaRotationMatrixRight = (identity(dimH) + epsilon*rotationMatrix@U) / (1 + epsilon)
 
 
         """ Calculation of updated density matrix """
-        modifiedMatrix = dot(dot(deltaRotationMatrixLeft,matrix),deltaRotationMatrixRight) / trace(dot(dot(deltaRotationMatrixLeft,matrix),deltaRotationMatrixRight))
+        modifiedMatrix = deltaRotationMatrixLeft@matrix@deltaRotationMatrixRight / trace(deltaRotationMatrixLeft@matrix@deltaRotationMatrixRight)
         eigValueArray, eigVectors = np.linalg.eig(matrix - modifiedMatrix)
         traceDistance = sum(np.absolute(eigValueArray)) / 2
 
 
         """ Update Likelihood Function, and Compared with older one """
         LikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
-        # probList = [trace(dot(modifiedMatrix,bases[i])) for i in range(16)]
-        probList = [trace(dot(bases[i],modifiedMatrix)) for i in range(16)]
+        # probList = [trace(modifiedMatrix@bases[i]) for i in range(16)]
+        probList = [trace(bases[i]@modifiedMatrix) for i in range(16)]
         nProbList = probList / sum(probList)
         modifiedLikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
         diff = np.real(modifiedLikelihoodFunction - LikelihoodFunction)
@@ -141,8 +144,15 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
             return -1
         
         iter += 1
+    
+    if iter >= maxNumberOfIteration:
+        print("----------------------------------------------")
+        print("Iteration time reached max iteration number.")
+        print("The number of iteration times is too small.")
+        print("----------------------------------------------")
 
     return modifiedMatrix
+
 
 
 
@@ -153,7 +163,7 @@ if __name__ == "__main__":
 
     listOfExperimentalDatas = array(list(map(float, input().split())))
 
-    maxNumberOfIteration = 10000
+    maxNumberOfIteration = 10e6
 
     finalMatrix = doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas)
 

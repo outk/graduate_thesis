@@ -9,7 +9,9 @@ This is for two qubits system.
 
 import numpy as np
 from numpy import array, kron, trace, identity
-
+import scipy
+from scipy.linalg import sqrtm, funm
+from datetime import datetime, timedelta 
 
 
 """ 
@@ -38,7 +40,7 @@ matrix of bases for two qubits:
 
 
 ------------------
-A order of this bases array is one of most important things in calcuration.
+A order of this bases array is one of most important things in calculation.
 So you must match each other between this and data set.
 
 """
@@ -55,7 +57,7 @@ bases =array(
 
 
 """
-get experimental datas
+Get Experimental Datas
 
 """
 
@@ -74,7 +76,7 @@ def getDatasFromFile(fileOfExperimentalDatas, numberOfQubits):
 
 
 """
-Iterative algorithm 
+Iterative Algorithm 
 
 """
 
@@ -88,14 +90,23 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
         First quantum state matrix for this algorithm is a identity matrix.
 
+
+        --------------------------------------------------------------------------------------------------------------
+        Return:
+
+            most likely estimated density matrix(np.array), time difference(datetime.timedelta)
+
     """
 
     iter = 0
     dimH = 4
     # TODO: why is epsilon so big number?
-    # epsilon = 10000000
-    epsilon = 10e-2
-    TolFun = 10e-10
+    # bigEpsilon = 10000000
+    # smallEpsilon = 0.01
+    epsilon = 10000000
+    # epsilon = 0.01
+    TolFun = 10e-11
+    endDiff = 10e-10
     diff = 100
     traceDistance = 100
 
@@ -103,68 +114,115 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
 
-    matrix = identity(dimH) # Input Density Matrix in Diluted MLE  (Identity)
+    densityMatrix = identity(dimH) # Input Density Matrix in Diluted MLE  (Identity)
 
+    startTime = datetime.now() #Timestamp
 
     while traceDistance > TolFun and iter <= maxNumberOfIteration:
+    # while diff > endDiff and iter <= maxNumberOfIteration:
 
-        # probList = [trace(matrix@bases[i]) for i in range(16)]
-        probList = [trace(bases[i]@matrix) for i in range(16)]
+        probList = [trace(bases[i] @ densityMatrix) for i in range(16)]
         nProbList = probList / sum(probList)
-        # TODO: Why is probList used not nProbList here?
         rotationMatrix = sum([(nDataList[i] / probList[i])*bases[i] for i in range(16)])
-        # rotationMatrix = sum([(nDataList[i] / nProbList[i])*bases[i] for i in range(16)])
 
 
         """ Normalization of Matrices for Measurement Bases """
-        U = np.linalg.inv(sum(bases)) / sum(probList)
-        # TODO: why is not 'U' multipled root(1/2)?
-        deltaRotationMatrixLeft = (identity(dimH) + epsilon*U@rotationMatrix) / (1 + epsilon)
-        deltaRotationMatrixRight = (identity(dimH) + epsilon*rotationMatrix@U) / (1 + epsilon)
+        U = np.linalg.inv(sum(bases)) / sum(probList)   
+        rotationMatrixLeft = (identity(dimH) + epsilon * U @ rotationMatrix) / (1 + epsilon)
+        rotationMatrixRight = (identity(dimH) + epsilon * rotationMatrix @ U) / (1 + epsilon)
 
 
         """ Calculation of updated density matrix """
-        modifiedMatrix = deltaRotationMatrixLeft@matrix@deltaRotationMatrixRight / trace(deltaRotationMatrixLeft@matrix@deltaRotationMatrixRight)
-        eigValueArray, eigVectors = np.linalg.eig(matrix - modifiedMatrix)
+        modifiedDensityMatrix = rotationMatrixLeft @ densityMatrix @ rotationMatrixRight / trace(rotationMatrixLeft @ densityMatrix @ rotationMatrixRight)
+        eigValueArray, eigVectors = np.linalg.eig(densityMatrix - modifiedDensityMatrix)
         traceDistance = sum(np.absolute(eigValueArray)) / 2
 
 
         """ Update Likelihood Function, and Compared with older one """
         LikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
-        # probList = [trace(modifiedMatrix@bases[i]) for i in range(16)]
-        probList = [trace(bases[i]@modifiedMatrix) for i in range(16)]
+        probList = [trace(bases[i] @ modifiedDensityMatrix) for i in range(16)]
         nProbList = probList / sum(probList)
-        modifiedLikelihoodFunction = sum([nDataList[i]*np.log(nProbList[i]) for i in range(16)])
-        diff = np.real(modifiedLikelihoodFunction - LikelihoodFunction)
-
-
-        matrix = modifiedMatrix.copy()
-        if modifiedMatrix is matrix:
-            print("Matrix failed to be copyed deeply for doing iterative algorithm.")
-            return -1
+        modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(16)])
         
+        diff = modifiedLikelihoodFunction - LikelihoodFunction
+
+
+        """ Show Progress of Calculation """
+        progress = 100 * iter / maxNumberOfIteration
+        if progress % 5 == 0:
+            msg = "Progress of calculation: " + str(int(progress)) + "%"
+            print(msg)
+
+
         iter += 1
+
+
+        """ Check Increasing of Likelihood Function  """
+        if diff < 0:
+            # print("--------------------------------------------------------------------")
+            # print("Likelihood Function decreased. Please change the number of epsilon.")
+            # print("--------------------------------------------------------------------")
+            # break
+
+            epsilon = epsilon * 0.9
+            continue
+        
+
+        """ Update Density Matrix """
+        densityMatrix = modifiedDensityMatrix.copy()
+
+
+    endTime = datetime.now() #Timestamp
     
+
+    """ Check That Max Iteration Number was proper """
     if iter >= maxNumberOfIteration:
         print("----------------------------------------------")
         print("Iteration time reached max iteration number.")
         print("The number of iteration times is too small.")
         print("----------------------------------------------")
 
-    return modifiedMatrix
+    
+    endIterationTimes = iter
+    emsg = "Iteration was '" + str(endIterationTimes) + "' times."
+    print(emsg)
+
+    return modifiedDensityMatrix, endTime - startTime
+
+
+"""
+Calculate Fidelity
+
+"""
+
+def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
+    """
+    calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 
 
+    """
+    fidelity = np.real(trace(idealDensityMatrix @ estimatedDensityMatrix))
+
+    return fidelity
 
 
 
 if __name__ == "__main__":
-    # listOfExperimentalDatas = array([101599, 17900, 92913, 3263, 52733, 56453, 50266, 57325, 52234, 18951, 49106, 59811, 54621, 47110, 62711, 18847])
-
     listOfExperimentalDatas = array(list(map(float, input().split())))
 
-    maxNumberOfIteration = 10e6
+    maxNumberOfIteration = 10000000
 
-    finalMatrix = doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas)
+    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas)
 
-    print(finalMatrix)
+    idealDensityMatrix = array([[1, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [1, 0, 0, 1]]) / 2
+
+    fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
+
+    print(estimatedDensityMatrix)
+
+    print("Fidelity is " + str(fidelity))
+
+    print("Time of calculation: ",timeDifference)
+
+

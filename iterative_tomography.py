@@ -1,6 +1,7 @@
 '''
 This is a implementation of 
 'Iterative algorithm for reconstruction of entangled states(10.1103/PhysRevA.63.040303)'
+'Diluted maximum-likelihood algorithm for quantum tomography(10.1103/PhysRevA.75.042108)'
 for quantum state tomography.
 
 This is for two qubits system.

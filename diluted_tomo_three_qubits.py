@@ -15,6 +15,7 @@ from scipy.linalg import sqrtm, funm
 from datetime import datetime, timedelta 
 
 
+
 """ 
 definition of base: 
 
@@ -113,11 +114,7 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
     iter = 0
     dimH = 8
-    # TODO: why is epsilon so big number?
-    # bigEpsilon = 10000000
-    # smallEpsilon = 0.01
     epsilon = 1000
-    # epsilon = 0.01
     TolFun = 10e-11
     endDiff = 10e-10
     diff = 100
@@ -127,7 +124,7 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
 
-    densityMatrix = identity(dimH) # Input Density Matrix in Diluted MLE  (Identity)
+    densityMatrix = identity(dimH) # Set Initial Density Matrix in Diluted MLE  (Identity)
 
     startTime = datetime.now() #Timestamp
 
@@ -172,11 +169,6 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
         """ Check Increasing of Likelihood Function  """
         if diff < 0:
-            # print("--------------------------------------------------------------------")
-            # print("Likelihood Function decreased. Please change the number of epsilon.")
-            # print("--------------------------------------------------------------------")
-            # break
-
             epsilon = epsilon * 0.1
             continue
         
@@ -203,6 +195,7 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
     return modifiedDensityMatrix, endTime - startTime
 
 
+
 """
 Calculate Fidelity
 
@@ -215,7 +208,7 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 
     """
-    fidelity = np.real(trace(idealDensityMatrix @ estimatedDensityMatrix))
+    fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)) @ sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix))))
 
     return fidelity
 
@@ -248,35 +241,7 @@ if __name__ == "__main__":
 
     print(estimatedDensityMatrix)
 
-    # print(w)
-
     print("Fidelity is " + str(fidelity))
 
     print("Time of calculation: ", timeDifference)
-
-    # ls = []
-
-    # ghz = np.zeros([8,8])
-
-    # ghz[0][0] = 1 / 2
-    # ghz[7][7] = 1 / 2
-    # ghz[0][7] = 1 / 2
-    # ghz[7][0] = 1 / 2
-
-    # w = np.zeros([1,8])
-
-    # w[0][4] = 1 / sqrt(3)
-    # w[0][6] = 1 / sqrt(3)
-    # w[0][1] = 1 / sqrt(3)
-
-    # wmatrix = w.T @ w
-
-    # print(wmatrix)
-
-
-    # for base in bases:
-    #     ls.append(np.real(trace(wmatrix @ base)) * 1000)
-    
-    # print(ls)
-
 

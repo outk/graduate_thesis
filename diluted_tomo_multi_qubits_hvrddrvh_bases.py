@@ -9,10 +9,10 @@ This is for multiple qubits system.
 '''
 
 import numpy as np
-from numpy import array, kron, trace, identity, sqrt
+from numpy import array, kron, trace, identity, sqrt, random
 import scipy
 from scipy.linalg import sqrtm, funm
-from datetime import datetime, timedelta 
+from datetime import datetime, timedelta
 
 
 """ 
@@ -266,7 +266,6 @@ if __name__ == "__main__":
 
     print("Time of calculation: ", timeDifference)
 
-    ls = []
 
     # ghz = np.zeros([8,8])
 

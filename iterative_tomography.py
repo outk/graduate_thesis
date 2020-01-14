@@ -48,12 +48,12 @@ So you must match each other between this and data set.
 
 bases =array(
     [
-    kron(bH,bH),kron(bH,bV),kron(bV,bV),kron(bV,bH),
-    kron(bR,bH),kron(bR,bV),kron(bD,bV),kron(bD,bH),
-    kron(bD,bR),kron(bD,bD),kron(bR,bD),kron(bH,bD),
-    kron(bV,bD),kron(bV,bL),kron(bH,bL),kron(bR,bL)
+        kron(bH,bH),kron(bH,bV),kron(bV,bV),kron(bV,bH),
+        kron(bR,bH),kron(bR,bV),kron(bD,bV),kron(bD,bH),
+        kron(bD,bR),kron(bD,bD),kron(bR,bD),kron(bH,bD),
+        kron(bV,bD),kron(bV,bL),kron(bH,bL),kron(bR,bL)
     ]
-    )
+)
 
 
 
@@ -81,7 +81,7 @@ Iterative Algorithm
 
 """
 
-def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
+def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas, initialDensityMatrix):
     """
     doIterativeAlgorithm():
 
@@ -101,11 +101,7 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
     iter = 0
     dimH = 4
-    # TODO: why is epsilon so big number?
-    # bigEpsilon = 10000000
-    # smallEpsilon = 0.01
-    epsilon = 10000000
-    # epsilon = 0.01
+    epsilon = 1000 # about 1000 is the best number of epsilon at first
     TolFun = 10e-11
     endDiff = 10e-10
     diff = 100
@@ -115,7 +111,9 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
 
-    densityMatrix = identity(dimH) # Input Density Matrix in Diluted MLE  (Identity)
+    # densityMatrix = identity(dimH) # Input Density Matrix in Diluted MLE  (Identity)
+
+    densityMatrix = initialDensityMatrix
 
     startTime = datetime.now() #Timestamp
 
@@ -160,12 +158,7 @@ def doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas):
 
         """ Check Increasing of Likelihood Function  """
         if diff < 0:
-            # print("--------------------------------------------------------------------")
-            # print("Likelihood Function decreased. Please change the number of epsilon.")
-            # print("--------------------------------------------------------------------")
-            # break
-
-            epsilon = epsilon * 0.9
+            epsilon = epsilon * 0.1 # about 0.1 is the best
             continue
         
 
@@ -212,18 +205,26 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 if __name__ == "__main__":
     listOfExperimentalDatas = array(list(map(float, input().split())))
 
+    sTime = datetime.now()
+
     maxNumberOfIteration = 10000000
 
-    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas)
+    initialDensityMatrix = identity(4)
 
-    idealDensityMatrix = array([[1, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [1, 0, 0, 1]]) / 2
+    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(maxNumberOfIteration, listOfExperimentalDatas, initialDensityMatrix)
 
-    fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
+    # idealDensityMatrix = array([[1, 0, 0, 1], [0, 0, 0, 0], [0, 0, 0, 0], [1, 0, 0, 1]]) / 2
+
+    # fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
 
     print(estimatedDensityMatrix)
 
-    print("Fidelity is " + str(fidelity))
+    # print("Fidelity is " + str(fidelity))
 
-    print("Time of calculation: ",timeDifference)
+    endTime = datetime.now()
+
+    allTimeDifference = endTime - sTime
+
+    print("Time of calculation: ",allTimeDifference)
 
 

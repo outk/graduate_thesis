@@ -1,5 +1,5 @@
 import numpy as np
-from numpy import array, sqrt, zeros, pi, exp, conjugate
+from numpy import array, sqrt, zeros, pi, exp, conjugate, kron
 
 zero_base_array1 = zeros((1,3))
 zero_base_array1[0][0] = 1
@@ -25,21 +25,29 @@ mb9 = (conjugate((exp(-2*pi*1j/3) * fb2 + (exp( 2*pi*1j/3)) * fb3).T) @ (exp(-2*
 
 bases = array([mb1, mb2, mb3, mb4, mb5, mb6, mb7, mb8, mb9])
 
+def makeBases(numberOfQutrits, bases):
+    for _ in range(numberOfQutrits-1):
+        fixedBases = []
+        for base1 in bases:
+            fixedBases.extend([kron(base1, base2) for base2 in bases])
+        bases = fixedBases.copy()
 
-numberOfQutrits = 1
+    return array(bases)
 
-baseVecter = np.zeros([1, 3**numberOfQutrits])
-baseVecter[0][0] = 1 / sqrt(2)
-baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(2)
-matrix = baseVecter.T @ baseVecter
+if __name__ == "__main__":
+    
+    numberOfQutrits = 2
 
-print(matrix)
+    newbases = makeBases(2, bases)
 
-datalist = []
+    baseVecter = np.zeros([1, 3**numberOfQutrits])
+    baseVecter[0][0] = 1 / sqrt(2)
+    baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(2)
+    matrix = baseVecter.T @ baseVecter
 
-for base in bases:
-    data = np.trace(base @ matrix)
-    datalist.append(int(np.real(data)*1000))
-    print(base)
+    datalist = []
 
-print(datalist)
+    for base in newbases:
+        data = np.trace(base @ matrix)
+        with open('test.txt', mode='a') as f:
+            f.write(str(int(np.real(data)*1000)) + '\n')

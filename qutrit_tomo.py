@@ -13,6 +13,7 @@ from numpy import array, kron, trace, identity, sqrt, random, zeros, exp, pi, co
 import scipy
 from scipy.linalg import sqrtm, funm
 from datetime import datetime, timedelta
+from concurrent import futures
 
 
 """ 
@@ -54,6 +55,16 @@ mb8 = (conjugate((exp( 2*pi*1j/3) * fb2 + (exp(-2*pi*1j/3)) * fb3).T) @ (exp( 2*
 mb9 = (conjugate((exp(-2*pi*1j/3) * fb2 + (exp( 2*pi*1j/3)) * fb3).T) @ (exp(-2*pi*1j/3) * fb2 + (exp( 2*pi*1j/3) * fb3))) / 2
 
 bases = array([mb1, mb2, mb3, mb4, mb5, mb6, mb7, mb8, mb9])
+
+
+def makeBases(numberOfQutrits, bases):
+    for _ in range(numberOfQutrits-1):
+        fixedBases = []
+        for base1 in bases:
+            fixedBases.extend([kron(base1, base2) for base2 in bases])
+        bases = fixedBases.copy()
+
+    return array(bases)
 
 
 
@@ -206,16 +217,35 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 
 
-if __name__ == "__main__":
-    listOfExperimentalDatas = array([249, 999, 249, 249, 249, 249, 249, 249, 249])
+""" Poisson Distributed Simulation """
 
-    listOfExperimentalDatas = random.poisson(listOfExperimentalDatas)
+def doPoissonDistirbutedSimulation(numberOfQutrits, bases, maxNumberOfIteration, experimentalData, idealMatrix):
+    """
+    doPoissonDistributedSimulation(experimentalData, iterationTime)
+
+    """
+
+    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, random.poisson(experimentalData))
+    fidelity = calculateFidelity(idealMatrix, estimatedDensityMatrix)
+
+    with open('test_qutrit_tomo_fidelity.txt', mode='a') as f:
+        f.write(str(fidelity) + '\n')
+
+
+
+if __name__ == "__main__":
+    start_time = datetime.now()
+
+    with open('test.txt') as f:
+        listOfExperimentalData = array([2+int(s.strip()) for s in f.readlines()])
 
     maxNumberOfIteration = 10000000
 
-    numberOfQutrits = 1
+    numberOfQutrits = 2
 
-    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExperimentalDatas)
+    newbases = makeBases(numberOfQutrits, bases)
+
+    # estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, newbases, maxNumberOfIteration, listOfExperimentalDatas)
 
 
     """ example of two qutrits """
@@ -223,15 +253,18 @@ if __name__ == "__main__":
     baseVecter[0][0] = 1 / sqrt(2)
     baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(2)
     matrix = baseVecter.T @ baseVecter
-    fidelity = calculateFidelity(matrix, estimatedDensityMatrix)
+    
 
-    print(estimatedDensityMatrix)
+    """ Pallarel Computing """
 
-    print("Fidelity is " + str(fidelity))
+    with futures.ProcessPoolExecutor(max_workers=3) as executor:
+        for _ in range(100):
+            executor.submit(fn=doPoissonDistirbutedSimulation, numberOfQutrits=numberOfQutrits, bases=newbases, maxNumberOfIteration=maxNumberOfIteration, experimentalData=listOfExperimentalData, idealMatrix=matrix)
 
-    print("Time of calculation: ", timeDifference)
 
+    end_time = datetime.now()
 
+    print(end_time - start_time)
     
 
 

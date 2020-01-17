@@ -69,21 +69,21 @@ def makeBases(numberOfQutrits, bases):
 
 
 """
-Get Experimental Datas
+Get Experimental Data
 
 """
 
-def getDatasFromFile(fileOfExperimentalDatas, numberOfQutrits):
+def getDataFromFile(fileOfExperimentalData, numberOfQutrits):
     """
-    getDatasFromFile(fileOfExperimentalDatas, numberOfQutrits):
+    getDataFromFile(fileOfExperimentalData, numberOfQutrits):
 
-        This function is getting datas from file of experiment consequense,
+        This function is getting data from file of experiment consequense,
         and return matrix (np.array (numberOfQutrits*numberOfQutrits)) of them.
 
     """
-    matrixOfExperimentalDatas = np.zeros([numberOfQutrits,numberOfQutrits], dtype=np.complex)
-    # TODO: modify matrixOfExperimentalDatas by given data file.
-    return matrixOfExperimentalDatas
+    matrixOfExperimentalData = np.zeros([numberOfQutrits,numberOfQutrits], dtype=np.complex)
+    # TODO: modify matrixOfExperimentalData by given data file.
+    return matrixOfExperimentalData
 
 
 
@@ -92,12 +92,12 @@ Iterative Algorithm
 
 """
 
-def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExperimentalDatas):
+def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExperimentalData):
     """
     doIterativeAlgorithm():
 
-        This function is to do iterative algorithm(10.1103/PhysRevA.63.040303) and diluted MLE algorithm(10.1103/PhysRevA.75.042108) to a set of datas given from a experiment.
-        This recieve four variables (numberOfQutrits, bases, maxNumberOfIteration, listAsExperimentalDatas),
+        This function is to do iterative algorithm(10.1103/PhysRevA.63.040303) and diluted MLE algorithm(10.1103/PhysRevA.75.042108) to a set of data given from a experiment.
+        This recieve four variables (numberOfQutrits, bases, maxNumberOfIteration, listAsExperimentalData),
         and return most likely estimated density matrix (np.array) and total time of calculation(datetime.timedelta).
 
         First quantum state matrix for this algorithm is a identity matrix.
@@ -119,9 +119,9 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
     diff = 100
     traceDistance = 100
 
-    dataList = listOfExperimentalDatas
+    dataList = listOfExperimentalData
     totalCountOfData = sum(dataList)
-    nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
+    nDataList = dataList / totalCountOfData # nDataList is a list of normarized data
 
     densityMatrix = identity(3 ** numberOfQutrits) # Input Density Matrix in Diluted MLE  (Identity)
 
@@ -195,6 +195,9 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
     emsg = "Iteration was '" + str(endIterationTimes) + "' times."
     print(emsg)
 
+    with open('iterationtimes.txt', mode='a') as f:
+        f.write(str(iter) + '\n')
+
     return modifiedDensityMatrix, endTime - startTime
 
 
@@ -228,7 +231,7 @@ def doPoissonDistirbutedSimulation(numberOfQutrits, bases, maxNumberOfIteration,
     estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, random.poisson(experimentalData))
     fidelity = calculateFidelity(idealMatrix, estimatedDensityMatrix)
 
-    with open('test_qutrit_tomo_fidelity.txt', mode='a') as f:
+    with open('test_qutrit_tomo_fidelity2.txt', mode='a') as f:
         f.write(str(fidelity) + '\n')
 
 
@@ -236,7 +239,7 @@ def doPoissonDistirbutedSimulation(numberOfQutrits, bases, maxNumberOfIteration,
 if __name__ == "__main__":
     start_time = datetime.now()
 
-    with open('test.txt') as f:
+    with open('data.txt') as f:
         listOfExperimentalData = array([2+int(s.strip()) for s in f.readlines()])
 
     maxNumberOfIteration = 10000000
@@ -245,26 +248,34 @@ if __name__ == "__main__":
 
     newbases = makeBases(numberOfQutrits, bases)
 
-    # estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, newbases, maxNumberOfIteration, listOfExperimentalDatas)
+    # estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, newbases, maxNumberOfIteration, listOfExperimentalData)
 
 
     """ example of two qutrits """
     baseVecter = np.zeros([1, 3**numberOfQutrits])
-    baseVecter[0][0] = 1 / sqrt(2)
-    baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(2)
-    matrix = baseVecter.T @ baseVecter
+    baseVecter[0][0] = 1 / sqrt(3)
+    baseVecter[0][4] = 1 / sqrt(3)
+    baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(3)
+    idealMatrix = baseVecter.T @ baseVecter
     
 
     """ Pallarel Computing """
 
-    with futures.ProcessPoolExecutor(max_workers=3) as executor:
-        for _ in range(100):
-            executor.submit(fn=doPoissonDistirbutedSimulation, numberOfQutrits=numberOfQutrits, bases=newbases, maxNumberOfIteration=maxNumberOfIteration, experimentalData=listOfExperimentalData, idealMatrix=matrix)
+    with futures.ProcessPoolExecutor(max_workers=10) as executor:
+        for _ in range(1000):
+            executor.submit(fn=doPoissonDistirbutedSimulation, numberOfQutrits=numberOfQutrits, bases=newbases, maxNumberOfIteration=maxNumberOfIteration, experimentalData=listOfExperimentalData, idealMatrix=idealMatrix)
 
 
     end_time = datetime.now()
 
     print(end_time - start_time)
+
+    iterationtimeslist = []
+
+    with open('iterationtimes.txt') as f:
+        iterationtimeslist.extend([int(s.strip()) for s in f.readlines()])
+
+    print('Total iteration times: ' + str(sum(iterationtimeslist)))
     
 
 

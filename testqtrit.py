@@ -41,13 +41,14 @@ if __name__ == "__main__":
     newbases = makeBases(2, bases)
 
     baseVecter = np.zeros([1, 3**numberOfQutrits])
-    baseVecter[0][0] = 1 / sqrt(2)
-    baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(2)
+    baseVecter[0][0] = 1 / sqrt(3)
+    baseVecter[0][4] = 1 / sqrt(3)
+    baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(3)
     matrix = baseVecter.T @ baseVecter
 
     datalist = []
 
     for base in newbases:
         data = np.trace(base @ matrix)
-        with open('test.txt', mode='a') as f:
-            f.write(str(int(np.real(data)*1000)) + '\n')
+        with open('data.txt', mode='a') as f:
+            f.write(str(int(np.real(data)*10000)) + '\n')

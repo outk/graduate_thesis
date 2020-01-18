@@ -1,23 +1,24 @@
 '''
-This is a implementation of 
+This is a implementation of Quantum State Tomography for Qutrits,
+using techniques of following papars.
+
 'Iterative algorithm for reconstruction of entangled states(10.1103/PhysRevA.63.040303)'
 'Diluted maximum-likelihood algorithm for quantum tomography(10.1103/PhysRevA.75.042108)'
-for quantum state tomography.
-
-This is for qutrits system.
+'Qudit Quantum State Tomography(10.1103/PhysRevA.66.012303)'
+'On-chip generation of high-dimensional entangled quantum states and their coherent control(Nature volume 546, pages622–626(2017))'
 
 '''
 
 import numpy as np
-from numpy import array, kron, trace, identity, sqrt, random, zeros, exp, pi, conjugate, random
-import scipy
-from scipy.linalg import sqrtm, funm
-from datetime import datetime, timedelta
+from numpy import array, kron, trace, identity, sqrt, zeros, exp, pi, conjugate, random
+from scipy.linalg import sqrtm
+from datetime import datetime
 from concurrent import futures
+import os
 
 
 """ 
-definition of three frequency bases: 
+Definition of Three Frequency Bases: 
 
     fb1 = array([1, 0, 0])
     fb2 = array([0, 1, 0])
@@ -39,10 +40,7 @@ fb3 = zero_base_array3
 
 
 
-"""
-make measurement bases
-
-"""
+""" Make Measurement Bases """
 
 mb1 = (conjugate((fb1 + fb2).T) @ (fb1 + fb2)) / 2
 mb2 = (conjugate((fb1 + fb3).T) @ (fb1 + fb3)) / 2
@@ -56,7 +54,6 @@ mb9 = (conjugate((exp(-2*pi*1j/3) * fb2 + (exp( 2*pi*1j/3)) * fb3).T) @ (exp(-2*
 
 bases = array([mb1, mb2, mb3, mb4, mb5, mb6, mb7, mb8, mb9])
 
-
 def makeBases(numberOfQutrits, bases):
     for _ in range(numberOfQutrits-1):
         fixedBases = []
@@ -68,31 +65,33 @@ def makeBases(numberOfQutrits, bases):
 
 
 
-"""
-Get Experimental Data
+""" Get Experimental Data """
 
-"""
-
-def getDataFromFile(fileOfExperimentalData, numberOfQutrits):
+def getExperimentalData(pathOfExperimentalData):
     """
-    getDataFromFile(fileOfExperimentalData, numberOfQutrits):
+    getExperimentalData(pathOfExperimentalData(string)):
 
-        This function is getting data from file of experiment consequense,
-        and return matrix (np.array (numberOfQutrits*numberOfQutrits)) of them.
+        This function is getting experimental data from file at "pathOfExperimentalData",
+        
+        ----------------------------------------------------------------------------------------
+        return:
+
+            np.array of them.
 
     """
-    matrixOfExperimentalData = np.zeros([numberOfQutrits,numberOfQutrits], dtype=np.complex)
-    # TODO: modify matrixOfExperimentalData by given data file.
-    return matrixOfExperimentalData
+
+    with open(pathOfExperimentalData) as f:
+        experimentalData = []
+        for s in f.readlines():
+            experimentalData.extend(map(int, s.strip().split()))
+
+    return array(experimentalData)
 
 
 
-"""
-Iterative Algorithm 
+""" Iterative Algorithm for Quantum Tomography """
 
-"""
-
-def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExperimentalData):
+def doIterativeAlgorithm(numberOfQutrits, bases, listOfExperimentalData):
     """
     doIterativeAlgorithm():
 
@@ -100,14 +99,12 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
         This recieve four variables (numberOfQutrits, bases, maxNumberOfIteration, listAsExperimentalData),
         and return most likely estimated density matrix (np.array) and total time of calculation(datetime.timedelta).
 
-        First quantum state matrix for this algorithm is a identity matrix.
-
+        First quantum state is an Identity: Maximum Mixed State.
 
         --------------------------------------------------------------------------------------------------------------
         Return:
 
-            most likely estimated density matrix(np.array), 
-            time difference(datetime.timedelta)
+            most likely estimated density matrix(np.array)
 
     """
 
@@ -115,18 +112,15 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
     iter = 0
     epsilon = 1000
     TolFun = 10e-11
-    endDiff = 10e-10
-    diff = 100
+    # endDiff = 10e-10
+    # diff = 100
     traceDistance = 100
+    maxNumberOfIteration = 100000
 
     dataList = listOfExperimentalData
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized data
-
-    densityMatrix = identity(3 ** numberOfQutrits) # Input Density Matrix in Diluted MLE  (Identity)
-
-    startTime = datetime.now() #Timestamp
-
+    densityMatrix = identity(3 ** numberOfQutrits) # Initial State: Maximun Mixed State
     
     """ Start iteration """
     while traceDistance > TolFun and iter <= maxNumberOfIteration:
@@ -136,27 +130,22 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
         nProbList = probList / sum(probList)
         rotationMatrix = sum([(nDataList[i] / probList[i]) * bases[i] for i in range(9 ** numberOfQutrits)])
 
-
         """ Normalization of Matrices for Measurement Bases """
         U = np.linalg.inv(sum(bases)) / sum(probList)   
         rotationMatrixLeft = (identity(3 ** numberOfQutrits) + epsilon * U @ rotationMatrix) / (1 + epsilon)
         rotationMatrixRight = (identity(3 ** numberOfQutrits) + epsilon * rotationMatrix @ U) / (1 + epsilon)
-
 
         """ Calculation of updated density matrix """
         modifiedDensityMatrix = rotationMatrixLeft @ densityMatrix @ rotationMatrixRight / trace(rotationMatrixLeft @ densityMatrix @ rotationMatrixRight)
         eigValueArray, eigVectors = np.linalg.eig(densityMatrix - modifiedDensityMatrix)
         traceDistance = sum(np.absolute(eigValueArray)) / 2
 
-
         """ Update Likelihood Function, and Compared with older one """
         LikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(9 ** numberOfQutrits)])
         probList = [trace(bases[i] @ modifiedDensityMatrix) for i in range(len(bases))]
         nProbList = probList / sum(probList)
-        modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(9 ** numberOfQutrits)])
-        
+        modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(9 ** numberOfQutrits)]) 
         diff = modifiedLikelihoodFunction - LikelihoodFunction
-
 
         """ Show Progress of Calculation """
         progress = 100 * iter / maxNumberOfIteration
@@ -164,118 +153,308 @@ def doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, listOfExp
             msg = "Progress of calculation: " + str(int(progress)) + "%"
             print(msg)
 
-
         """ Increment """
         iter += 1
-
 
         """ Check Increasing of Likelihood Function  """
         if diff < 0:
             epsilon = epsilon * 0.1
             continue
-        
 
         """ Update Density Matrix """
         densityMatrix = modifiedDensityMatrix.copy()
 
-
-    endTime = datetime.now() #Timestamp
     
-
     """ Check That Max Iteration Number was appropriate """
     if iter >= maxNumberOfIteration:
         print("----------------------------------------------")
         print("Iteration time reached max iteration number.")
         print("The number of max iteration times is too small.")
         print("----------------------------------------------")
-
     
     """ Show the total number of iteration """
     endIterationTimes = iter
     emsg = "Iteration was '" + str(endIterationTimes) + "' times."
     print(emsg)
 
-    with open('iterationtimes.txt', mode='a') as f:
-        f.write(str(iter) + '\n')
-
-    return modifiedDensityMatrix, endTime - startTime
+    return modifiedDensityMatrix
 
 
 
-"""
-Calculate Fidelity
-
-"""
+""" Calculate Fidelity """
 
 def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
     """
     calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
-
-
     """
+
     fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)) @ sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix))))
 
     return fidelity
 
 
 
-""" Poisson Distributed Simulation """
+""" Iterative Simulation """
 
-def doPoissonDistirbutedSimulation(numberOfQutrits, bases, maxNumberOfIteration, experimentalData, idealMatrix):
+def doIterativeSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName):
     """
-    doPoissonDistributedSimulation(experimentalData, iterationTime)
+    doIterativeSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName)
+
 
     """
 
-    estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, bases, maxNumberOfIteration, random.poisson(experimentalData))
-    fidelity = calculateFidelity(idealMatrix, estimatedDensityMatrix)
+    """ Get Experimental Data"""
+    listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
 
-    with open('test_qutrit_tomo_fidelity2.txt', mode='a') as f:
+    """ Calculate """
+    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQutrits, bases, listOfExperimentalData)
+    fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
+
+    """ Make File Name of result """
+    l = 0
+    r = len(pathOfExperimentalData)-1
+    for i in range(len(pathOfExperimentalData)):
+        if pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == ".":
+            r = len(pathOfExperimentalData)-1-i
+        if pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == "/" or pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == "\\":
+            l = len(pathOfExperimentalData)-i
+            break
+    resultFileName = pathOfExperimentalData[l:r]
+    resultFilePath = '.\\result\\qutrit\\iterative\\' + resultDirectoryName + '\\' + resultFileName + '_result' + '.txt'
+
+    """ Save Result """
+    with open(resultFilePath, mode='a') as f:
         f.write(str(fidelity) + '\n')
 
 
 
+""" Poisson Distributed Simulation """
+
+def doPoissonDistributedSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName):
+    """
+    doPoissonDistributedSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName)
+
+
+    """
+
+    """ Get Experimental Data"""
+    listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
+
+    """ Calculate """
+    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQutrits, bases, random.poisson(listOfExperimentalData))
+    fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
+
+    """ Make File Name of result """
+    l = 0
+    r = len(pathOfExperimentalData)-1
+    for i in range(len(pathOfExperimentalData)):
+        if pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == ".":
+            r = len(pathOfExperimentalData)-1-i
+        if pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == "/" or pathOfExperimentalData[len(pathOfExperimentalData)-1-i] == "\\":
+            l = len(pathOfExperimentalData)-i
+            break
+    resultFileName = pathOfExperimentalData[l:r]
+    resultFilePath = '.\\result\\qutrit\\poisson\\' + resultDirectoryName + "\\" + resultFileName + '_result' + '.txt'
+
+    """ Save Result """
+    with open(resultFilePath, mode='a') as f:
+        f.write(str(fidelity) + '\n')
+
+
+
+""" Get Number of Qutrits """
+
+def getNumberOfQutrits():
+    """
+    getNumberOfQutrits()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER NUMBER OF QUTRITS")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    numberOfQutrits = int(input())
+
+    return numberOfQutrits
+
+
+
+""" Get Paths of Experimental Data """
+
+def getExperimentalDataPaths():
+    """
+    getExperimentalDataPaths()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER PATHS OF EXPERIMENTAL DATA")
+    print("")
+    print("IF THERE ARE MULTIPLE DATA FILE YOU WANT TO TOMOGRAPHY,")
+    print("ENTER ALL PATHS SEPARATED WITH SPACE.")
+    print("LIKE THIS >> .\\datadirectory\\ex1.txt .\\datadirectory\\ex2.txt ...")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    paths = list(input().split())
+
+    return paths
+
+
+
+""" Get Name of Result Directory AND FILE """
+
+def getNameOfResultDirectory():
+    """
+    getNameOfResultDirectory()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER NAME OF RESULT DIRECTORY ")
+    print("")
+    print("THE RESULT DATA WILL SAVED AT ")
+    print("'.\\result\\qutrit\\iterative(or poisson)\\{ YOUR ENTED DIRECTORY NAME }\\{ EXPERIMENTAL DATA FILE NAME }_result.txt'")
+    print("")
+    print("IF EMPTY, THE NAME OF RESULT DIRECTORY IS 'default'")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    nameOfResultDirectory = input()
+    if nameOfResultDirectory == "":
+        nameOfResultDirectory = "default"
+
+    return nameOfResultDirectory
+
+
+
+""" Whether Do Poisson Distributed Simulation """
+
+def checkPoisson():
+    """
+    checkPoisson()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER ANSWER WHETHER DO POISSON DISTRIBUTED SIMULATION")
+    print("IF YOU DO, PLEASE ENTER 'yes'")
+    print("IF YOU ENTER ANOTHER WORD OR EMPTY, YOUR ANSWER IS REGARED AS 'no'")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    answer = input()
+    if answer == "yes" or answer == "Yes" or answer == "YES":
+        print("YOUR ANSWER IS: 'yes'")
+        poissonPaths = getExperimentalDataPaths()
+        eachIterationTime = getEachIterationTime()
+        return True, poissonPaths*eachIterationTime
+    else:
+        print("YOUR ANSWER IS: 'no'")
+        return False, []
+
+
+
+""" Get Each Iteration Time """
+
+def getEachIterationTime():
+    """
+    getEachIterationTime()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER ITERATION TIME OF EACH POISSON SIMULATION")
+    print("------------------------------------------------------------")
+    print(">>")
+    
+    eachIterationTime = input()
+    if eachIterationTime == "":
+        eachIterationTime = 0
+    else:
+        eachIterationTime = int(eachIterationTime)
+
+    return eachIterationTime
+
+
+
+""" Get Number of Parallel Comuting """
+
+def getNumberOfParallelComputing():
+    """
+    getNumberOfParallelComputing()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("HOW MANY TIMES DO YOU WANT TO PARALLELIZE?")
+    print("IF THE NUMBER IS TOO LARGE, THE PARFORMANCE OF SIMULATION BECOME LOWER.")
+    print("RECOMENDED NUMBER IS DEPENDING ON YOUR COMPUTER.")
+    print("------------------------------------------------------------")
+    print(">>")
+    
+    numberOfParallelComputing = int(input())
+
+    return numberOfParallelComputing
+
+
+
+
 if __name__ == "__main__":
-    start_time = datetime.now()
 
-    with open('data.txt') as f:
-        listOfExperimentalData = array([2+int(s.strip()) for s in f.readlines()])
+    """ Get Number of Qutrits """
+    numberOfQutrits = getNumberOfQutrits()
+    
+    """ Get Paths of Experimental Data """
+    paths = getExperimentalDataPaths()
 
-    maxNumberOfIteration = 10000000
+    """ Get Name of Result Directory """
+    resultDirectoryName = getNameOfResultDirectory()
 
-    numberOfQutrits = 2
+    """ Check Poisson Distributed Simulation """
+    check, poissonPaths = checkPoisson()
 
-    newbases = makeBases(numberOfQutrits, bases)
+    """ Get Number of Parallel Computing """
+    numberOfParallelComputing = getNumberOfParallelComputing()
 
-    # estimatedDensityMatrix, timeDifference = doIterativeAlgorithm(numberOfQutrits, newbases, maxNumberOfIteration, listOfExperimentalData)
+    """ Make Bases """
+    basesOfQutrits = makeBases(numberOfQutrits, bases)
 
-
-    """ example of two qutrits """
+    """ Make Ideal Density Matrix """
     baseVecter = np.zeros([1, 3**numberOfQutrits])
     baseVecter[0][0] = 1 / sqrt(3)
     baseVecter[0][4] = 1 / sqrt(3)
     baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(3)
-    idealMatrix = baseVecter.T @ baseVecter
-    
+    idealDensityMatrix = baseVecter.T @ baseVecter
 
-    """ Pallarel Computing """
+    start_time = datetime.now() #time stamp
 
-    with futures.ProcessPoolExecutor(max_workers=10) as executor:
-        for _ in range(1000):
-            executor.submit(fn=doPoissonDistirbutedSimulation, numberOfQutrits=numberOfQutrits, bases=newbases, maxNumberOfIteration=maxNumberOfIteration, experimentalData=listOfExperimentalData, idealMatrix=idealMatrix)
+    """ Make Result Directory """
+    if not os.path.exists('.\\result\\qutrit\\iterative\\' + resultDirectoryName):
+        os.makedirs('.\\result\\qutrit\\iterative\\' + resultDirectoryName)
+
+    """ Start Tomography """
+    with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+        for path in paths:
+            executor.submit(fn=doIterativeSimulation, numberOfQutrits=numberOfQutrits, bases=basesOfQutrits, pathOfExperimentalData=path, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
+
+    """ Start Poisson Distributed Simulation """
+    if check:
+        """ Make Result Directory for Poisson Distributed Simulation """
+        if not os.path.exists('.\\result\\qutrit\\posson\\' + resultDirectoryName):
+            os.makedirs('.\\result\\qutrit\\poisson\\' + resultDirectoryName)
+
+        with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+            for poissonPath in poissonPaths:
+                executor.submit(fn=doPoissonDistributedSimulation, numberOfQutrits=numberOfQutrits, bases=basesOfQutrits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
 
 
-    end_time = datetime.now()
+    end_time = datetime.now() #time stamp
+    print("Total Calculation Time was " + str(end_time - start_time))
 
-    print(end_time - start_time)
-
-    iterationtimeslist = []
-
-    with open('iterationtimes.txt') as f:
-        iterationtimeslist.extend([int(s.strip()) for s in f.readlines()])
-
-    print('Total iteration times: ' + str(sum(iterationtimeslist)))
     
 
 

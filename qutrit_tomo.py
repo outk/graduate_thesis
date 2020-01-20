@@ -392,7 +392,9 @@ def getNumberOfParallelComputing():
     print("------------------------------------------------------------")
     print("HOW MANY TIMES DO YOU WANT TO PARALLELIZE?")
     print("IF THE NUMBER IS TOO LARGE, THE PARFORMANCE OF SIMULATION BECOME LOWER.")
-    print("RECOMENDED NUMBER IS DEPENDING ON YOUR COMPUTER.")
+    print("THE NUMBER OF LOGICAL PROCESSOR OF YOUR COMPUTER IS >>")
+    print(os.cpu_count())
+    print("RECOMENDED NUMBER IS LESS THAN THE ABOVE NUMBER.")
     print("------------------------------------------------------------")
     print(">>")
     

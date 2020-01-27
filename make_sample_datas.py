@@ -1,28 +1,67 @@
 import numpy as np
-from numpy import trace
-from scipy import sqrt
-
-ls = []
-
-ghz = np.zeros([8,8])
-
-ghz[0][0] = 1 / 2
-ghz[7][7] = 1 / 2
-ghz[0][7] = 1 / 2
-ghz[7][0] = 1 / 2
-
-w = np.zeros([1,8])
-
-w[0][4] = 1 / sqrt(3)
-w[0][6] = 1 / sqrt(3)
-w[0][1] = 1 / sqrt(3)
-
-wmatrix = w.T @ w
-
-print(wmatrix)
+from numpy import array, kron, trace, identity, sqrt, zeros, exp, pi, conjugate, random
+from scipy.linalg import sqrtm
+from datetime import datetime
+from concurrent import futures
+import os
 
 
-for base in bases:
-    ls.append(np.real(trace(wmatrix @ base)) * 1000)
+su2b = array([
+    [[   1,  0], [   0,  1]],
+    [[   0,  1], [   1,  0]],
+    [[   0,-1j], [  1j,  0]],
+    [[   1,  0], [   0, -1]]
+]
+)
+su2Bases = []
+newbases = []
+for i in range(4):
+    su2Bases.extend([kron(su2b[i], su2b[j]) for j in range(4)])
+newbases = su2Bases.copy()
+su2Bases = []
+for i in range(16):
+    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
+newbases = su2Bases.copy()
+su2Bases = []
+for i in range(64):
+    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
+su2Bases = array(su2Bases)
 
-print(ls)
+
+bH = array([[1,0],[0,0]])
+bV = array([[0,0],[0,1]])
+bD = array([[1/2,1/2],[1/2,1/2]])
+bR = array([[1/2,1j/2],[-1j/2,1/2]])
+bL = array([[1/2,-1j/2],[1j/2,1/2]])
+
+initialBases = array([bH, bV, bR, bD])
+
+cycleBases1 = array([bH, bV, bR, bD])
+cycleBases2 = array([bD, bR, bV, bH])
+
+def makeBases(numberOfQubits):
+    beforeBases = initialBases
+    for _ in range(numberOfQubits - 1):
+        afterBases = []
+        for i in range(len(beforeBases)):
+            if i % 2 == 0:
+                afterBases.extend([kron(beforeBases[i], cycleBase) for cycleBase in cycleBases1])
+            else:
+                afterBases.extend([kron(beforeBases[i], cycleBase) for cycleBase in cycleBases2])
+        beforeBases = afterBases
+    return array(afterBases)
+
+numberOfQubits = 4
+
+bases = makeBases(numberOfQubits)
+
+baseVecter = np.zeros([1, 2**numberOfQubits])
+baseVecter[0][0] = 1 / sqrt(2)
+baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+matrix = baseVecter.T @ baseVecter
+
+with open("./testdata/4qubitsdata.txt", mode='a') as f:
+    for base in bases:
+        c = np.real(np.trace(matrix @ base) * 10000 + random.poisson(10))
+        f.writelines(str(int(c)) + " ")
+

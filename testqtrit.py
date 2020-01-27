@@ -50,5 +50,5 @@ if __name__ == "__main__":
 
     for base in newbases:
         data = np.trace(base @ matrix)
-        with open('data.txt', mode='a') as f:
+        with open('./testdata/data.txt', mode='a') as f:
             f.write(str(int(np.real(data)*10000)) + '\n')

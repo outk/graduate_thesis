@@ -62,6 +62,6 @@ matrix = baseVecter.T @ baseVecter
 
 with open("./testdata/4qubitsdata.txt", mode='a') as f:
     for base in bases:
-        c = np.real(np.trace(matrix @ base) * 10000 + random.poisson(10))
+        c = np.real(np.trace(matrix @ base) * 10000 + 1)
         f.writelines(str(int(c)) + " ")
 

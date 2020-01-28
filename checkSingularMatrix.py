@@ -68,7 +68,7 @@ def makeMMatrix(numberOfQubits, bases):
     M = []
 
     for i in range(4**numberOfQubits):
-        M.append(sum([BInverse[i][j] * su2Bases[j] for j in range(4**numberOfQubits)]))
+        M.append(sum([BInverse[j][i] * su2Bases[j] for j in range(4**numberOfQubits)]))
     
     return array(M)
 
@@ -89,6 +89,27 @@ def makeDensityMatrix(numberOfQubits, dataList, bases):
     print(densityMatrix)
 
     return densityMatrix
+
+
+""" cholesky decomposition """
+def choleskyDecomposition(numberOfQubits, matrix):
+
+    L = np.zeros([2**numberOfQubits, 2**numberOfQubits], dtype=np.complex)
+
+    for i in range(2**numberOfQubits):
+        for j in range(i-1):
+            s = matrix[i][j]
+            for k in range(j-1):
+                s -= np.conjugate(L[i][k]) * L[j][k]
+            L[i][j] = s / L[j][j]
+        s = matrix[i][i]
+        for k in range(i-1):
+            s -= np.conjugate(L[i][k])*L[i][k]
+        if np.real(s) < 0:
+            s = -1*s
+        L[i][i] = np.sqrt(s)
+
+    return np.conjugate(L).T @ L / np.trace(np.conjugate(L).T @ L)
 
 def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
     """
@@ -113,6 +134,10 @@ if __name__ == "__main__":
     bases = makeBases(numberOfQubits)
 
     densityMatrix = makeDensityMatrix(numberOfQubits, listOfExperimentalDatas, bases)
+
+    initialDensityMatrix = choleskyDecomposition(numberOfQubits, densityMatrix)
+
+    print(np.trace(initialDensityMatrix))
 
     baseVecter = np.zeros([1, 2**numberOfQubits])
     baseVecter[0][0] = 1 / sqrt(2)

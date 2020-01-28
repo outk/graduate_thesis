@@ -16,6 +16,25 @@ from concurrent import futures
 import os
 
 
+# su2b = array([
+#     [[   1,  0], [   0,  1]],
+#     [[   0,  1], [   1,  0]],
+#     [[   0,-1j], [  1j,  0]],
+#     [[   1,  0], [   0, -1]]
+# ]
+# )
+
+# def makeSU2Bases(numberOfQubits):
+#     newbases = su2b.copy()
+#     su2Bases = []
+#     for i in range(numberOfQubits-1):
+#         for newbase in newbases:
+#             su2Bases.extend([kron(newbase, base) for base in su2b])
+#         newbases = su2Bases.copy()
+#         su2Bases = []
+
+#     return array(su2Bases)
+
 su2b = array([
     [[   1,  0], [   0,  1]],
     [[   0,  1], [   1,  0]],
@@ -24,16 +43,19 @@ su2b = array([
 ]
 )
 
-def makeSU2Bases(numberOfQubits):
-    newbases = su2b.copy()
-    su2Bases = []
-    for i in range(numberOfQubits-1):
-        for newbase in newbases:
-            su2Bases.extend([kron(newbase, base) for base in su2b])
-        newbases = su2Bases.copy()
-        su2Bases = []
-
-    return array(su2Bases)
+su2Bases = []
+newbases = []
+for i in range(4):
+    su2Bases.extend([kron(su2b[i], su2b[j]) for j in range(4)])
+newbases = su2Bases.copy()
+su2Bases = []
+for i in range(16):
+    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
+newbases = su2Bases.copy()
+su2Bases = []
+for i in range(64):
+    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
+su2Bases = array(su2Bases)
 
 
 bH = array([[1,0],[0,0]])
@@ -59,8 +81,7 @@ def makeBases(numberOfQubits):
         beforeBases = afterBases
     return array(afterBases)
 
-
-def makeBMatrix(numberOfQubits, bases, su2Bases):
+def makeBMatrix(numberOfQubits, bases):
     B = np.zeros((4**numberOfQubits, 4**numberOfQubits))
 
     for i in range(4**numberOfQubits):
@@ -69,22 +90,51 @@ def makeBMatrix(numberOfQubits, bases, su2Bases):
 
     return B
 
-def makeRList(numberOfQubits, dataList, bases, su2Bases):
-    B = makeBMatrix(numberOfQubits, bases, su2Bases)
+
+def makeMMatrix(numberOfQubits, bases):
+    B = makeBMatrix(numberOfQubits, bases)
 
     BInverse = np.linalg.inv(B)
 
-    rlist = np.array([sum([BInverse[i][j] * dataList[j] for j in range(4**numberOfQubits)]) for i in range(4**numberOfQubits)])
+    M = []
 
-    return rlist
+    for i in range(4**numberOfQubits):
+        M.append(sum([BInverse[j][i] * su2Bases[j] for j in range(4**numberOfQubits)]))
+    
+    return array(M)
 
-def makeInitialDensityMatrix(numberOfQubits, dataList, bases, su2Bases):
-    rList = makeRList(numberOfQubits, dataList, bases, su2Bases)
 
-    densityMatrix = sum([rList[i] * su2Bases[i] for i in range(4**numberOfQubits)])
-    densityMatrix = densityMatrix / np.trace(densityMatrix)
+def makeInitialDensityMatrix(numberOfQubits, dataList, bases):
+    M = makeMMatrix(numberOfQubits, bases)
 
-    return densityMatrix
+    N = sum([np.trace(M[i]) * dataList[i] for i in range(4**numberOfQubits)])
+
+    densityMatrix = sum([dataList[i] * M[i] for i in range(4**numberOfQubits)]) / N
+
+    initialDensityMatrix = choleskyDecomposition(numberOfQubits, densityMatrix)
+
+    return initialDensityMatrix
+
+
+""" cholesky decomposition """
+def choleskyDecomposition(numberOfQubits, matrix):
+
+    L = np.zeros([2**numberOfQubits, 2**numberOfQubits], dtype=np.complex)
+
+    for i in range(2**numberOfQubits):
+        for j in range(i-1):
+            s = matrix[i][j]
+            for k in range(j-1):
+                s -= np.conjugate(L[i][k]) * L[j][k]
+            L[i][j] = s / L[j][j]
+        s = matrix[i][i]
+        for k in range(i-1):
+            s -= np.conjugate(L[i][k])*L[i][k]
+        if np.real(s) < 0:
+            s = -1*s
+        L[i][i] = np.sqrt(s)
+
+    return np.conjugate(L).T @ L / np.trace(np.conjugate(L).T @ L)
 
 
 """ Get Experimental Data """
@@ -111,7 +161,7 @@ def getExperimentalData(pathOfExperimentalData):
 
 
 
-def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas, su2Bases):
+def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     """
     doIterativeAlgorithm():
 
@@ -141,7 +191,8 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas, su2Base
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases, su2Bases)
+    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
+    # densityMatrix = identity(2 ** numberOfQubits)
 
     """ Start iteration """
     while traceDistance > TolFun and iter <= maxNumberOfIteration:
@@ -210,7 +261,7 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
     """
 
-    fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)) @ sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix))))
+    fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)))) ** 2
 
     return fidelity
 
@@ -218,9 +269,9 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 """ Iterative Simulation """
 
-def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, su2Bases):
+def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName):
     """
-    doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, su2Bases)
+    doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName)
 
 
     """
@@ -229,7 +280,7 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
     listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
 
     """ Calculate """
-    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalData, su2Bases)
+    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalData)
     fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
 
     """ Make File Name of result """
@@ -252,9 +303,9 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
 
 """ Poisson Distributed Simulation """
 
-def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, su2Bases):
+def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName):
     """
-    doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, su2Bases)
+    doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName)
 
 
     """
@@ -263,7 +314,7 @@ def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData
     listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
 
     """ Calculate """
-    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, random.poisson(listOfExperimentalData), su2Bases)
+    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, random.poisson(listOfExperimentalData))
     fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
 
     """ Make File Name of result """
@@ -431,8 +482,8 @@ if __name__ == "__main__":
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
 
-    """ Make SU2 Bases """
-    su2Bases = makeSU2Bases(numberOfQubits)
+    # """ Make SU2 Bases """
+    # su2Bases = makeSU2Bases(numberOfQubits)
     
     """ Get Paths of Experimental Data """
     paths = getExperimentalDataPaths()
@@ -464,7 +515,7 @@ if __name__ == "__main__":
     """ Start Tomography """
     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
         for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=path, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, su2Bases=su2Bases)
+            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=path, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
 
     """ Start Poisson Distributed Simulation """
     if check:
@@ -474,7 +525,7 @@ if __name__ == "__main__":
 
         with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
             for poissonPath in poissonPaths:
-                executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, su2Bases=su2Bases)
+                executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
 
 
     end_time = datetime.now() #time stamp

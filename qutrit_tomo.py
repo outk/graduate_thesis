@@ -111,10 +111,10 @@ def doIterativeAlgorithm(numberOfQutrits, bases, listOfExperimentalData):
     """ Setting initial parameters """
     iter = 0
     epsilon = 1000
-    TolFun = 10e-11
-    # endDiff = 10e-10
-    # diff = 100
-    traceDistance = 100
+    endDiff = 10e-10
+    diff = 100
+    # TolFun = 10e-11
+    # traceDistance = 100
     maxNumberOfIteration = 100000
 
     dataList = listOfExperimentalData
@@ -123,8 +123,8 @@ def doIterativeAlgorithm(numberOfQutrits, bases, listOfExperimentalData):
     densityMatrix = identity(3 ** numberOfQutrits) # Initial State: Maximun Mixed State
     
     """ Start iteration """
-    while traceDistance > TolFun and iter <= maxNumberOfIteration:
-    # while diff > endDiff and iter <= maxNumberOfIteration:
+    # while traceDistance > TolFun and iter <= maxNumberOfIteration:
+    while diff > endDiff and iter <= maxNumberOfIteration:
 
         probList = [trace(bases[i] @ densityMatrix) for i in range(len(bases))]
         nProbList = probList / sum(probList)

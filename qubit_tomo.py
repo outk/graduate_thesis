@@ -14,6 +14,8 @@ from scipy.linalg import sqrtm
 from datetime import datetime
 from concurrent import futures
 import os
+import glob
+from pathlib import Path
 
 
 # su2b = array([
@@ -126,7 +128,10 @@ def choleskyDecomposition(numberOfQubits, matrix):
             s = matrix[i][j]
             for k in range(j-1):
                 s -= np.conjugate(L[i][k]) * L[j][k]
-            L[i][j] = s / L[j][j]
+            if L[j][j] != 0:
+                L[i][j] = s / L[j][j]
+            else:
+                L[i][j] = s / 1e-9
         s = matrix[i][i]
         for k in range(i-1):
             s -= np.conjugate(L[i][k])*L[i][k]
@@ -166,7 +171,7 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     doIterativeAlgorithm():
 
         This function is to do iterative algorithm(10.1103/PhysRevA.63.040303) and diluted MLE algorithm(10.1103/PhysRevA.75.042108) to a set of datas given from a experiment.
-        This recieve four variables (numberOfQubits, bases, maxNumberOfIteration, listAsExperimentalDatas),
+        This recieve four variables (numberOfQubits, bases, listAsExperimentalDatas),
         and return most likely estimated density matrix (np.array) and total time of calculation(datetime.timedelta).
 
         First quantum state matrix for this algorithm is a identity matrix.
@@ -182,21 +187,21 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     """ Setting initial parameters """
     iter = 0
     epsilon = 1000
-    TolFun = 10e-11
-    # endDiff = 10e-10
-    # diff = 100
-    traceDistance = 100
+    endDiff = 1e-11
+    diff = 100
+    # TolFun = 10e-11
+    # traceDistance = 100
     maxNumberOfIteration = 100000
 
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
-    # densityMatrix = identity(2 ** numberOfQubits)
+    # densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
+    densityMatrix = identity(2 ** numberOfQubits)
 
     """ Start iteration """
-    while traceDistance > TolFun and iter <= maxNumberOfIteration:
-    # while diff > endDiff and iter <= maxNumberOfIteration:
+    # while traceDistance > TolFun and iter <= maxNumberOfIteration:
+    while diff > endDiff and iter <= maxNumberOfIteration and epsilon > 1e-10:
 
         probList = [trace(bases[i] @ densityMatrix) for i in range(len(bases))]
         nProbList = probList / sum(probList)
@@ -217,7 +222,7 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
         probList = [trace(bases[i] @ modifiedDensityMatrix) for i in range(len(bases))]
         nProbList = probList / sum(probList)
         modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(4 ** numberOfQubits)])
-        diff = modifiedLikelihoodFunction - LikelihoodFunction
+        nowdiff = np.real(modifiedLikelihoodFunction - LikelihoodFunction)
 
         """ Show Progress of Calculation """
         progress = 100 * iter / maxNumberOfIteration
@@ -229,9 +234,11 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
         iter += 1
 
         """ Check Increasing of Likelihood Function  """
-        if diff < 0:
+        if nowdiff < 0:
             epsilon = epsilon * 0.1
             continue
+        else:
+            diff = nowdiff
         
         """ Update Density Matrix """
         densityMatrix = modifiedDensityMatrix.copy()
@@ -246,10 +253,9 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
 
     """ Show the total number of iteration """
     endIterationTimes = iter
-    emsg = "Iteration was '" + str(endIterationTimes) + "' times."
-    print(emsg)
+    print("Iteration was '" + str(endIterationTimes) + "' times.")
 
-    return modifiedDensityMatrix
+    return modifiedDensityMatrix, endIterationTimes
 
 
 
@@ -280,7 +286,7 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
     listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
 
     """ Calculate """
-    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalData)
+    estimatedDensityMatrix, totalIterationTime = doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalData)
     fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
 
     """ Make File Name of result """
@@ -293,11 +299,14 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
             l = len(pathOfExperimentalData)-i
             break
     resultFileName = pathOfExperimentalData[l:r]
-    resultFilePath = '.\\result\\qubit\\iterative\\' + resultDirectoryName + '\\' + resultFileName + '_result' + '.txt'
+    resultFilePath = '.\\result\\qubit\\iterative\\' + resultDirectoryName + '\\' + 'result' + '.txt'
+    resultIterationTimeFilePath = '.\\result\\qubit\\iterative\\' + resultDirectoryName + '\\' + 'resultIterationTime' + '.txt'
 
     """ Save Result """
     with open(resultFilePath, mode='a') as f:
-        f.write(str(fidelity) + '\n')
+        f.writelines(str(fidelity) + '\n')
+    with open(resultIterationTimeFilePath, mode='a') as f:
+        f.writelines(str(totalIterationTime) + '\n')
 
 
 
@@ -314,7 +323,7 @@ def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData
     listOfExperimentalData = getExperimentalData(pathOfExperimentalData)
 
     """ Calculate """
-    estimatedDensityMatrix = doIterativeAlgorithm(numberOfQubits, bases, random.poisson(listOfExperimentalData))
+    estimatedDensityMatrix, totalIterationTime = doIterativeAlgorithm(numberOfQubits, bases, random.poisson(listOfExperimentalData))
     fidelity = calculateFidelity(idealDensityMatrix, estimatedDensityMatrix)
 
     """ Make File Name of result """
@@ -354,26 +363,22 @@ def getNumberOfQubits():
 
 
 
-""" Get Paths of Experimental Data """
+""" Get Path of Experimental Data Directory """
 
-def getExperimentalDataPaths():
+def getExperimentalDataDirectoryPath():
     """
-    getExperimentalDataPaths()
+    getExperimentalDataDirectoryPath()
 
     """
 
     print("------------------------------------------------------------")
-    print("PLEASE ENTER PATHS OF EXPERIMENTAL DATA")
+    print("PLEASE ENTER PATH OF EXPERIMENTAL DATA DIRECTORY")
     print("")
-    print("IF THERE ARE MULTIPLE DATA FILE YOU WANT TO TOMOGRAPHY,")
-    print("ENTER ALL PATHS SEPARATED WITH SPACE.")
-    print("LIKE THIS >> .\\datadirectory\\ex1.txt .\\datadirectory\\ex2.txt ...")
+    print("LIKE THIS >> .\\datadirectory")
     print("------------------------------------------------------------")
     print(">>")
 
-    paths = list(input().split())
-
-    return paths
+    return Path(input())
 
 
 
@@ -469,8 +474,12 @@ def getNumberOfParallelComputing():
     print("RECOMENDED NUMBER IS LESS THAN THE ABOVE NUMBER.")
     print("------------------------------------------------------------")
     print(">>")
-    
-    numberOfParallelComputing = int(input())
+
+    n = input()
+    if n != '':
+        numberOfParallelComputing = int(n)
+    else:
+        numberOfParallelComputing = 1
 
     return numberOfParallelComputing
 
@@ -485,8 +494,9 @@ if __name__ == "__main__":
     # """ Make SU2 Bases """
     # su2Bases = makeSU2Bases(numberOfQubits)
     
-    """ Get Paths of Experimental Data """
-    paths = getExperimentalDataPaths()
+    """ Get Path of Experimental Data Directory """
+    directoryPath = getExperimentalDataDirectoryPath()
+    paths = list(directoryPath.glob("*.txt"))
 
     """ Get Name of Result Directory """
     resultDirectoryName = getNameOfResultDirectory()
@@ -502,8 +512,12 @@ if __name__ == "__main__":
 
     """ Make Ideal Density Matrix """
     baseVecter = np.zeros([1, 2**numberOfQubits])
-    baseVecter[0][0] = 1 / sqrt(2)
-    baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    # baseVecter[0][0] = 1 / sqrt(2)
+    # baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    baseVecter[0][1] = 1 / 2
+    baseVecter[0][2] = 1 / 2
+    baseVecter[0][4] = 1 / 2
+    baseVecter[0][8] = 1 / 2
     idealDensityMatrix = baseVecter.T @ baseVecter
 
     start_time = datetime.now() #time stamp
@@ -515,7 +529,7 @@ if __name__ == "__main__":
     """ Start Tomography """
     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
         for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=path, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
+            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
 
     """ Start Poisson Distributed Simulation """
     if check:
@@ -531,6 +545,9 @@ if __name__ == "__main__":
     end_time = datetime.now() #time stamp
     print("Total Calculation Time was " + str(end_time - start_time))
 
-    
+    if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
+            os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
 
+    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
+        f.write("total time: " + str(end_time - start_time) + "\n")
 

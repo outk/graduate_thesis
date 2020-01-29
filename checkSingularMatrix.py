@@ -101,7 +101,10 @@ def choleskyDecomposition(numberOfQubits, matrix):
             s = matrix[i][j]
             for k in range(j-1):
                 s -= np.conjugate(L[i][k]) * L[j][k]
-            L[i][j] = s / L[j][j]
+            if L[j][j] != 0:
+                L[i][j] = s / L[j][j]
+            else:
+                L[i][j] = s / 1e-9
         s = matrix[i][i]
         for k in range(i-1):
             s -= np.conjugate(L[i][k])*L[i][k]
@@ -118,13 +121,12 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 
     """
-    fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)) @ sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix))))
-
+    fidelity = np.real(trace(sqrtm(sqrtm(idealDensityMatrix) @ estimatedDensityMatrix @ sqrtm(idealDensityMatrix)))) ** 2
     return fidelity
 
 
 if __name__ == "__main__":
-    with open("./testdata/4qubitsdata.txt") as f:
+    with open("./testdata/4qubitspoissondata/6.txt") as f:
         listOfExperimentalDatas = []
         for s in f.readlines():
             listOfExperimentalDatas.extend(map(int, s.strip().split()))
@@ -140,11 +142,19 @@ if __name__ == "__main__":
     print(np.trace(initialDensityMatrix))
 
     baseVecter = np.zeros([1, 2**numberOfQubits])
-    baseVecter[0][0] = 1 / sqrt(2)
-    baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    # baseVecter[0][0] = 1 / sqrt(2)
+    # baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    baseVecter[0][1] = 1 / 2
+    baseVecter[0][2] = 1 / 2
+    baseVecter[0][4] = 1 / 2
+    baseVecter[0][8] = 1 / 2
+    idealDensityMatrix = baseVecter.T @ baseVecter
     matrix = baseVecter.T @ baseVecter
     fidelity = calculateFidelity(matrix, densityMatrix)
 
     print(fidelity)
 
+    fidelity = calculateFidelity(matrix, identity(2**numberOfQubits) / 2**numberOfQubits)
+
+    print(fidelity)
 

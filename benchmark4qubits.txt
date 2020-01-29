@@ -1,0 +1,16 @@
+total time: 0:46:47.720894  sample 100 usedmeasurementofqubits 6 parallel
+total time: 0:09:56.419765  sample 100 identity 6 parallel
+total time: 0:00:33.911925  sample 1 0.txt identity
+total time: 0:00:55.208790  sample 1 0.txt usedmeasurementofqubits
+total time: 0:00:35.731375  sample 1 1.txt usedmeasurementofqubits fidelity of initialdensitymatrix > 1
+total time: 0:00:43.278810  sample 1 1.txt identity
+total time: 0:00:47.525925  sample 1 2.txt identity
+total time: 0:00:30.128583  sample 1 2.txt usedmeasurementofqubits fidelity of initialdensitymatrix > 1
+total time: 0:00:28.894082  sample 1 3.txt usedmeasurementofqubits fidelity of initialdensitymatrix > 1
+total time: 0:00:47.824860  sample 1 3.txt identity
+total time: 0:00:52.062489  sample 1 4.txt identity
+total time: 0:00:23.632746  sample 1 4.txt usedmeasurementofqubits fidelity of initialdensitymatrix > 1
+total time: 0:00:35.771873  sample 1 5.txt identity
+total time: 0:01:37.647051  sample 1 5.txt usedmeasurementofqubits
+total time: 0:00:56.105185  sample 1 6.txt identity
+total time: 0:00:52.549758  sample 1 6.txt usedmeasurementofqubits

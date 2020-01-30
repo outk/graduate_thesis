@@ -57,7 +57,7 @@ newbases = su2Bases.copy()
 su2Bases = []
 for i in range(64):
     su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
-su2Bases = array(su2Bases)
+su2Bases = array(su2Bases) / 8
 
 
 bH = array([[1,0],[0,0]])
@@ -123,23 +123,27 @@ def choleskyDecomposition(numberOfQubits, matrix):
 
     L = np.zeros([2**numberOfQubits, 2**numberOfQubits], dtype=np.complex)
 
-    for i in range(2**numberOfQubits):
-        for j in range(i-1):
-            s = matrix[i][j]
-            for k in range(j-1):
-                s -= np.conjugate(L[i][k]) * L[j][k]
-            if L[j][j] != 0:
-                L[i][j] = s / L[j][j]
-            else:
-                L[i][j] = s / 1e-9
+    for i in range(2**numberOfQubits-1, -1, -1):
         s = matrix[i][i]
-        for k in range(i-1):
-            s -= np.conjugate(L[i][k])*L[i][k]
-        if np.real(s) < 0:
-            s = -1*s
-        L[i][i] = np.sqrt(s)
+        for k in range(2**numberOfQubits-1, i, -1):
+            s -= np.conjugate(L[k][i]) * L[k][i]
+        if s >= 0:
+            L[i][i] = np.sqrt(s)
+        else:
+            L[i][i] = np.sqrt(s)
+        for j in range(i):
+            t = matrix[i][j]
+            for k in range(2**numberOfQubits-1, i, -1):
+                t -= (np.conjugate(L[k][i]) * L[k][j])
+            if L[i][i] != 0:
+                L[i][j] = t / np.conjugate(L[i][i])
+            else:
+                L[i][j] = t / 1e-9
 
-    return np.conjugate(L).T @ L / np.trace(np.conjugate(L).T @ L)
+    for i in range(2**numberOfQubits):
+        L[i][i] = np.real(L[i][i])
+
+    return (np.conjugate(L).T @ L) / np.trace(np.conjugate(L).T @ L)
 
 
 """ Get Experimental Data """
@@ -203,9 +207,9 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     # while traceDistance > TolFun and iter <= maxNumberOfIteration:
     while diff > endDiff and iter <= maxNumberOfIteration and epsilon > 1e-10:
 
-        probList = [trace(bases[i] @ densityMatrix) for i in range(len(bases))]
+        probList = [trace(base @ densityMatrix) for base in bases]
         nProbList = probList / sum(probList)
-        rotationMatrix = sum([(nDataList[i] / probList[i]) * bases[i] for i in range(4 ** numberOfQubits)])
+        rotationMatrix = sum([(nDataList[i] / probList[i]) * bases[i] for i in range(4 ** numberOfQubits) if probList[i] != 0])
 
         """ Normalization of Matrices for Measurement Bases """
         U = np.linalg.inv(sum(bases)) / sum(probList)   
@@ -218,10 +222,10 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
         traceDistance = sum(np.absolute(eigValueArray)) / 2
 
         """ Update Likelihood Function, and Compared with older one """
-        LikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(4 ** numberOfQubits)])
-        probList = [trace(bases[i] @ modifiedDensityMatrix) for i in range(len(bases))]
+        LikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(4 ** numberOfQubits) if nProbList[i] != 0])
+        probList = [trace(base @ modifiedDensityMatrix) for base in bases]
         nProbList = probList / sum(probList)
-        modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(4 ** numberOfQubits)])
+        modifiedLikelihoodFunction = sum([nDataList[i] * np.log(nProbList[i]) for i in range(4 ** numberOfQubits) if nProbList[i] != 0])
         nowdiff = np.real(modifiedLikelihoodFunction - LikelihoodFunction)
 
         """ Show Progress of Calculation """

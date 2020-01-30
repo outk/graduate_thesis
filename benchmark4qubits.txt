@@ -14,3 +14,10 @@ total time: 0:00:35.771873  sample 1 5.txt identity
 total time: 0:01:37.647051  sample 1 5.txt usedmeasurementofqubits
 total time: 0:00:56.105185  sample 1 6.txt identity
 total time: 0:00:52.549758  sample 1 6.txt usedmeasurementofqubits
+
+
+total time: 0:08:31.204845 sample 10 identity
+total time: 0:09:40.433784 sample 10 usedmoq
+
+total time: 0:15:31.241564 sample 100 usedmoq 6 parallel
+total time: 0:14:33.761596

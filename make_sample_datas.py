@@ -63,14 +63,14 @@ baseVecter[0][4] = 1 / 2
 baseVecter[0][8] = 1 / 2
 matrix = baseVecter.T @ baseVecter
 
-with open("./testdata/4qubitsdata.txt", mode='a') as f:
+with open("./testdata/4qubitsdatafew.txt", mode='a') as f:
     for base in bases:
-        c = np.real(np.trace(matrix @ base) * 1000000)
+        c = np.real(np.trace(matrix @ base) * 10000)
         f.writelines(str(int(c)) + " ")
 
 for i in range(1000):
-    with open("./testdata/4qubitspoissondata/"+str(i)+".txt", mode='a') as f:
+    with open("./testdata/4qubitspoissondatafew/"+str(i)+".txt", mode='a') as f:
         for base in bases:
-            c = np.real(np.trace(matrix @ base) * 1000000)
+            c = np.real(np.trace(matrix @ base) * 10000)
             f.writelines(str(int(random.poisson(c))) + " ")
         f.writelines("\n")

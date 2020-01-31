@@ -200,12 +200,12 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    # densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
-    densityMatrix = identity(2 ** numberOfQubits)
+    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
+    # densityMatrix = identity(2 ** numberOfQubits)
 
     """ Start iteration """
     # while traceDistance > TolFun and iter <= maxNumberOfIteration:
-    while diff > endDiff and iter <= maxNumberOfIteration and epsilon > 1e-10:
+    while diff > endDiff and iter <= maxNumberOfIteration and epsilon > 1e-6:
 
         probList = [trace(base @ densityMatrix) for base in bases]
         nProbList = probList / sum(probList)
@@ -552,6 +552,6 @@ if __name__ == "__main__":
     if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
             os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
 
-    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
+    with open('benchmark'+str(numberOfQubits)+'qubitsfew.txt', mode='a') as f:
         f.write("total time: " + str(end_time - start_time) + "\n")
 

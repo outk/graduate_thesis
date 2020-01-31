@@ -200,8 +200,8 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas):
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    # densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
-    densityMatrix = identity(2 ** numberOfQubits)
+    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
+    # densityMatrix = identity(2 ** numberOfQubits)
 
     """ Start iteration """
     # while traceDistance > TolFun and iter <= maxNumberOfIteration:

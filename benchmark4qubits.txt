@@ -20,4 +20,8 @@ total time: 0:08:31.204845 sample 10 identity
 total time: 0:09:40.433784 sample 10 usedmoq
 
 total time: 0:15:31.241564 sample 100 usedmoq 6 parallel
-total time: 0:14:33.761596
+total time: 0:14:33.761596 sample 100 identity 6 parallel
+
+
+total time: 3:51:53.661901 identity 100 1 parallel
+total time: 3:52:05.252874 usedmoq 100 1 parallel

@@ -515,13 +515,15 @@ if __name__ == "__main__":
     basesOfQubits = makeBases(numberOfQubits)
 
     """ Make Ideal Density Matrix """
-    baseVecter = np.zeros([1, 2**numberOfQubits])
+    # baseVecter = np.zeros([1, 2**numberOfQubits])
     # baseVecter[0][0] = 1 / sqrt(2)
     # baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
-    baseVecter[0][1] = 1 / 2
-    baseVecter[0][2] = 1 / 2
-    baseVecter[0][4] = 1 / 2
-    baseVecter[0][8] = 1 / 2
+    # baseVecter[0][1] = 1 / 2
+    # baseVecter[0][2] = 1 / 2
+    # baseVecter[0][4] = 1 / 2
+    # baseVecter[0][8] = 1 / 2
+
+    baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex)
     idealDensityMatrix = baseVecter.T @ baseVecter
 
     start_time = datetime.now() #time stamp
@@ -552,6 +554,6 @@ if __name__ == "__main__":
     if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
             os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
 
-    with open('benchmark'+str(numberOfQubits)+'qubitsfew.txt', mode='a') as f:
+    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
         f.write("total time: " + str(end_time - start_time) + "\n")
 

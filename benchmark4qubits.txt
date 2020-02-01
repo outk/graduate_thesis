@@ -25,3 +25,21 @@ total time: 0:14:33.761596 sample 100 identity 6 parallel
 
 total time: 3:51:53.661901 identity 100 1 parallel
 total time: 3:52:05.252874 usedmoq 100 1 parallel
+
+total time: 0:01:16.844689 usedmoq 100 6 parallel data 1111ed
+total time: 0:00:40.588729 identity 100 6 parallel data 1111ed
+
+
+total time: 0:00:41.269388 identity 100 6 parallel data 1111ed few
+total time: 0:01:23.869241 usedmoq 100 6 parallel data 1111ed few
+
+
+
+total time: 0:26:10.094626 usedmoq 100 6 parallel data all
+total time: 0:25:13.205211 identity 100 6 parallel data all 
+
+
+total time: 2:35:28.958793 usedmoq 100 1 parallel data all
+total time: 2:38:26.649328 identity 100 1 parallel data all
+
+

@@ -200,11 +200,11 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas, idealDe
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
-    # densityMatrix = identity(2 ** numberOfQubits)
+    # densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases)
+    densityMatrix = identity(2 ** numberOfQubits)
 
     fidelity = calculateFidelity(idealDensityMatrix, densityMatrix)
-    with open('fpusedmoq1111ed.txt', mode='a') as f:
+    with open('fpidentitymixed2.txt', mode='a') as f:
         f.writelines(str(fidelity) + '\n')
 
     """ Start iteration """
@@ -253,7 +253,7 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas, idealDe
         densityMatrix = modifiedDensityMatrix.copy()
 
         fidelity = calculateFidelity(idealDensityMatrix, densityMatrix)
-        with open('fpusedmoq1111ed.txt', mode='a') as f:
+        with open('fpidentitymixed2.txt', mode='a') as f:
             f.writelines(str(fidelity) + ' ' + str(epsilon) + ' ' + str(nowdiff) + '\n')
 
     print(densityMatrix)
@@ -324,16 +324,39 @@ if __name__ == "__main__":
     basesOfQubits = makeBases(numberOfQubits)
 
     """ Make Ideal Density Matrix """
-    baseVecter = np.zeros([1, 2**numberOfQubits])
-    baseVecter[0][0] = 1 / sqrt(2)
-    baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    # baseVecter = np.zeros([1, 2**numberOfQubits])
+    # baseVecter[0][0] = 1 / sqrt(2)
+    # baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
     # baseVecter[0][1] = 1 / 2
     # baseVecter[0][2] = 1 / 2
     # baseVecter[0][4] = 1 / 2
     # baseVecter[0][8] = 1 / 2
 
     # baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex)
-    idealDensityMatrix = baseVecter.T @ baseVecter
+    # idealDensityMatrix = baseVecter.T @ baseVecter
+
+    matrix = np.zeros([2**numberOfQubits, 2**numberOfQubits]) # (|0000>+|1111>)(<0000|+<1111|) + |0001><0001| + |0010><0010| + |0100><0100| + |1000><1000|
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][1] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][2] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][4] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][8] = 1
+    matrix += baseVecter.T @ baseVecter
+
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][0] = 1
+    baseVecter[0][2**numberOfQubits-1] = 1
+    matrix += baseVecter.T @ baseVecter
+
+    matrix = matrix/np.trace(matrix)
+
+    idealDensityMatrix = matrix
 
     start_time = datetime.now() #time stamp
 
@@ -345,6 +368,6 @@ if __name__ == "__main__":
     print("Total Calculation Time was " + str(end_time - start_time))
 
 
-    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
-        f.write("total time: " + str(end_time - start_time) + "\n")
+    # with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
+    #     f.write("total time: " + str(end_time - start_time) + "\n")
 

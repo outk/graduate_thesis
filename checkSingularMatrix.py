@@ -133,7 +133,7 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 
 if __name__ == "__main__":
-    with open("./testdata/4qubitspoissondata/8.txt") as f:
+    with open("./testdata/4qubitsdatamixed.txt") as f:
         listOfExperimentalDatas = []
         for s in f.readlines():
             listOfExperimentalDatas.extend(map(int, s.strip().split()))
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     print(eig(initialDensityMatrix))
 
-    print(eig(densityMatrix))
+    # print(eig(densityMatrix))
 
     # print(initialDensityMatrix)
 
@@ -167,15 +167,44 @@ if __name__ == "__main__":
     # print(np.matrix(densityMatrix).getH()-densityMatrix)
 
 
-    baseVecter = np.zeros([1, 2**numberOfQubits])
+    # baseVecter = np.zeros([1, 2**numberOfQubits])
     # baseVecter[0][0] = 1 / sqrt(2)
     # baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
-    baseVecter[0][1] = 1 / 2
-    baseVecter[0][2] = 1 / 2
-    baseVecter[0][4] = 1 / 2
-    baseVecter[0][8] = 1 / 2
-    idealDensityMatrix = baseVecter.T @ baseVecter
-    matrix = baseVecter.T @ baseVecter
+    # baseVecter[0][1] = 1 / 2
+    # baseVecter[0][2] = 1 / 2
+    # baseVecter[0][4] = 1 / 2
+    # baseVecter[0][8] = 1 / 2
+    # idealDensityMatrix = baseVecter.T @ baseVecter
+
+    # baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex)
+    # matrix = baseVecter.T @ baseVecter
+
+    matrix = np.zeros([2**numberOfQubits, 2**numberOfQubits]) # (|0000>+|1111>)(<0000|+<1111|) + |0001><0001| + |0010><0010| + |0100><0100| + |1000><1000|
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][1] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][2] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][4] = 1
+    matrix += baseVecter.T @ baseVecter
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][8] = 1
+    matrix += baseVecter.T @ baseVecter
+
+    baseVecter = np.zeros([1, 2**numberOfQubits])
+    baseVecter[0][0] = 1
+    baseVecter[0][2**numberOfQubits-1] = 1
+    matrix += baseVecter.T @ baseVecter
+
+    matrix = matrix/np.trace(matrix)
+
+
+    # fidelity = calculateFidelity(matrix, densityMatrix)
+
+    # print(fidelity)
+
     fidelity = calculateFidelity(matrix, initialDensityMatrix)
 
     print(fidelity)

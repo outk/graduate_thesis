@@ -20,55 +20,69 @@ total time: 0:08:31.204845 sample 10 identity
 total time: 0:09:40.433784 sample 10 usedmoq
 
 
-total time: 0:15:31.241564 usedmoq 100 6 parallel only one qubit 1
-total time: 0:14:33.761596 identity 100 6 parallel only one qubit 1
 
 
-total time: 1:24:55.830782 usedmoq 100 1 parallel data only one qubit 1
+
+
+
+
+
+
+
+
+
+total time: 0:14:33.761596 identity 100 6 parallel data only one qubit 1
+total time: 0:15:19.482054 usedmoq 100 6 parallel data only one qubit 1
+
 total time: 1:24:18.172140 identity 100 1 parallel data only one qubit 1
+total time: 1:24:55.830782 usedmoq 100 1 parallel data only one qubit 1 
 
 
-total time: 0:11:08.798578 sample 100 usedmoq 6 parallel  
-total time: 0:10:14.372404 sample 100 identity 6 parallel 
+
+total time: 0:10:14.372404 identity 100 6 parallel data only one qubit 1 few
+total time: 0:11:08.798578 usedmoq 100 6 parallel data only one qubit 1 few
+
+total time: 1:03:42.639130 identity 100 1 parallel data only one qubit 1 few
+total time: 1:04:31.185183 usedmoq 100 1 parallel data only one qubit 1 few
 
 
-total time: 1:03:42.639130 identity 100 few 1 parallel data only one qubit 1 few
-total time: 1:05:05.937051 usedmoq 100 few 1 parallel data only one qubit 1 few #######
 
-
-total time: 0:01:16.844689 usedmoq 100 6 parallel data 1111ed ###########
 total time: 0:00:40.588729 identity 100 6 parallel data 1111ed
-
-
-total time: 0:00:41.269388 identity 100 6 parallel data 1111ed few
-total time: 0:01:23.869241 usedmoq 100 6 parallel data 1111ed few ############
-
-
-total time: 0:26:10.094626 usedmoq 100 6 parallel data all
-total time: 0:25:13.205211 identity 100 6 parallel data all 
-
-
-total time: 2:35:28.958793 usedmoq 100 1 parallel data all
-total time: 2:38:26.649328 identity 100 1 parallel data all
-
-
-total time: 0:29:32.422115 usedmoq 100 6 parallel data mixed
-total time: 0:28:24.505253 usedmoq 100 6 parallel data mixed
-total time: 0:17:16.670303 identity 100 6 parallel data mixed
-
-
-total time: 1:40:27.540305 identity 100 1 parallel data mixed
-total time: 2:48:46.326620 usedmoq 100 1 parallel data mixed
-
-
-total time: 0:03:13.064040 identity 100 6 parallel data random
-total time: 0:03:13.027502 usedmoq 100 6 parallel data random
-
+total time: 0:00:45.650548 usedmoq 100 6 parallel data 1111ed
 
 total time: 0:04:04.085240 identity 100 1 parallel data 1111ed
 total time: 0:04:11.419018 usedmoq 100 1 parallel data 1111ed
 
 
-total time: 0:19:31.259050 usedmoq 100 1 parallel data random
+
+total time: 0:00:41.269388 identity 100 6 parallel data 1111ed few
+total time: 0:00:43.618828 usedmoq 100 6 parallel data 1111ed few 
+
+total time: 0:04:03.921826 identity 100 1 parallel data 1111ed few
+total time: 0:04:07.311823 usedmoq 100 1 parallel data 1111ed few
+
+
+
+total time: 0:25:13.205211 identity 100 6 parallel data all 
+total time: 0:26:10.094626 usedmoq 100 6 parallel data all
+
+total time: 2:38:26.649328 identity 100 1 parallel data all
+total time: 2:35:28.958793 usedmoq 100 1 parallel data all
+
+
+
+total time: 0:17:16.670303 identity 100 6 parallel data mixed
+total time: 0:28:24.505253 usedmoq 100 6 parallel data mixed
+
+total time: 1:40:27.540305 identity 100 1 parallel data mixed
+total time: 2:48:46.326620 usedmoq 100 1 parallel data mixed
+
+
+
+total time: 0:03:13.064040 identity 100 6 parallel data random
+total time: 0:03:13.027502 usedmoq 100 6 parallel data random
+
 total time: 0:19:04.970106 identity 100 1 parallel data random
+total time: 0:19:31.259050 usedmoq 100 1 parallel data random
+
 

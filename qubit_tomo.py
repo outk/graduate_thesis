@@ -46,18 +46,17 @@ su2b = array([
 )
 
 su2Bases = []
-newbases = []
-for i in range(4):
-    su2Bases.extend([kron(su2b[i], su2b[j]) for j in range(4)])
-newbases = su2Bases.copy()
-su2Bases = []
-for i in range(16):
-    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
-newbases = su2Bases.copy()
-su2Bases = []
-for i in range(64):
-    su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
-su2Bases = array(su2Bases) / 8
+newbases = su2b.copy()
+
+def makeSU2Bases(numberOfQubits):
+    global newbases, su2Bases
+    for _ in range(numberOfQubits-1):
+        for i in range(len(newbases)):
+            su2Bases.extend([kron(newbases[i], su2b[j]) for j in range(4)])
+        newbases = su2Bases.copy()
+        su2Bases = []
+        
+    su2Bases = array(newbases) / (2**numberOfQubits)
 
 
 bH = array([[1,0],[0,0]])
@@ -84,6 +83,7 @@ def makeBases(numberOfQubits):
     return array(afterBases)
 
 def makeBMatrix(numberOfQubits, bases):
+    global su2Bases
     B = np.zeros((4**numberOfQubits, 4**numberOfQubits))
 
     for i in range(4**numberOfQubits):
@@ -94,6 +94,7 @@ def makeBMatrix(numberOfQubits, bases):
 
 
 def makeMMatrix(numberOfQubits, bases):
+    global su2Bases
     B = makeBMatrix(numberOfQubits, bases)
 
     BInverse = np.linalg.inv(B)
@@ -200,8 +201,8 @@ def doIterativeAlgorithm(numberOfQubits, bases, listOfExperimentalDatas, MMatrix
     dataList = listOfExperimentalDatas
     totalCountOfData = sum(dataList)
     nDataList = dataList / totalCountOfData # nDataList is a list of normarized datas
-    densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases, MMatrix)
-    # densityMatrix = identity(2 ** numberOfQubits)
+    # densityMatrix = makeInitialDensityMatrix(numberOfQubits, dataList, bases, MMatrix)
+    densityMatrix = identity(2 ** numberOfQubits)
 
     """ Start iteration """
     # while traceDistance > TolFun and iter <= maxNumberOfIteration:
@@ -495,8 +496,8 @@ if __name__ == "__main__":
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
 
-    # """ Make SU2 Bases """
-    # su2Bases = makeSU2Bases(numberOfQubits)   
+    """ Make SU2 Bases """
+    makeSU2Bases(numberOfQubits)   
     
     """ Get Path of Experimental Data Directory """
     directoryPath = getExperimentalDataDirectoryPath()

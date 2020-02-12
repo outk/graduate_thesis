@@ -16,6 +16,9 @@ from concurrent import futures
 import os
 import glob
 from pathlib import Path
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import pickle
 
 
 # su2b = array([
@@ -313,6 +316,9 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
     with open(resultIterationTimeFilePath, mode='a') as f:
         f.writelines(str(totalIterationTime) + '\n')
 
+    """ Make 3D Plot """
+    plotResult(numberOfQubits, estimatedDensityMatrix)
+
 
 
 """ Poisson Distributed Simulation """
@@ -347,6 +353,48 @@ def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData
     with open(resultFilePath, mode='a') as f:
         f.write(str(fidelity) + '\n')
 
+
+
+def plotResult(numberOfQubits, densityMatrix):
+    """
+    plotResult(densityMatrix)
+    
+    """
+
+    """ Plot Setting """
+    xedges, yedges = np.arange(2**numberOfQubits), np.arange(2**numberOfQubits)
+ 
+    xpos, ypos = np.meshgrid(xedges, yedges) # x,y座標を3D用の形式に変換（その１）
+    zpos = 0 # zは常に0を始点にする
+    
+    dx = 1 # x座標の幅を設定
+    dy = 1 # y座標の幅を設定
+    dz = densityMatrix.ravel() # z座標の幅は棒の長さに相当
+    
+    xpos = xpos.ravel() # x座標を3D用の形式に変換（その２）
+    ypos = ypos.ravel() # y座標を3D用の形式に変換（その２)
+
+    fig = plt.figure() # 描画領域を作成
+    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
+    ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    plt.title("Real Part") # タイトル表示
+    plt.xlabel("X") # x軸の内容表示
+    plt.ylabel("Y") # y軸の内容表示
+    ax1.set_zlabel("Z") # z軸の内容表示
+    
+    ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
+    ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    plt.title("Imaginary Part") # タイトル表示
+    plt.xlabel("X") # x軸の内容表示
+    plt.ylabel("Y") # y軸の内容表示
+    ax2.set_zlabel("Z") # z軸の内容表示
+    
+    
+    
+    plt.show()
+
+    with open('firstplottest'+'_plot.pkl', 'wb') as f:
+        pickle.dump(self.fig, f)
 
 
 """ Get Number of Qubits """
@@ -581,6 +629,6 @@ if __name__ == "__main__":
     if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
             os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
 
-    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
-        f.write("total time: " + str(end_time - start_time) + "\n")
+    # with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
+    #     f.write("total time: " + str(end_time - start_time) + "\n")
 

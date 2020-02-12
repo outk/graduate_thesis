@@ -129,25 +129,34 @@ def makeInitialDensityMatrix(numberOfQutrits, dataList, bases):
     return initialDensityMatrix
 
 
-""" cholesky decomposition """
-def choleskyDecomposition(numberOfQutrits, matrix):
+    """ cholesky decomposition """
+def choleskyDecomposition(numberOfQubits, matrix):
 
-    L = np.zeros([3**numberOfQutrits, 3**numberOfQutrits], dtype=np.complex)
+    L = np.zeros([2**numberOfQubits, 2**numberOfQubits], dtype=np.complex)
 
-    for i in range(3**numberOfQutrits):
-        for j in range(i-1):
-            s = matrix[i][j]
-            for k in range(j-1):
-                s -= np.conjugate(L[i][k]) * L[j][k]
-            L[i][j] = s / L[j][j]
+    for i in range(2**numberOfQubits-1, -1, -1):
         s = matrix[i][i]
-        for k in range(i-1):
-            s -= np.conjugate(L[i][k])*L[i][k]
-        if np.real(s) < 0:
-            s = -1*s
-        L[i][i] = np.sqrt(s)
+        for k in range(2**numberOfQubits-1, i, -1):
+            s -= np.conjugate(L[k][i]) * L[k][i]
+        if s >= 0:
+            L[i][i] = np.sqrt(s)
+        else:
+            L[i][i] = np.sqrt(s)
+        for j in range(i):
+            t = matrix[i][j]
+            for k in range(2**numberOfQubits-1, i, -1):
+                t -= (np.conjugate(L[k][i]) * L[k][j])
+            if L[i][i] != 0:
+                L[i][j] = np.conjugate(t / L[i][i])
+            else:
+                L[i][j] = np.conjugate(t / 1e-9)
 
-    return np.conjugate(L).T @ L / np.trace(np.conjugate(L).T @ L)
+    for i in range(2**numberOfQubits):
+        L[i][i] = np.real(L[i][i])
+
+    return (np.conjugate(L).T @ L) / np.trace(np.conjugate(L).T @ L)
+
+    
 
 def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
     """

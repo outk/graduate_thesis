@@ -21,25 +21,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import pickle
 
 
-# su2b = array([
-#     [[   1,  0], [   0,  1]],
-#     [[   0,  1], [   1,  0]],
-#     [[   0,-1j], [  1j,  0]],
-#     [[   1,  0], [   0, -1]]
-# ]
-# )
-
-# def makeSU2Bases(numberOfQubits):
-#     newbases = su2b.copy()
-#     su2Bases = []
-#     for i in range(numberOfQubits-1):
-#         for newbase in newbases:
-#             su2Bases.extend([kron(newbase, base) for base in su2b])
-#         newbases = su2Bases.copy()
-#         su2Bases = []
-
-#     return array(su2Bases)
-
 su2b = array([
     [[   1,  0], [   0,  1]],
     [[   0,  1], [   1,  0]],
@@ -73,6 +54,7 @@ initialBases = array([bH, bV, bR, bD])
 cycleBases1 = array([bH, bV, bR, bD])
 cycleBases2 = array([bD, bR, bV, bH])
 
+
 def makeBases(numberOfQubits):
     beforeBases = initialBases
     for _ in range(numberOfQubits - 1):
@@ -83,7 +65,15 @@ def makeBases(numberOfQubits):
             else:
                 afterBases.extend([kron(beforeBases[i], cycleBase) for cycleBase in cycleBases2])
         beforeBases = afterBases
-    return array(afterBases)
+    
+    baseName = []
+
+    for i in range(2**numberOfQubits):
+        baseName.append("|"+ str(np.binary_repr(i, width=4)) +">")
+
+    return array(afterBases), baseName
+
+
 
 def makeBMatrix(numberOfQubits, bases):
     global su2Bases
@@ -283,7 +273,7 @@ def calculateFidelity(idealDensityMatrix, estimatedDensityMatrix):
 
 """ Iterative Simulation """
 
-def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, MMatrix):
+def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, MMatrix, baseNames):
     """
     doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDensityMatrix, resultDirectoryName, MMatrix)
 
@@ -317,7 +307,7 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
         f.writelines(str(totalIterationTime) + '\n')
 
     """ Make 3D Plot """
-    plotResult(numberOfQubits, estimatedDensityMatrix)
+    plotResult(numberOfQubits, estimatedDensityMatrix, baseNames)
 
 
 
@@ -355,7 +345,7 @@ def doPoissonDistributedSimulation(numberOfQubits, bases, pathOfExperimentalData
 
 
 
-def plotResult(numberOfQubits, densityMatrix):
+def plotResult(numberOfQubits, densityMatrix, baseNames):
     """
     plotResult(densityMatrix)
     
@@ -379,21 +369,25 @@ def plotResult(numberOfQubits, densityMatrix):
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Real Part") # タイトル表示
     plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
     plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
     ax1.set_zlabel("Z") # z軸の内容表示
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Imaginary Part") # タイトル表示
     plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
     plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
     ax2.set_zlabel("Z") # z軸の内容表示
-    
-    
     
     plt.show()
 
-    with open('firstplottest'+'_plot.pkl', 'wb') as f:
+    print(baseNames)
+
+    with open('firstplottest'+'_plot.pkl', mode='wb') as f:
         pickle.dump(self.fig, f)
 
 
@@ -561,7 +555,7 @@ if __name__ == "__main__":
     numberOfParallelComputing = getNumberOfParallelComputing()
 
     """ Make Bases """
-    basesOfQubits = makeBases(numberOfQubits)
+    basesOfQubits, baseNames = makeBases(numberOfQubits)
 
     """ Make M Matrix """
     M = makeMMatrix(numberOfQubits, basesOfQubits)
@@ -610,7 +604,7 @@ if __name__ == "__main__":
     """ Start Tomography """
     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
         for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
+            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
     """ Start Poisson Distributed Simulation """
     if check:

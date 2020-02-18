@@ -59,9 +59,9 @@ bases = makeBases(numberOfQubits)
 
 # baseVecter = np.zeros([1, 2**numberOfQubits])
 
-# baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex) #all
+# baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex) #all 
 
-# baseVecter[0][1] = 1 / 2 #only one qubit 1 |0001> + |0010> + |0100> + |1000>
+# baseVecter[0][1] = 1 / 2 #only one qubit 1 (|0001> + |0010> + |0100> + |1000>)(<0001| + <0010| + <0100| + <1000|)
 # baseVecter[0][2] = 1 / 2
 # baseVecter[0][4] = 1 / 2
 # baseVecter[0][8] = 1 / 2

@@ -19,6 +19,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pickle
+import pycallgraph
 
 
 su2b = array([
@@ -69,7 +70,8 @@ def makeBases(numberOfQubits):
     baseName = []
 
     for i in range(2**numberOfQubits):
-        baseName.append("|"+ str(np.binary_repr(i, width=4)) +">")
+        if i%4 == 0:
+            baseName.append("|"+ str(np.binary_repr(i, width=4)) +">")
 
     return array(afterBases), baseName
 
@@ -368,27 +370,27 @@ def plotResult(numberOfQubits, densityMatrix, baseNames):
     ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Real Part") # タイトル表示
-    plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
-    plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
-    ax1.set_zlabel("Z") # z軸の内容表示
+    # plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
+    # plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
+    # ax1.set_zlabel("Z") # z軸の内容表示
+    ax1.set_zlim(-0.1, 0.2)
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Imaginary Part") # タイトル表示
-    plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
-    plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 2**numberOfQubits, 1), labels=baseNames)
-    ax2.set_zlabel("Z") # z軸の内容表示
+    # plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
+    # plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
+    # ax2.set_zlabel("Z") # z軸の内容表示
+    ax2.set_zlim(-0.1, 0.2)
     
     plt.show()
 
-    print(baseNames)
-
     with open('firstplottest'+'_plot.pkl', mode='wb') as f:
-        pickle.dump(self.fig, f)
+        pickle.dump(fig, f)
 
 
 """ Get Number of Qubits """
@@ -535,6 +537,8 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
+    PyCallGraph.start()
+
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
 
@@ -618,6 +622,9 @@ if __name__ == "__main__":
 
 
     end_time = datetime.now() #time stamp
+
+    PyCallGraph.done()
+
     print("Total Calculation Time was " + str(end_time - start_time))
 
     if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):

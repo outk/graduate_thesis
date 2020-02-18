@@ -15,10 +15,8 @@ from scipy.linalg import sqrtm
 from datetime import datetime
 from concurrent import futures
 import os
-import glob
 from pathlib import Path
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import pickle
 
 
@@ -233,6 +231,7 @@ def doIterativeSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealD
         f.write(str(fidelity) + '\n')
 
     """ Make 3D Plot """
+    print(estimatedDensityMatrix)
     plotResult(numberOfQutrits, estimatedDensityMatrix)
 
 
@@ -272,14 +271,14 @@ def doPoissonDistributedSimulation(numberOfQutrits, bases, pathOfExperimentalDat
 
 def plotResult(numberOfQutrits, densityMatrix):
     """
-    plotResult(densityMatrix)
+    plotResult(numberOfQutrits, densityMatrix)
     
     """
 
-    baseNames = []
+    baseNames = np.array([])
 
     """ Plot Setting """
-    xedges, yedges = np.arange(2**numberOfQutiits), np.arange(2**numberOfQutrits)
+    xedges, yedges = np.arange(3**numberOfQutrits), np.arange(3**numberOfQutrits)
  
     xpos, ypos = np.meshgrid(xedges, yedges) # x,y座標を3D用の形式に変換（その１）
     zpos = 0 # zは常に0を始点にする
@@ -295,27 +294,27 @@ def plotResult(numberOfQutrits, densityMatrix):
     ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Real Part") # タイトル表示
-    plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
-    plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
-    ax1.set_zlabel("Z") # z軸の内容表示
+    # plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # ax1.set_zlabel("Z") # z軸の内容表示
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Imaginary Part") # タイトル表示
-    plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
-    plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
-    ax2.set_zlabel("Z") # z軸の内容表示
-    
+    # plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # ax2.set_zlabel("Z") # z軸の内容表示
+
     plt.show()
 
     print(baseNames)
 
     with open('firstplottest'+'_plot.pkl', mode='wb') as f:
-        pickle.dump(self.fig, f)
+        pickle.dump(fig, f)
 
 
 

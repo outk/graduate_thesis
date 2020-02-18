@@ -295,18 +295,18 @@ def plotResult(numberOfQutrits, densityMatrix):
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Real Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # ax1.set_zlabel("Z") # z軸の内容表示
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Imaginary Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
-    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示
-    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    # plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # ax2.set_zlabel("Z") # z軸の内容表示
 
     plt.show()

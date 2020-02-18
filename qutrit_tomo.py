@@ -15,6 +15,11 @@ from scipy.linalg import sqrtm
 from datetime import datetime
 from concurrent import futures
 import os
+import glob
+from pathlib import Path
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import pickle
 
 
 """ 
@@ -227,6 +232,9 @@ def doIterativeSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealD
     with open(resultFilePath, mode='a') as f:
         f.write(str(fidelity) + '\n')
 
+    """ Make 3D Plot """
+    plotResult(numberOfQutrits, estimatedDensityMatrix)
+
 
 
 """ Poisson Distributed Simulation """
@@ -260,6 +268,54 @@ def doPoissonDistributedSimulation(numberOfQutrits, bases, pathOfExperimentalDat
     """ Save Result """
     with open(resultFilePath, mode='a') as f:
         f.write(str(fidelity) + '\n')
+
+
+def plotResult(numberOfQutrits, densityMatrix):
+    """
+    plotResult(densityMatrix)
+    
+    """
+
+    baseNames = []
+
+    """ Plot Setting """
+    xedges, yedges = np.arange(2**numberOfQutiits), np.arange(2**numberOfQutrits)
+ 
+    xpos, ypos = np.meshgrid(xedges, yedges) # x,y座標を3D用の形式に変換（その１）
+    zpos = 0 # zは常に0を始点にする
+    
+    dx = 1 # x座標の幅を設定
+    dy = 1 # y座標の幅を設定
+    dz = densityMatrix.ravel() # z座標の幅は棒の長さに相当
+    
+    xpos = xpos.ravel() # x座標を3D用の形式に変換（その２）
+    ypos = ypos.ravel() # y座標を3D用の形式に変換（その２)
+
+    fig = plt.figure() # 描画領域を作成
+    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
+    ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    plt.title("Real Part") # タイトル表示
+    plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
+    plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
+    ax1.set_zlabel("Z") # z軸の内容表示
+    
+    ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
+    ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    plt.title("Imaginary Part") # タイトル表示
+    plt.xlabel("X") # x軸の内容表示
+    plt.xticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
+    plt.ylabel("Y") # y軸の内容表示
+    plt.yticks(np.arange(0, 2**numberOfQutrits, 1), labels=baseNames)
+    ax2.set_zlabel("Z") # z軸の内容表示
+    
+    plt.show()
+
+    print(baseNames)
+
+    with open('firstplottest'+'_plot.pkl', mode='wb') as f:
+        pickle.dump(self.fig, f)
 
 
 

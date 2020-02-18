@@ -19,6 +19,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pickle
+import pycallgraph
 
 
 su2b = array([
@@ -389,7 +390,7 @@ def plotResult(numberOfQubits, densityMatrix, baseNames):
     plt.show()
 
     with open('firstplottest'+'_plot.pkl', mode='wb') as f:
-        pickle.dump(self.fig, f)
+        pickle.dump(fig, f)
 
 
 """ Get Number of Qubits """
@@ -536,6 +537,8 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
+    PyCallGraph.start()
+
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
 
@@ -619,6 +622,9 @@ if __name__ == "__main__":
 
 
     end_time = datetime.now() #time stamp
+
+    PyCallGraph.done()
+
     print("Total Calculation Time was " + str(end_time - start_time))
 
     if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):

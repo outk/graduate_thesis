@@ -293,6 +293,7 @@ def plotResult(numberOfQutrits, densityMatrix):
     fig = plt.figure() # 描画領域を作成
     ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    # fig.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black')
     plt.title("Real Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
     # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
@@ -302,7 +303,7 @@ def plotResult(numberOfQutrits, densityMatrix):
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
-    plt.title("Imaginary Part") # タイトル表示
+    # plt.title("Imaginary Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
     # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示

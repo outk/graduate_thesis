@@ -17,9 +17,8 @@ import os
 import glob
 from pathlib import Path
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import pickle
-import pycallgraph
+# import pycallgraph
 
 
 su2b = array([
@@ -537,7 +536,7 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
-    PyCallGraph.start()
+    # pycallgraph.start()
 
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
@@ -623,7 +622,7 @@ if __name__ == "__main__":
 
     end_time = datetime.now() #time stamp
 
-    PyCallGraph.done()
+    # pycallgraph.done()
 
     print("Total Calculation Time was " + str(end_time - start_time))
 

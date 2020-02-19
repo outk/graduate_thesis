@@ -14,11 +14,13 @@ from scipy.linalg import sqrtm
 from datetime import datetime
 from concurrent import futures
 import os
-import glob
 from pathlib import Path
 import matplotlib.pyplot as plt
 import pickle
+<<<<<<< HEAD
 # import pycallgraph
+=======
+>>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
 
 
 su2b = array([
@@ -430,6 +432,29 @@ def getExperimentalDataDirectoryPath():
 
 
 
+""" Get Paths of Experimental Data """
+
+def getExperimentalDataPaths():
+    """
+    getExperimentalDataPaths()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER PATHS OF EXPERIMENTAL DATA")
+    print("")
+    print("IF THERE ARE MULTIPLE DATA FILE YOU WANT TO TOMOGRAPHY,")
+    print("ENTER ALL PATHS SEPARATED WITH SPACE.")
+    print("LIKE THIS >> .\\datadirectory\\ex1.txt .\\datadirectory\\ex2.txt ...")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    paths = list(input().split())
+
+    return paths
+
+
+
 """ Get Name of Result Directory AND FILE """
 
 def getNameOfResultDirectory():
@@ -458,28 +483,28 @@ def getNameOfResultDirectory():
 
 """ Whether Do Poisson Distributed Simulation """
 
-def checkPoisson():
-    """
-    checkPoisson()
+# def checkPoisson():
+#     """
+#     checkPoisson()
 
-    """
+#     """
 
-    print("------------------------------------------------------------")
-    print("PLEASE ENTER ANSWER WHETHER DO POISSON DISTRIBUTED SIMULATION")
-    print("IF YOU DO, PLEASE ENTER 'yes'")
-    print("IF YOU ENTER ANOTHER WORD OR EMPTY, YOUR ANSWER IS REGARED AS 'no'")
-    print("------------------------------------------------------------")
-    print(">>")
+#     print("------------------------------------------------------------")
+#     print("PLEASE ENTER ANSWER WHETHER DO POISSON DISTRIBUTED SIMULATION")
+#     print("IF YOU DO, PLEASE ENTER 'yes'")
+#     print("IF YOU ENTER ANOTHER WORD OR EMPTY, YOUR ANSWER IS REGARED AS 'no'")
+#     print("------------------------------------------------------------")
+#     print(">>")
 
-    answer = input()
-    if answer == "yes" or answer == "Yes" or answer == "YES":
-        print("YOUR ANSWER IS: 'yes'")
-        poissonPaths = getExperimentalDataPaths()
-        eachIterationTime = getEachIterationTime()
-        return True, poissonPaths*eachIterationTime
-    else:
-        print("YOUR ANSWER IS: 'no'")
-        return False, []
+#     answer = input()
+#     if answer == "yes" or answer == "Yes" or answer == "YES":
+#         print("YOUR ANSWER IS: 'yes'")
+#         # poissonPaths = getExperimentalDataPaths()
+#         eachIterationTime = getEachIterationTime()
+#         return True, poissonPaths*eachIterationTime
+#     else:
+#         print("YOUR ANSWER IS: 'no'")
+#         return False, []
 
 
 
@@ -536,26 +561,34 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
+<<<<<<< HEAD
     # pycallgraph.start()
+=======
+    # PyCallGraph.start()
+>>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
 
     """ Get Number of Qubits """
-    numberOfQubits = getNumberOfQubits()
+    # numberOfQubits = getNumberOfQubits()
+    numberOfQubits = 4
 
     """ Make SU2 Bases """
     makeSU2Bases(numberOfQubits)   
     
     """ Get Path of Experimental Data Directory """
-    directoryPath = getExperimentalDataDirectoryPath()
-    paths = list(directoryPath.glob("*.txt"))
+    # directoryPath = getExperimentalDataDirectoryPath()
+    # paths = list(directoryPath.glob("*.txt"))
+    path = '/home/osboxes/graduate-thesis/testdata/plotdata/1.txt'
 
     """ Get Name of Result Directory """
-    resultDirectoryName = getNameOfResultDirectory()
+    # resultDirectoryName = getNameOfResultDirectory()
+    resultDirectoryName = 'plottest'
 
     """ Check Poisson Distributed Simulation """
-    check, poissonPaths = checkPoisson()
+    # check, poissonPaths = checkPoisson()
 
     """ Get Number of Parallel Computing """
-    numberOfParallelComputing = getNumberOfParallelComputing()
+    # numberOfParallelComputing = getNumberOfParallelComputing()
+    numberOfParallelComputing = 1
 
     """ Make Bases """
     basesOfQubits, baseNames = makeBases(numberOfQubits)
@@ -605,24 +638,30 @@ if __name__ == "__main__":
         os.makedirs('.\\result\\qubit\\iterative\\' + resultDirectoryName)
 
     """ Start Tomography """
-    with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
-        for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
+    # with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+    #     for path in paths:
+    #         executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
-    """ Start Poisson Distributed Simulation """
-    if check:
-        """ Make Result Directory for Poisson Distributed Simulation """
-        if not os.path.exists('.\\result\\qubit\\poisson\\' + resultDirectoryName):
-            os.makedirs('.\\result\\qubit\\poisson\\' + resultDirectoryName)
+    doIterativeSimulation(numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
-        with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
-            for poissonPath in poissonPaths:
-                executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
+    # """ Start Poisson Distributed Simulation """
+    # if check:
+    #     """ Make Result Directory for Poisson Distributed Simulation """
+    #     if not os.path.exists('.\\result\\qubit\\poisson\\' + resultDirectoryName):
+    #         os.makedirs('.\\result\\qubit\\poisson\\' + resultDirectoryName)
+
+    #     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+    #         for poissonPath in poissonPaths:
+    #             executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
 
 
     end_time = datetime.now() #time stamp
 
+<<<<<<< HEAD
     # pycallgraph.done()
+=======
+    # PyCallGraph.done()
+>>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
 
     print("Total Calculation Time was " + str(end_time - start_time))
 

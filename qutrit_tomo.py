@@ -291,29 +291,33 @@ def plotResult(numberOfQutrits, densityMatrix):
     ypos = ypos.ravel() # y座標を3D用の形式に変換（その２)
 
     fig = plt.figure() # 描画領域を作成
-    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
+    # ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
+    ax1 = plt.axes(projection="3d")
+    
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     plt.title("Real Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
-    # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示
-    # plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # ax1.set_zlabel("Z") # z軸の内容表示
+    ax1.set_zlim(-0.1, 0.5)
     
-    ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
-    ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
-    plt.title("Imaginary Part") # タイトル表示
+    # ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
+    # ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
+    # plt.title("Imaginary Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
     # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示
     # plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # ax2.set_zlabel("Z") # z軸の内容表示
+    # ax2.set_zlim(-0.1, 0.5)
 
     plt.show()
 
-    print(baseNames)
+    # print(baseNames)
 
-    with open('firstplottest'+'_plot.pkl', mode='wb') as f:
+    with open('qutritplottest'+'_plot.pkl', mode='wb') as f:
         pickle.dump(fig, f)
 
 

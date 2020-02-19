@@ -14,12 +14,9 @@ from scipy.linalg import sqrtm
 from datetime import datetime
 from concurrent import futures
 import os
-import glob
 from pathlib import Path
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import pickle
-import pycallgraph
 
 
 su2b = array([
@@ -431,6 +428,29 @@ def getExperimentalDataDirectoryPath():
 
 
 
+""" Get Paths of Experimental Data """
+
+def getExperimentalDataPaths():
+    """
+    getExperimentalDataPaths()
+
+    """
+
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER PATHS OF EXPERIMENTAL DATA")
+    print("")
+    print("IF THERE ARE MULTIPLE DATA FILE YOU WANT TO TOMOGRAPHY,")
+    print("ENTER ALL PATHS SEPARATED WITH SPACE.")
+    print("LIKE THIS >> .\\datadirectory\\ex1.txt .\\datadirectory\\ex2.txt ...")
+    print("------------------------------------------------------------")
+    print(">>")
+
+    paths = list(input().split())
+
+    return paths
+
+
+
 """ Get Name of Result Directory AND FILE """
 
 def getNameOfResultDirectory():
@@ -537,7 +557,7 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
-    PyCallGraph.start()
+    # PyCallGraph.start()
 
     """ Get Number of Qubits """
     numberOfQubits = getNumberOfQubits()
@@ -623,7 +643,7 @@ if __name__ == "__main__":
 
     end_time = datetime.now() #time stamp
 
-    PyCallGraph.done()
+    # PyCallGraph.done()
 
     print("Total Calculation Time was " + str(end_time - start_time))
 

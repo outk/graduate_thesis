@@ -16,11 +16,8 @@ from concurrent import futures
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import pickle
-<<<<<<< HEAD
-# import pycallgraph
-=======
->>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
 
 
 su2b = array([
@@ -309,8 +306,8 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
     with open(resultIterationTimeFilePath, mode='a') as f:
         f.writelines(str(totalIterationTime) + '\n')
 
-    """ Make 3D Plot """
-    plotResult(numberOfQubits, estimatedDensityMatrix, baseNames)
+    # """ Make 3D Plot """
+    # plotResult(numberOfQubits, estimatedDensityMatrix, baseNames)
 
 
 
@@ -561,12 +558,6 @@ def getNumberOfParallelComputing():
 
 if __name__ == "__main__":
 
-<<<<<<< HEAD
-    # pycallgraph.start()
-=======
-    # PyCallGraph.start()
->>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
-
     """ Get Number of Qubits """
     # numberOfQubits = getNumberOfQubits()
     numberOfQubits = 4
@@ -577,7 +568,7 @@ if __name__ == "__main__":
     """ Get Path of Experimental Data Directory """
     # directoryPath = getExperimentalDataDirectoryPath()
     # paths = list(directoryPath.glob("*.txt"))
-    path = '/home/osboxes/graduate-thesis/testdata/plotdata/1.txt'
+    path = '/home/osboxes/graduate-thesis/testdata/plotdata/2.txt'
 
     """ Get Name of Result Directory """
     # resultDirectoryName = getNameOfResultDirectory()
@@ -656,12 +647,6 @@ if __name__ == "__main__":
 
 
     end_time = datetime.now() #time stamp
-
-<<<<<<< HEAD
-    # pycallgraph.done()
-=======
-    # PyCallGraph.done()
->>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
 
     print("Total Calculation Time was " + str(end_time - start_time))
 

@@ -5,7 +5,7 @@ using techniques of following papars.
 'Iterative algorithm for reconstruction of entangled states(10.1103/PhysRevA.63.040303)'
 'Diluted maximum-likelihood algorithm for quantum tomography(10.1103/PhysRevA.75.042108)'
 'Qudit Quantum State Tomography(10.1103/PhysRevA.66.012303)'
-'On-chip generation of high-dimensional entangled quantum states and their coherent control(Nature volume 546, pages622–626(2017))'
+'On-chip generation of high-dimensional entangled quantum states and their coherent control(Nature volume 546, pages622-626(2017))'
 
 '''
 
@@ -17,6 +17,7 @@ from concurrent import futures
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import pickle
 
 
@@ -291,8 +292,8 @@ def plotResult(numberOfQutrits, densityMatrix):
     ypos = ypos.ravel() # y座標を3D用の形式に変換（その２)
 
     fig = plt.figure() # 描画領域を作成
-    # ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
-    ax1 = plt.axes(projection="3d")
+    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
+    # ax1 = plt.axes(projection="3d")
     
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
     # fig.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black')
@@ -304,20 +305,15 @@ def plotResult(numberOfQutrits, densityMatrix):
     # ax1.set_zlabel("Z") # z軸の内容表示
     ax1.set_zlim(-0.1, 0.5)
     
-<<<<<<< HEAD
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
-=======
-    # ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
-    # ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
->>>>>>> d45830900bb6266a29b795497a98d1e5502a6448
-    # plt.title("Imaginary Part") # タイトル表示
+    plt.title("Imaginary Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
-    # plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # plt.ylabel("Y") # y軸の内容表示
-    # plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
+    plt.yticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
     # ax2.set_zlabel("Z") # z軸の内容表示
-    # ax2.set_zlim(-0.1, 0.5)
+    ax2.set_zlim(-0.1, 0.5)
 
     plt.show()
 

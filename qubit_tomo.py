@@ -566,20 +566,20 @@ if __name__ == "__main__":
     makeSU2Bases(numberOfQubits)   
     
     """ Get Path of Experimental Data Directory """
-    directoryPath = getExperimentalDataDirectoryPath()
-    paths = list(directoryPath.glob("*.txt"))
-    # path = '/home/osboxes/graduate-thesis/testdata/plotdata/2.txt'
+    # directoryPath = getExperimentalDataDirectoryPath()
+    # paths = list(directoryPath.glob("*.txt"))
+    path = '/home/osboxes/graduate-thesis/testdata/plotdata/2.txt'
 
     """ Get Name of Result Directory """
-    resultDirectoryName = getNameOfResultDirectory()
-    # resultDirectoryName = 'plottest'
+    # resultDirectoryName = getNameOfResultDirectory()
+    resultDirectoryName = 'plottest'
 
     """ Check Poisson Distributed Simulation """
     # check, poissonPaths = checkPoisson()
 
     """ Get Number of Parallel Computing """
-    numberOfParallelComputing = getNumberOfParallelComputing()
-    # numberOfParallelComputing = 1
+    # numberOfParallelComputing = getNumberOfParallelComputing()
+    numberOfParallelComputing = 1
 
     """ Make Bases """
     basesOfQubits, baseNames = makeBases(numberOfQubits)
@@ -622,18 +622,18 @@ if __name__ == "__main__":
 
     # idealDensityMatrix = matrix
 
-    start_time = datetime.now() #time stamp
+    # start_time = datetime.now() #time stamp
 
     """ Make Result Directory """
-    if not os.path.exists('.\\result\\qubit\\iterative\\' + resultDirectoryName):
-        os.makedirs('.\\result\\qubit\\iterative\\' + resultDirectoryName)
+    # if not os.path.exists('.\\result\\qubit\\iterative\\' + resultDirectoryName):
+    #     os.makedirs('.\\result\\qubit\\iterative\\' + resultDirectoryName)
 
     """ Start Tomography """
-    with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
-        for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
+    # with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+    #     for path in paths:
+    #         executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
-    # doIterativeSimulation(numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
+    doIterativeSimulation(numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
     # """ Start Poisson Distributed Simulation """
     # if check:
@@ -646,13 +646,13 @@ if __name__ == "__main__":
     #             executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
 
 
-    end_time = datetime.now() #time stamp
+    # end_time = datetime.now() #time stamp
 
-    print("Total Calculation Time was " + str(end_time - start_time))
+    # print("Total Calculation Time was " + str(end_time - start_time))
 
-    if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
-            os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
+    # if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
+    #         os.makedirs('.\\result\\4qubit\\poisson\\benchmark')
 
-    with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
-        f.write("total time: " + str(end_time - start_time) + "\n")
+    # with open('benchmark'+str(numberOfQubits)+'qubits.txt', mode='a') as f:
+    #     f.write("total time: " + str(end_time - start_time) + "\n")
 

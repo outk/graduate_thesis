@@ -4,7 +4,7 @@ import pygraphviz
 
 path = './pycallgraph.dot'
 
-G = nx.Graph(nx.drawing.nx_pydot.read_dot(path))
+G = nx.DiGraph(nx.drawing.nx_pydot.read_dot(path))
 
 # print(list(G.nodes))
 
@@ -75,19 +75,86 @@ rme = [
     'numpy.linalg.linalg._unary_dispatcher',
     '_ModuleLockManager.__init__',
     'numpy.core.fromnumeric.trace',
-    'find_spec'
+    'find_spec',
+    '_get_spec',
+    '_path_importer_cache',
+    'FileFinder.find_spec',
+    'SourceFileLoader.create_module',
+    '_new_module',
+    '_init_module_attrs',
+    'ModuleSpec.parent',
+    'ModuleSpec.has_location', 
+    'ModuleSpec.cached', 
+    'SourceFileLoader.get_code', 
+    'SourceFileLoader._check_name_wrapper', 
+    'cache_from_source', 
+    'SourceFileLoader.path_stats', 
+    'SourceFileLoader.get_data', 
+    '_classify_pyc', 
+    '_validate_timestamp_pyc', 
+    '_verbose_message', '_compile_bytecode', 
+    'numpy.<module>', 
+    '<genexpr>', 
+    'scipy.linalg.<module>', 
+    'numpy.testing._private.<module>', 
+    'matplotlib.pyplot.<module>', 
+    '_NamespacePath.__iter__', 
+    'mpl_toolkits.mplot3d.<module>', 
+    'numpy.core._asarray.asanyarray', 
+    'outer', 
+    'numpy.core.numeric._outer_dispatcher', 
+    'numpy.core.numeric.outer', 
+    'concatenate', 
+    'numpy.core.multiarray.concatenate', 
+    'numpy.lib.shape_base.get_array_prepare', 
+    'numpy.lib.shape_base.<genexpr>', 
+    'numpy.lib.shape_base.get_array_wrap', 
+    'warnings._formatwarnmsg', 
+    'warnings._formatwarnmsg_impl', 
+    'numpy.core._asarray.asarray', 
+    'numpy.linalg.linalg._realType', 
+    'numpy.linalg.linalg._assertFinite', 
+    'numpy.core._methods._all', 
+    'numpy.linalg.linalg._complexType', 
+    'scipy.sparse.base.isspmatrix', 
+    'numpy.ma.core.isMaskedArray', 
+    'numpy.lib.function_base.asarray_chkfinite', 
+    'numpy.core.numerictypes.issubdtype', 
+    'numpy.core.numerictypes.issubclass_', 
+    'numpy.lib.type_check._is_type_dispatcher', 
+    'numpy.lib.type_check.isrealobj', 
+    'iscomplexobj', 
+    'scipy.linalg.misc._datacopied', 
+    'scipy.linalg.lapack.get_lapack_funcs', 
+    'scipy.linalg.blas._get_funcs', 
+    'numpy.lib.twodim_base._trilu_dispatcher', 
+    'numpy.lib.twodim_base.triu', 
+    'numpy.lib.twodim_base.tri', 
+    'where', 
+    'numpy.core.numeric._array_equal_dispatcher', 
+    'numpy.core.numeric.array_equal', 
+    'diag', 
+    'numpy.lib.twodim_base._diag_dispatcher', 
+    'numpy.lib.twodim_base.diag', 
+    'amin', 
+    'numpy.core.fromnumeric._amin_dispatcher', 
+    'numpy.core.fromnumeric.amin'
 ]
 
 G.remove_nodes_from(rme)
 
 print(G.nodes)
 
-G = nx.nx_agraph.to_agraph(G)
+# G = pygraphviz.AGraph(directed=True)
+# G.graph_attr['rankdir'] = "TB"
+# G.graph_attr['splines'] = "ortho"
+# G.graph_attr['ordering'] = "out"
+# G.layout(prog='dot')
 
-G = pygraphviz.AGraph(directed=True)
-G.graph_attr['rankdir'] = "TB"
-G.graph_attr['splines'] = "ortho"
-G.graph_attr['ordering'] = "out"
-G.layout(prog='dot')
+# G = nx.nx_agraph.to_agraph(G)
 
-G.draw('graph.png', prog='circo')
+p = nx.drawing.nx_pydot.to_pydot(G)
+
+# G.draw('graph.png', prog='circo')
+
+p.write_png('graph.png')

@@ -47,11 +47,24 @@ total time: 1:04:31.185183 usedmoq 100 1 parallel data only one qubit 1 few
 
 
 
+
+
+case1
+
+
+total time: 0:00:54.388711 identity 100 9 parallel data 1111ed
+total time: 0:00:50.802002 usedmoq 100 9 parallel data 1111ed
+
 total time: 0:00:40.588729 identity 100 6 parallel data 1111ed
 total time: 0:00:45.650548 usedmoq 100 6 parallel data 1111ed
 
+total time: 0:01:23.834835 identity 100 3 parallel data 1111ed
+total time: 0:01:27.710980 usedmoq 100 3 parallel data 1111ed
+
 total time: 0:04:04.085240 identity 100 1 parallel data 1111ed
 total time: 0:04:11.419018 usedmoq 100 1 parallel data 1111ed
+
+
 
 
 
@@ -63,16 +76,41 @@ total time: 0:04:07.311823 usedmoq 100 1 parallel data 1111ed few
 
 
 
+
+
+
+
+case2
+
+
+total time: 0:25:40.716639 identity 100 9 parallel data all 
+total time: 0:25:26.610188 usedmoq 100 9 parallel data all
+
 total time: 0:25:13.205211 identity 100 6 parallel data all 
 total time: 0:26:10.094626 usedmoq 100 6 parallel data all
+
+total time: 0:50:43.501042 identity 100 3 parallel data all
+total time: 0:50:27.265037 usedmoq 100 3 parallel data all
 
 total time: 2:38:26.649328 identity 100 1 parallel data all
 total time: 2:35:28.958793 usedmoq 100 1 parallel data all
 
 
 
+
+
+
+case3
+
+
+total time: 0:16:10.650770 identity 100 9 parallel data mixed
+total time: 0:29:32.467332 usedmoq 100 9 parallel data mixed
+
 total time: 0:17:16.670303 identity 100 6 parallel data mixed
 total time: 0:28:24.505253 usedmoq 100 6 parallel data mixed
+
+total time: 0:33:35.093032 identity 100 3 parallel data mixed
+total time: 0:56:08.064187 usedmoq 100 3 parallel data mixed
 
 total time: 1:40:27.540305 identity 100 1 parallel data mixed
 total time: 2:48:46.326620 usedmoq 100 1 parallel data mixed

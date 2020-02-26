@@ -112,13 +112,13 @@ from matplotlib.dates import DateFormatter
 
 fig = plt.figure()
 
-x = np.array([1,6])
+x = np.array([0,3,6,9])
 
-timels = ['1:24:18', '0:14:33']
+timels = ['0:04:04', '0:01:23', '0:00:40', '0:00:54']
 timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 y = np.array(timels)
 ax1 = fig.add_subplot(1, 1, 1)
-ax1.plot(x, y, label='case 1', marker='o')
+ax1.plot(x, y, label='case 1 identity', marker='o', color='dodgerblue', linestyle='dotted')
 # timels = ['1:24:55', '0:15:19']
 # timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 # y = np.array(timels)
@@ -130,53 +130,107 @@ ax1.plot(x, y, label='case 1', marker='o')
 # # ax1.set_title('(|0001> + |0010> + |0100> + |1000>)(<0001| + <0010| + <0100| + <1000|)')
 # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
 
-timels = ['0:04:04', '0:00:40']
+timels = ['0:04:11', '0:01:27', '0:00:45', '0:00:50']
 timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 y = np.array(timels)
 # ax2 = fig.add_subplot(1, 2, 1)
-ax1.plot(x, y, label='case 2', marker='o')
+ax1.plot(x, y, label='case 1 usedmoq', marker='o', color='dodgerblue')
 # ax2.yaxis.set_major_formatter(DateFormatter('%H:%M'))
 # ax2.set_xlabel('parallel')
 # ax2.set_ylabel('time')
 # ax2.set_title('(|0000>+|1111>)(<0000|+<1111|)')
 # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
 
-timels = ['2:38:26', '0:25:13']
+timels = ['2:38:26', '0:50:43', '0:25:13', '0:25:40']
 timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 y = np.array(timels)
-# ax3 = fig.add_subplot(2, 1, 1)
-ax1.plot(x, y, label='case 3', marker='o')
-# ax3.yaxis.set_major_formatter(DateFormatter('%H:%M'))
-# ax3.set_xlabel('parallel')
-# ax3.set_ylabel('time')
-# ax3.set_title('all')
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.plot(x, y, label='case 2 identity', marker='o', color='deeppink', linestyle='dotted')
+# timels = ['1:24:55', '0:15:19']
+# timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+# y = np.array(timels)
+# ax1.plot(x, y, label='estimated state')
+# plt.legend(loc=2, ncol=2)
+# ax1.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# ax1.set_xlabel('parallel')
+# ax1.set_ylabel('calculation time')
+# # ax1.set_title('(|0001> + |0010> + |0100> + |1000>)(<0001| + <0010| + <0100| + <1000|)')
 # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
 
-timels = ['1:40:27', '0:17:16']
+timels = ['2:35:28', '0:50:27', '0:26:10', '0:25:26']
 timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 y = np.array(timels)
-# ax4 = fig.add_subplot(2, 2, 1)
-ax1.plot(x, y, label='case 4', marker='o')
-# ax4.yaxis.set_major_formatter(DateFormatter('%H:%M'))
-# ax4.set_xlabel('parallel')
-# ax4.set_ylabel('time')
-# ax4.set_title('(|0000>+|1111>)(<0000|+<1111|) + |0001><0001| + |0010><0010| + |0100><0100| + |1000><1000|')
+# ax2 = fig.add_subplot(1, 2, 1)
+ax1.plot(x, y, label='case 2 usedmoq', marker='o', color='deeppink')
+# ax2.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# ax2.set_xlabel('parallel')
+# ax2.set_ylabel('time')
+# ax2.set_title('(|0000>+|1111>)(<0000|+<1111|)')
 # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
 
-timels = ['0:19:04', '0:03:13']
+timels = ['1:40:27', '0:33:35', '0:17:16', '0:16:10']
 timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
 y = np.array(timels)
-# ax5 = fig.add_subplot(3, 1, 1)
-ax1.plot(x, y, label='case 5', marker='o')
-# ax5.yaxis.set_major_formatter(DateFormatter('%H:%M'))
-# ax5.set_xlabel('parallel')
-# ax5.set_ylabel('time')
-# ax5.set_title('random')
+ax1 = fig.add_subplot(1, 1, 1)
+ax1.plot(x, y, label='case 3 identity', marker='o', color='orange', linestyle='dotted')
+# timels = ['1:24:55', '0:15:19']
+# timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+# y = np.array(timels)
+# ax1.plot(x, y, label='estimated state')
+# plt.legend(loc=2, ncol=2)
+# ax1.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# ax1.set_xlabel('parallel')
+# ax1.set_ylabel('calculation time')
+# # ax1.set_title('(|0001> + |0010> + |0100> + |1000>)(<0001| + <0010| + <0100| + <1000|)')
+# plt.xticks(np.arange(1, 7, 5), labels=[1,6])
+
+timels = ['2:48:46', '0:56:08', '0:28:24', '0:29:32']
+timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+y = np.array(timels)
+# ax2 = fig.add_subplot(1, 2, 1)
+ax1.plot(x, y, label='case 3 usedmoq', marker='o', color='orange')
+# ax2.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# ax2.set_xlabel('parallel')
+# ax2.set_ylabel('time')
+# ax2.set_title('(|0000>+|1111>)(<0000|+<1111|)')
+# plt.xticks(np.arange(1, 7, 5), labels=[1,6])
+
+# timels = ['2:38:26', '0:25:13']
+# timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+# y = np.array(timels)
+# # ax3 = fig.add_subplot(2, 1, 1)
+# ax1.plot(x, y, label='case 3', marker='o')
+# # ax3.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# # ax3.set_xlabel('parallel')
+# # ax3.set_ylabel('time')
+# # ax3.set_title('all')
+# # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
+
+# timels = ['1:40:27', '0:17:16']
+# timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+# y = np.array(timels)
+# # ax4 = fig.add_subplot(2, 2, 1)
+# ax1.plot(x, y, label='case 4', marker='o')
+# # ax4.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# # ax4.set_xlabel('parallel')
+# # ax4.set_ylabel('time')
+# # ax4.set_title('(|0000>+|1111>)(<0000|+<1111|) + |0001><0001| + |0010><0010| + |0100><0100| + |1000><1000|')
+# # plt.xticks(np.arange(1, 7, 5), labels=[1,6])
+
+# timels = ['0:19:04', '0:03:13']
+# timels = [dt.strptime(d, '%H:%M:%S') for d in timels]
+# y = np.array(timels)
+# # ax5 = fig.add_subplot(3, 1, 1)
+# ax1.plot(x, y, label='case 5', marker='o')
+# # ax5.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+# # ax5.set_xlabel('parallel')
+# # ax5.set_ylabel('time')
+# # ax5.set_title('random')
 
 plt.legend(loc=1, ncol=2)
-ax1.yaxis.set_major_formatter(DateFormatter('%H:%M'))
+ax1.yaxis.set_major_formatter(DateFormatter('%H:%M:%S'))
 ax1.set_xlabel('parallel')
 ax1.set_ylabel('calculation time')
 
-plt.xticks(np.arange(1, 7, 5), labels=[1,6])
+plt.xticks(np.arange(0, 10, 3), labels=[1,3,6,9])
 plt.show()

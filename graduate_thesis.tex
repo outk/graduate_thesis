@@ -10,7 +10,7 @@
 \usepackage{otf}
 \usepackage{here}	%図を好きな位置に表示
 \usepackage[subrefformat=parens]{subcaption}	%サブキャプション
- 
+
 %PDFの機能(しおり機能、ハイパーリンク機能)が使えるようにする
 %しおりの文字化けを防ぐ
 \usepackage{atbegshi}
@@ -52,1114 +52,248 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 %本文
 \begin{document}
 
-%タイトル
-\begin{titlepage}
-\begin{center}\begin{LARGE}
-\vspace*{1em}
-{令和元年度}\vspace{1em}\\
-\vspace*{1em}
-{卒業研究}\vspace{1em}\\
-\textbf{\HUGE 量子状態トモグラフィー}\\
-\vspace{4em}
-{\LARGE 指導教員}\\
-\vspace{0.8em}
-{\Huge\bf 山本　俊 教授}\\
-\vspace{0.3\vsize}
-{大阪大学 基礎工学部\\ 電子物理科学科 物性物理科学コース\\ 山本研究室}\\
-\vspace{0.8em}
-{\Huge\bf 小林哲也}\\
-\vspace{1em}
-{\Large 2020年3月6日}
-\end{LARGE}\end{center}
-\end{titlepage}
+	%タイトル
+	\begin{titlepage}
+		\begin{center}\begin{LARGE}
+			\vspace{1em}
+			{令和元年度}\\
+			\vspace{1.5em}
+			{卒業研究}\vspace{3em}\\
+			\textbf{\HUGE 量子状態トモグラフィー}\\
+			\vspace{4em}
+			{\LARGE 指導教員}\\
+			\vspace{0.8em}
+			{\Huge\bf 山本　俊 教授}\\
+			\vspace{0.2\vsize}
+			{大阪大学 基礎工学部\\ 電子物理科学科 物性物理科学コース\\ 山本研究室\\学籍番号 09D16031}\\
+			\vspace{0.8em}
+			{\Huge\bf 小林哲也}\\
+			\vspace{3em}
+			{\Large 2020年3月6日}
+		\end{LARGE}\end{center}
+	\end{titlepage}
 
-%目次のページだけローマ数字に設定
-\pagenumbering{roman}
+	%目次のページだけローマ数字に設定
+	\pagenumbering{roman}
 
-%目次サブセクションまで表記
-\setcounter{tocdepth}{2}
-\tableofcontents
+	%目次サブセクションまで表記
+	\setcounter{tocdepth}{2}
+	\tableofcontents
 
-\clearpage
+	\clearpage
 
-%図目次
-\listoffigures
+	%図目次
+	\listoffigures
 
-%ページ数をリセットしアラビア数字に変更
-\clearpage
-\pagenumbering{arabic}
-
-
-\chapter{序論}
-\section{研究の背景と目的}
-近年注目を増している量子情報、量子コンピューティング研究・開発において実験的に生成された量子状態を正確に認識することは極めて重要である。しかしながら、量子的制約により、量子状態を直接観測することは現時点では不可能である。そこで、量子状態トモグラフィーが用いられる。量子状態トモグラフィーとは、同じ量子状態を複数生成し、それぞれを測定基底を変えて測定をすることで得られた観測データから、最尤推定などを用いて真の量子状態を推定することである。本論文では、量子状態トモグラフィーの一般的理論を説明した後、実験的誤りに対する耐性があるアルゴリズムを紹介する。最後に、これらのアルゴリズムを実装し確認する。
+	%ページ数をリセットしアラビア数字に変更
+	\clearpage
+	\pagenumbering{arabic}
 
 
-\chapter{量子状態トモグラフィー}
-\section{量子状態トモグラフィーの一般的理論}
-本節では，二体粒子の弾性散乱過程について説明する\cite{J.J. Sakurai}．
+	\chapter{序論}
+	\section{研究の背景と目的}
+	近年注目を増している量子情報、量子コンピューティング研究・開発において実験的に生成された量子状態を正確に認識することは極めて重要である。しかしながら、量子的制約により、量子状態を直接観測することは現時点では不可能である。そこで、量子状態トモグラフィーが用いられる。量子状態トモグラフィーとは、同じ量子状態を複数生成し、それぞれを測定基底を変えて測定をすることで得られた観測データから、最尤推定などを用いて真の量子状態を推定することである。本論文では、量子状態トモグラフィーの一般的理論を説明した後、実験的誤りに対する耐性があるアルゴリズムを紹介する。最後に、これらのアルゴリズムを実装し確認する。
 
-\subsection{リップマン・シュウィンガー方程式}
 
-時間に依存しない散乱過程を考える．すなわち，散乱の中心に一つの粒子がいて，これと入射粒子との間の距離にしか依存しない相互作用によって引き起こされる散乱を考える．この散乱過程のハミルトニアンを以下のように仮定する．
-\begin{equation}
-	\hat{H}=\hat{H_{0}}+\hat{V}
-	\label{eq2.1.1}
-\end{equation}
-ここで$\hat{H_{0}}=\hat{p}^2 / 2 \mu$は入射する自由粒子のハミルトニアンで$\mu$は換算質量，$\hat{V}$は粒子間の相互作用である．$\hat{V}=0$のとき散乱は起こらない．散乱過程が弾性であるとき，散乱の有無でエネルギーに変化はないので$\hat{H}$のエネルギー固有値は$\hat{V}=0$の場合でも変わらない．よって，自由粒子の固有状態を$\ket{\phi}$，固有値を$E$とすると
-\begin{equation}
-	\hat{H_0} \ket{\phi} = E \ket{\phi}
-	\label{eq2.1.2}
-\end{equation}
-が成り立ち，この$E$は$\hat{H}$の固有値でもあるので，解きたいシュレディンガー方程式は
-\begin{equation}
-	\hat{H} \ket{\psi} = ( \hat{H_0} + \hat{V} ) \ket{\psi} = E \ket{\psi}
-	\label{eq2.1.3}
-\end{equation}
-である．$\ket{\psi}$は$\hat{V} \rightarrow 0$のとき$\ket{\psi} \rightarrow \ket{\phi}$となる．
+	\chapter{理論}
+	\section{量子状態トモグラフィーの一般的理論}
 
-ここで，\eq{eq2.1.3}の解を以下のように仮定する．
-\begin{equation}
-	\ket{\psi} = \ket{\phi} + \frac{1}{E-\hat{H_0}+i \epsilon} \hat{V} \ket{\psi}
-	\label{eq2.1.4}
-\end{equation}
-この式(\ref{eq2.1.4})はリップマン・シュウィンガー方程式とよばれ，$\epsilon \rightarrow 0$のときこれは式(\ref{eq2.1.3})を満たす．$+ i \epsilon$は演算子$1/(E-\hat{H}_{0})$の特異性を解決するためのものである．式(\ref{eq2.1.4})に左から$\bra{\bm{r}}$をかけると
-\begin{align}
-	\braket{\bm{r} | \psi}
-	& = \braket{\bm{r} | \phi} + \braket{\bm{r} | \frac{1}{E-\hat{H_0}+i \epsilon} \hat{V} | \psi} \notag \\
-	& = \braket{\bm{r} | \phi} + \int d \bm{r}' \braket{\bm{r} | \frac{1}{E-\hat{H_0}+i \epsilon} | \bm{r}'}\braket{\bm{r}' | \hat{V} | \psi} \notag \\
-	& = \braket{\bm{r} | \phi} + \int d \bm{r}' G_{+}\left( \bm{r}, \bm{r}' \right) V(\bm{r}') \braket{\bm{r}' | \psi}
-	\label{eq2.1.5}
-\end{align}
-となる．ここで
-\begin{equation}
-	G_{+}\left( \bm{r}, \bm{r}' \right) \equiv \braket{\bm{r} | \frac{1}{E-\hat{H_0}+i \epsilon} | \bm{r}'}
-	\label{eq2.1.6}
-\end{equation}
-と定義した．$\ket{\phi}$が波数$\bm{k}$の平面波の状態$\ket{\bm{k}}$だとすると
-\begin{equation}
-	\braket{\bm{r} | \phi} = \braket{\bm{r} | \bm{k}} = \frac{e^{i \bm{k} \cdot \bm{r}}}{(2\pi)^{3/2}}
-	\label{eq2.1.7}
-\end{equation}
-と書ける\cite{igikawa}．また，式(\ref{eq2.1.6})はグリーン関数であり，$|\bm{r}|>>\left|\bm{r}' \right|$の十分遠方な範囲での散乱を考えて$\left|\bm{r}-\bm{r}' \right| \simeq r-\bm{r} \cdot \bm{r}' / r$と近似し，さらに$\bm{k}' \equiv k \hat{\bm{r}}$と定義すると最終的な表式は
-\begin{align}
-	G_{+}\left( \bm{r}, \bm{r}' \right)
-	 & = - \frac{2 m}{\hbar^{2}} \frac{1}{4 \pi} \frac{e^{+i k \left|\bm{r}-\bm{r}' \right|}}{\left|\bm{r}-\bm{r}' \right|} \notag \\
-	 & \simeq - \frac{2 m}{\hbar^{2}} \frac{1}{4 \pi} \frac{e^{i k r}}{r} e^{-i \bm{k}^{\prime} \cdot \bm{r}}
-	\label{eq2.1.8}
-\end{align}
-である．以上より，十分遠方での散乱状態を表した波動関数$\psi(\bm{r}) \equiv (2\pi)^{3/2} \braket{\bm{r} | \psi}$は
-\begin{equation}
-	\psi(\bm{r}) = e^{i \bm{k} \cdot \bm{r}}+\frac{e^{i k \cdot r}}{r} f\left(\bm{k}', \bm{k}\right)
-	\label{eq2.1.9}
-\end{equation}
-と表せる．第一項は入射波，第二項は散乱波を表している．ここで$f\left(\bm{k}', \bm{k}\right)$は散乱振幅と呼ばれ
-\begin{equation}
-	f\left(\boldsymbol{k}^{\prime}, \boldsymbol{k}\right)
-	 = -\frac{1}{4 \pi}\left(\frac{2 m}{\hbar^{2}}\right)(2 \pi)^{3} \int d \bm{r}^{\prime} \frac{e^{-i \bm{k}^{\prime} \cdot \bm{r}}}{(2 \pi)^{3 / 2}} V \left(\bm{r}^{\prime}\right) \braket{\bm{r}' | \psi}
-	 \label{eq2.1.10}
-\end{equation}
-である．これは，散乱波の大きさを決定する因子である．散乱断面積$\sigma$はこれの絶対値の二乗を全立体角で積分すると得られる．
-\begin{equation}
-	\sigma=\int\left|f\left(\boldsymbol{k}^{\prime}, \boldsymbol{k}\right)\right|^{2} d \Omega
-	\label{eq2.1.11}
-\end{equation}
 
-\section{部分波散乱}
-粒子間の相互作用$\hat{V}$から現れる散乱ポテンシャル$V(\bm{r}')$は球対称であると考える．このとき，散乱過程を球面波の基底で分けて考えられる．すなわち，散乱波を角運動量$l$の成分をもつ部分波の基底で展開して記述することができる．極低温原子系では低次の項の散乱波のみ注目するので，部分波展開は非常に都合がよい．
+	\subsection{密度行列}
 
-\subsection{散乱波の部分波展開}
-球対称のポテンシャルによる散乱過程を球面波の基底で考える．まず平面波$e^{i \bm{k} \cdot \bm{r}}$は球ベッセル関数$j_{l}(k r)$とルジャンドル多項式$P_{l}(\cos \theta)$を用いると以下のように部分波展開することができる．
-\begin{equation}
-	e^{i \bm{k} \cdot \bm{r}} = \sum_{l=0}^{\infty}(2 l+1) i^{l} j_{l}(k r) P_{l}(\cos \theta)
-	\label{eq2.2.1}
-\end{equation}
-弾性散乱により$\bm{k}$と$\bm{k}'$の絶対値が等しいことを考慮すると散乱振幅$f\left(\bm{k}', \bm{k}\right)$も同様な変形で
-\begin{equation}
-	f\left(\bm{k}', \bm{k}\right) = f(\theta, k)=\sum_{l=0}^{\infty}(2 l+1) f_{l} P_{l}(\cos \theta)
-	\label{eq2.2.2}
-\end{equation}
-と展開できる．ここで$f_{l}$は部分波振幅と呼ばれるもので，$\theta$は$\bm{k}$と$\bm{k}'$のなす角である．
+	量子状態は密度行列によって表される。密度行列$\hat{\rho}$とは以下の性質を満たす行列である。
+	\begin{equation}
+		Tr[\hat{\rho}]=1
+		\label{eq2.1}
+	\end{equation}
+	また、密度行列の固有値を$\lambda$とすると、
+	\begin{equation}
+		0 \leq \lambda \leq 1, \ \ \ \  ^\forall \lambda
+		\label{eq2.2}
+	\end{equation}
+	$d$次元の密度行列を$\hat{\rho}_d$と表記する。
 
-十分遠い位置での散乱を考えるために$r$が大きいときの波動関数$\psi(\bm{r})$のふるまいを知りたい．まず
-\begin{equation}
-	j_{l}(k r) \underset{r \gg 0}{\longrightarrow} \frac{e^{i(k r-l \pi / 2)}-e^{-i(k r-l \pi / 2)}}{2 i k r}
-	\label{eq2.2.3}
-\end{equation}
-を用いると$\psi(\bm{r})$は
-\begin{align}
-	\varphi(\boldsymbol{r})
-	& \underset{r \gg 0}{\longrightarrow} \sum_{l=0}^{\infty}(2 l+1) P_{l}(\cos \theta) \left[ i^{l} \frac{ e^{i(k r-l \pi / 2)}-e^{-i(k r-l \pi / 2)}}{2 i k r} + f_{l} \frac{e^{i k \cdot r}}{r} \right] \notag \\
-	& = \sum_{l=0}^{\infty}(2 l+1) \frac{P_{l}(\cos \theta)}{2 i k}\left[\left(1+2 i k f_{l}\right) \frac{e^{ik r}}{r}-\frac{e^{-i(k r-l \pi)}}{r}\right]
-	\label{eq2.2.4}
-\end{align}
-と表せる．
 
-時間に依存しない散乱を考えるとき，確率の保存により外向きの確率流密度と内向きの確率流密度は等しくなる．すなわち，散乱過程で粒子の湧き出しや吸い込みが起こらないので式(\ref{eq2.2.4})の第一項と第二項の絶対値は等しくなければならない．この条件より散乱波の振幅$S_{l}(k) \equiv 1+2 i k f_{l}(k)$は以下を満たさなければならない．
-\begin{equation}
-	\left|S_{l}(k)\right|=1
-	\label{eq2.2.5}
-\end{equation}
 
-次に，入射波と散乱波の位相シフトを考える．位相差を$2 \delta_{l}$とすると$S_{l}(k)=e^{2 i \delta_{l}}$となるので
-\begin{align}
-	f_{l}
-	=\frac{S_{l}-1}{2 i k} = \frac{e^{2 i \delta_{l}}-1}{2 i k} = \frac{1}{k \cot \delta_{l}-i k}
-	\label{eq2.2.6}
-\end{align}
-よって式(\ref{eq2.2.2})は
-\begin{equation}
-	f(\theta, k)=\frac{1}{k} \sum_{l=0}^{\infty}(2 l+1) e^{i \delta_{l}} \sin \delta_{l} P_{l}(\cos \theta)
-	\label{eq2.2.7}
-\end{equation}
-となり，散乱断面積$\sigma$も部分波展開で表せて以下のように記述できる．
-\begin{align}
-	\sigma
-	& = \int|f(\theta, k)|^{2} d \Omega \notag \\
-	& = \frac{4 \pi}{k^{2}} \sum_{l=0}^{\infty}(2 l+1) \sin ^{2} \delta_{l}
-	\label{eq2.2.8}
-\end{align}
+	\subsection{1 qubitトモグラフィー　(直交基底)}
 
-\subsection{動径方向のシュレディンガー方程式}
-位相シフトを実際に求めるには，散乱ポテンシャルのある場合とない場合での位相のずれを見ればわかる．球対称な散乱ポテンシャル$V(\boldsymbol{r})=V(r)$が存在するとき，動径方向の波動関数$u_{l}(r)$についてのシュレディンガー方程式は
-\begin{equation}
-	\left[ \frac{\hbar^{2}}{2 m} \frac{d^{2}}{d r^{2}} + \frac{\hbar^{2} k^2}{2 m}-V(r)-U_{l}(r) \right] u_{l}(r)=0
-	\label{eq2.2.9}
-\end{equation}
-となる．ここで第四項$U_{l}(r)$は遠心力ポテンシャルを表し
-\begin{equation}
-	U_{l}(r) \equiv \left(\frac{\hbar^{2}}{2 m}\right) \frac{l(l+1)}{r^{2}}
-	\label{eq2.2.10}
-\end{equation}
-である．ポテンシャルの有効距離が$\alpha$程度であるとする．自由粒子の運動エネルギーが遠心力ポテンシャルより小さいとき
-\begin{equation}
-	U_{l}(\alpha) \gg \frac{\hbar^{2} k^2}{2 m} \Leftrightarrow l \gg k \alpha
-	\label{eq2.2.11}
-\end{equation}
-であり，この場合，位相シフト$\delta_{l}$は
-\begin{equation}
-	\delta_{l} \sim k^{2 l+1}
-	\label{eq2.2.12}
-\end{equation}
-となる．冷却原子系では$k \rightarrow 0$の極限を考えるので$l=0$の場合のみ散乱断面積$\sigma$が有限の値を持ち$l > 0$では$\sigma$は$0$に収束するので高次の部分波の散乱は無視できることが多い．しかし，遠心力ポテンシャルの障壁による準束縛状態のエネルギーが自由粒子の運動エネルギー程度のとき，共鳴散乱が起こり$l > 0$でも$\sigma$が有限値を持つようになる．
+	qubitは$2$次元の密度行列で表される。
 
-\subsection{同種フェルミオンの散乱}
-いま2つの同種粒子の散乱を考える．同種粒子の場合，散乱振幅$f(\theta, k)$と$f(\pi - \theta, k)$の過程を区別することができない．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=13.0cm]{image./same-fermion.jpg}
-	\caption{$f(\theta, k)$と$f(\pi - \theta, k)$の散乱過程．同種粒子の場合この2つの散乱は同じとみなせる．}
-	\label{fig2.2.1}
-\end{figure}
-
-よって波動関数はこの2つの散乱状態を足し合わせたものになる．また，フェルミオンの交換の反対称性より$\psi( -\bm{r} )= -\psi(\bm{r})$なので波動関数の形は
-\begin{equation}
- 	\psi(\bm{r})=\frac{1}{\sqrt{2}}\left[e^{i \bm{k} \cdot \bm{r}}+\frac{e^{i \bm{k} \cdot \bm{r}}}{r} f\left(\theta, k\right)\right] - \frac{1}{\sqrt{2}}\left[e^{-i \bm{k} \cdot \bm{r}}+\frac{e^{-i \bm{k} \cdot \bm{r}}}{r} f\left(\pi - \theta, k\right)\right]
-	\label{eq2.2.13}
-\end{equation}
-となり，散乱断面積は
-\begin{equation}
-	\sigma=\frac{1}{2} \int|f(\theta, k) - f(\pi-\theta, k)|^{2} d \Omega
-	\label{eq2.2.14}
-\end{equation}
-となる．ここで，同種フェルミオンの部分波散乱を考えるためにまず$f(\pi - \theta, k)$を部分波展開すると
-\begin{equation}
-	f(\pi - \theta, k)=\frac{1}{k} \sum_{l=0}^{\infty}(2 l+1) e^{i \delta_{l}} \sin \delta_{l} (-1)^l P_{l}(\cos \theta)
-	\label{eq2.2.15}
-\end{equation}
-となる．式(\ref{eq2.2.13})の$f(\theta, k) - f(\pi-\theta, k)$に注目すると角運動量$l$が偶数の項が消し合うのことがわかるので散乱断面積は
-\begin{equation}
-	\sigma = \frac{8 \pi}{k^{2}} \sum_{l=\mathrm{odd}}(2 l+1) \sin ^{2} \delta_{l}
-	\label{eq2.2.16}
-\end{equation}
-となる．これは，同種フェルミオンの部分波散乱は角運動量$l$が奇数の場合のみ起こり，偶数の散乱は起こらないことを表している．
-
-\subsection{$p$波散乱}
-$p$波散乱$(l=1)$の場合，位相シフト$\delta_{1}(k)$について次のように展開ができる\cite{InaD}\cite{Waseem}．
-\begin{equation}
-	k \cot \delta_{1}(k) = - k^{-2} \left( \frac{1}{V_p} + k_{\mathrm e} k^2 \right)
-	\label{eq2.2.17}
-\end{equation}
-ここで$V_p$は散乱体積と呼び$k_{\mathrm e}$は有効距離と呼ばれ，それぞれ体積，波数の次元を持つパラメータである．これらを用いると$p$波散乱の散乱振幅$f_1(\bm{k})$は
-\begin{align}
-	f_{1}(k)
-	& = \frac{1}{k \cot \delta_{1}(k) - i k} \notag \\
-	& \approx \frac{-k^{2}}{\frac{1}{V_p} + k_{\mathrm e} k^2 +i k^3}
-	\label{eq2.2.18}
-\end{align}
-となる．よって式(\ref{eq2.2.2})，(\ref{eq2.2.8})より散乱断面積はエネルギーが低いとき
-\begin{equation}
-	\sigma=\int|f(\theta, k)|^{2} d \Omega = \frac{12 \pi}{\left( \frac{1}{V_p} + k_{\mathrm e} k^2 \right)^{2}}
-	\label{eq2.2.19}
-\end{equation}
-となる．散乱体積が小さいとき，これは
-\begin{equation}
-	\sigma \approx 12 V^2_p k^4 \propto T^2
-	\label{eq2.2.20}
-\end{equation}
-一方，散乱体積が発散する共鳴散乱のときは
-\begin{equation}
-	\sigma \approx \frac{12 \pi}{k_{\mathrm e}^{2}}
-	\label{eq2.2.21}
-\end{equation}
-となる．
-
-分子の束縛エネルギー$E_b$は次のようになる\cite{InaD}．
-\begin{equation}
-	E_{\mathrm{b}} \approx \frac{\hbar^{2}}{m V_p k_{\mathrm e}}
-	\label{eq2.2.22}
-\end{equation}
-次節のフェッシュバッハ共鳴を用いると，散乱体積$V_p$と有効距離$k_{\mathrm e}$を外部磁場で制御することができる．フェッシュバッハ共鳴点での磁場を$B_{0}$とすると磁場と散乱体積の関係は
-\begin{equation}
-	V_p = V_{\mathrm{bg}}\left(1-\frac{\Delta B}{B-B_{0}}\right)
-	\label{eq2.2.23}
-\end{equation}
-で表せる．
-
-\section{フェッシュバッハ共鳴}
-本節では，フェッシュバッハ共鳴についての説明を\cite{Miyato}に沿って行う．
-
-\subsection{原子間相互作用}
-中性原子間にはたらく相互作用から生じるポテンシャルは次のように表される．
-\begin{equation}
-	V(r) = - \frac{C_6}{r^6} + \frac{C_{12}}{r^{12}}
-	\label{eq2.3.1}
-\end{equation}
-\eq{eq2.3.1}の第一項はファン・デル・ワールス力であり，原子を構成する荷電粒子によるクーロン力に起因する相互作用である．第二項はパウリの排他律から起こる反発力であり原子間距離が近くなったときにはたらく項である．$s$波相互作用を考える場合，相互作用ポテンシャルは\eq{eq2.3.1}のように記述できる．
-
-\subsection{フェッシュバッハ共鳴の原理}
-全角運動量$F=1/2$の$^6$Liの$s$波散乱を考える．この$^6$Liの磁気副準位は$m_f=-1/2$と$m_f=1/2$であり，それぞれ$\ket{1}$と$\ket{2}$とする．$\ket{1}$と$\ket{2}$が$s$波散乱を起こすとき，角運動量の保存より散乱過程におけるの入射粒子の始状態と終状態は同じ角運動量$F=1/2$でなくてはならない．しかし，散乱の途中で異なる角運動量$F=3/2$をとることがあり，中間状態として$F=3/2$と$F=1/2$の原子の相互作用ポテンシャルによる束縛状態を経ることがある．$F=1/2$と$F=1/2$の相互作用ポテンシャルに重ねて同じグラフに載せたものを図\ref{fig2.3.1}に示す．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=13.0cm]{image./closed-opened.png}
-	\caption{2つの相互作用ポテンシャル．赤が$F=3/2$で青が$F=1/2$によるポテンシャル，緑の点線は入射原子のエネルギーを示す．入射してきた原子は中間状態としてどちらかのポテンシャルを経る．また$F=3/2$のポテンシャル中にある横線は束縛状態を表す．}
-	\label{fig2.3.1}
-\end{figure}
-
-それぞれの原子の準位を外部磁場によるゼーマン効果によって変化させ，束縛状態の準位を上下させることで散乱長を制御させられる．束縛状態と原子のエネルギーが等しくなるとき，散乱長が無限大となり，この現象をフェッシュバッハ共鳴という．$s$波散乱長$a$の磁場依存性は次のようになる．
-\begin{equation}
-	a = a_{\mathrm{bg}}\left(1+\frac{\Delta B}{B-B_{0}}\right)
-	\label{eq2.3.2}
-\end{equation}
-
-\subsection{$p$波フェッシュバッハ共鳴}
-\eq{eq2.3.1}の相互作用に遠心力ポテンシャル$U_{l}(r)$を加えると，相互作用ポテンシャルは次のように書き変えられる．
-\begin{equation}
-	V(r)+U_{l}(r) = - \frac{C_6}{r^6} + \frac{C_{12}}{r^{12}} + \left(\frac{\hbar^{2}}{2 m}\right) \frac{l(l+1)}{r^{2}}
-	\label{eq2.3.3}
-\end{equation}
-$s$波の場合では考慮すべき軌道角運動量は$l=0$であり，遠心力ポテンシャル$U_{0}(r)=0$なので$s$波相互作用ではこの項は無視した．$p$波の場合，遠心力ポテンシャルを考えると相互作用の概形は\fig{fig2.3.2}のようになり，$s$波では存在しなかったポテンシャル障壁が生まれる．よって$p$波相互作用する原子が束縛状態になるためにはこのポテンシャル障壁をトンネル効果で通り抜けなければならない．このため$p$波フェッシュバッハ共鳴の共鳴幅は$s$波に比べて狭く，束縛が強い．これは$p$波対が$s$波対より分子としての結びつきが強いことを意味している．
-
-$^6$Liの$p$波フェッシュバッハ共鳴は相互作用ポテンシャルに入射した原子が$p$波の分子状態$(S=0, I=1, L=1)$と結合することで起きる．この分子状態に結合できる原子の組み合わせは$\ket{1}-\ket{1}, \ket{1}-\ket{2}, \ket{2}-\ket{2}$である．これらの組み合わせはそれぞれスピントリプレット的で分子状態はシングレットである．$^6$Liの$p$波フェッシュバッハ共鳴を\fig{fig2.3.1}に示す．
-\begin{table}[h]
-\centering
-	\caption{$^6$Liの$p$波フェッシュバッハ共鳴}
-		\begin{tabular}{ccc}
-		\hline
-		磁場$B$[G] & 線幅[mG] & 組み合わせ \\ \hline
-		159 & 100 & $\ket{1}-\ket{1}$ \\
-		185 & 100 & $\ket{1}-\ket{2}$ \\
-		215 & 100 & $\ket{2}-\ket{2}$ \\ \hline
-		\end{tabular}
-	\label{tab2.3.1}
-\end{table}
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=10.0cm]{image./p-wave.png}
-	\caption{$p$波相互作用ポテンシャル．$s$波相互作用との違いは，遠心力ポテンシャルに起因する極大値を持つところにある．}
-	\label{fig2.3.2}
-\end{figure}
-
-\section{縮退フェルミ原子}
-極低温領域でフェルミオンは基底準位からフェルミ準位までのすべての準位を完全に占有した状態になる．これをフェルミ縮退という．この説ではトラップにより高密度かつ低温の状況下にあるフェルミオンの理論を述べる\cite{InaD}\cite{Miyato}\cite{demarco}．
-
-\subsection{トラップされたフェルミ気体}
-光学系によってトラップされた原子の振る舞いは楕円型の3次元調和ポテンシャルで近似できる．調和ポテンシャル中の相互作用しない理想フェルミオンを考えるとき，質量$m$の粒子一つ当たりのハミルトニアンは以下のようになる．
-\begin{align}
- 	H = \frac{1}{2m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)+\frac{m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)
-	\label{eq2.4.1}
-\end{align}
-ここで $\lambda$ は$xy$平面におけるトラップ周波数と$z$方向のトラップ周波数の比を示している．このとき，粒子のエネルギー$E$は各方向への振動モードの数$n_x, n_y, n_z$を用いると
-\begin{align}
- 	E = \hbar \omega_{r} \left( n_x + n_y + \lambda n_z \right)
-	\label{eq2.4.2}
-\end{align}
-となる．よって状態密度を$g(E)$とすると
-\begin{equation}
-	g(E)=\frac{E^{2}}{2 \lambda\left(\hbar \omega_{r}\right)^{3}}
-	\label{eq2.4.3}
-\end{equation}
-式(\ref{eq2.4.3})より温度$T=0$における粒子数$N_0$は
-\begin{equation}
-	N_0=\int_{0}^{E_{F}} g(E) d E = \frac{1}{6} \frac{E_F^3}{\lambda (\hbar \omega_r)}
-	\label{eq2.4.4}
-\end{equation}
-となり，フェルミ温度$T_F$が以下のように表せる．
-\begin{equation}
-	T_{F}=\frac{E_{F}}{k_{B}}=\frac{\hbar \omega_{r}}{k_{B}}(6 \lambda N_0)^{1 / 3}
-	\label{eq2.4.5}
-\end{equation}
-式(\ref{eq2.4.5})は$T_F$ を求めるには原子数とトラップ周波数を測定すればよいことを示している．
-
-フェルミ・ディラック分布は以下のようになる．$\beta=1/k_B T$である．
-\begin{align}
- 	f(E) = \frac{1}{e^{\beta(E-\mu)}+1}
-	\label{eq2.4.6}
-\end{align}
-ここで，フェルミ原子気体の縮退度を評価するためのパラメータであるフガシティ$\xi$を定義する．
-\begin{equation}
-	\xi \equiv e^{\beta \mu}
-	\label{eq2.4.7}
-\end{equation}
-古典分布の場合これは$\xi \ll 1$となる．フガシティを用いると，フェルミ・ディラック分布を含んだ積分を次のような数値解的な表現で表せる．これをフェルミ・ディラック積分という．
-\begin{align}
- 	\int_{0}^{\infty} \frac{E^{n}}{e^{\beta(E-\mu)}+1} \mathrm{d} E
- 	& = \int_{0}^{\infty} \frac{E^{n}}{e^{\beta E }/\xi +1} \mathrm{d} E \notag \\
- 	& = - \beta^{ -( n+1 ) } \Gamma(n+1) \mathrm{Li}_{n+1}(- \xi )
-	\label{eq2.4.8}
-\end{align}
-ここで$\mathrm{Li}_{n}(- \xi )$は$n$次のPolyLog関数であり$\xi \ll 1$の古典極限では$\mathrm{Li}_{n}(-\xi) \rightarrow -\xi$となる．式(\ref{eq2.4.7})を用いると，有限温度での原子数$N$と全エネルギー$U$は
-\begin{align}
-	N
-	& = \int_{0}^{\infty} g(E) f(E) \mathrm{d} E \notag \\
-	& =-\frac{1}{\lambda}\left(\frac{k_{B} T}{\hbar \omega_{r}}\right)^{3} \mathrm{Li}_{3}(- \xi)
-	\label{eq2.4.9}
-\end{align}
-\begin{align}
-	U
-	& = \int_{0}^{\infty} E g(E) f(E) \mathrm{d} E \notag \\
-	& = -\frac{3}{\lambda} \frac{\left(k_{B} T\right)^{4}}{\left(\hbar \omega_{r}\right)^{3}} \mathrm{Li}_{4}(- \xi)
-	\label{eq2.4.10}
-\end{align}
-よって式(\ref{eq2.4.4})，式(\ref{eq2.4.9})より以下の式が求められる．
-\begin{equation}
-	\frac{T}{T_F} = \left[ - 6 \mathrm{Li}_3(- \xi) \right]^{-\frac{1}{3}}
-	\label{eq2.4.11}
-\end{equation}
-式(\ref{eq2.4.11})は縮退度$T/T_F$とフガシティの関係を表している．また，原子一つ当たりのエネルギー$E=U/N$は次のようになる．
-\begin{equation}
-	E = 3k_BT \frac{\mathrm{Li}_4(- \xi)}{\mathrm{Li}_3(- \xi)}
-	\label{eq2.4.12}
-\end{equation}
-
-\subsection{原子密度分布と運動量分布}
-トーマス・フェルミ近似により原子の半古典的な位相空間分布が求まり，冷却原子系の温度領域に対して有効な近似が得られる\cite{demarco}．位相空間上の点$(\bm{r}, \bm{p})$における，位相空間分布関数$\mathrm{w}(\bm{r}, \bm{p})$は次のように与えられる．
-\begin{align}
-	\mathrm{w}(\bm{r}, \bm{p}) = \frac{1}{(2 \pi \hbar)^{3}} \frac{1}{e^{\beta(H(\bm{r}, \bm{p})-\mu)}+1}
-	\label{eq2.4.13}
-\end{align}
-ここで$H(\bm{r}, \bm{p})$は式(\ref{eq2.4.1})のハミルトニアンである．式(\ref{eq2.4.12})を運動量で積分すると密度$n(\bm{r})$は
-\begin{align}
- 	n(\bm{r}) 
- 	& = \int_{-\infty}^{\infty} \mathrm{w}(\bm{r}, \bm{p}) \mathrm{d} \bm{p}
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} \iiint \frac{1}{e^{\beta( \frac{1}{2 m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)+\frac{m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)-\mu)}+1} \mathrm{d} p_x \mathrm{d} p_y \mathrm{d} p_z
- 	\notag \\
- 	& = - \left( \frac{mk_{B}T}{2 \pi \hbar^2} \right)^{3/2} \mathrm{Li}_{3/2}(- \xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B} T}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right) } )
-	\label{eq2.4.14}
-\end{align}
-となる．また，式(\ref{eq2.4.12})を位置で積分すると運動量分布$n_p(\bm{p})$が得られる．
-\begin{align}
- 	n_p(\bm{p}) 
- 	& = \int_{-\infty}^{\infty} \mathrm{w}(\bm{r}, \bm{p}) \mathrm{d} \bm{r}
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} \iiint \frac{1}{e^{\beta( \frac{1}{2 m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)+\frac{m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)-\mu)}+1} \mathrm{d} x \mathrm{d} y \mathrm{d} z
- 	\notag \\
- 	& = - \frac{1}{\lambda} \left( \frac{k_{B}T}{2 \pi \hbar^2 m \omega_{r}^2} \right)^{3/2} \mathrm{Li}_{3/2}(- \xi e^{ - \frac{1}{2mk_{B} T}\left(p_x^{2}+p_y^{2}+p_z^{2}\right) } )
-	\label{eq2.4.15}
-\end{align}
-式(\ref{eq2.4.14})，式(\ref{eq2.4.15})を二次元で積分すると一次元の原子密度分布と運動量分布が得られる．
-\begin{align}
- 	n(x) & = - \frac{\sqrt{m}(k_{B}T)^{5/2}}{\sqrt{2 \pi} \hbar^3 \lambda \omega_r^2} \mathrm{Li}_{5/2}(- \xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B} T} x^{2} } ) 
- 	\label{eq2.4.16} \\
-	n_p(p_x) & = - \frac{1}{\lambda} \frac{(k_{B}T)^{5/2}}{\sqrt{2 \pi} \hbar^3 \sqrt{m} \omega_r^3} \mathrm{Li}_{5/2}(- \xi e^{ - \frac{1}{2mk_{B} T} p_x^{2} } )
-	\label{eq2.4.17}
-\end{align}
-これらをトーマス・フェルミ分布関数という．また，\eq{eq2.4.16}は古典極限$\xi \ll 1$の場合では以下のように変形でき，これは古典領域において原子密度はガウス分布に従うことを表している．
-\begin{align}
- 	n(x) = \frac{N_{\mathrm{classical}}}{\sqrt{2 \pi} \sigma_r} e^{ - \frac{1}{2 \sigma_r^2} x^{2} }
-	\label{eq2.4.18}
-\end{align}
-ここで$\sigma_r^2=k_BT/m \omega$とした．運動量分布$n_p$も同様に変形できる．
-
-のちに述べる吸収イメージング法による透過光の光学濃度(OD)を用いた測定から原子の密度分布を測定することができる．トラップから解放されて長時間$(\omega t \gg 1)$拡散した原子の吸収イメージング（TOFイメージ）から得られる密度分布は運動エネルギーを反映しており，等方的な運動量分布とみなすことができる\cite{demarco}．
-
-\section{原子の冷却法・トラップ}
-本研究では原子の冷却に2つの冷却手法を取った．本稿ではレーザー冷却と蒸発冷却の簡単な原理と蒸発冷却に利用した光双極子トラップの説明を行う．
-
-\subsection{レーザー冷却}
-レーザー冷却とは，光の輻射圧を利用して原子を冷却する技術である．基本原理は，原子が光の輻射圧を受けたときの反跳運動量で原子の運動量を奪い，冷却を行う．原子が受ける輻射圧は
-\begin{equation}
-	F= \hbar k \Gamma \frac{a_0 \Gamma^2}{\delta^2 + \Gamma^2}
-	\label{eq2.5.1}
-\end{equation}
-と書ける．ここで$\Gamma$は自然幅，$\delta$は離調，$a_0$は共鳴時の吸収係数である\cite{Kuga}．
-
-原子の共鳴周波数から負に離調させた周波数のレーザーを照射すると，レーザーに対して向かってくる原子を優先的に冷やすことができる．このとき原子に与えられる反跳運動量は常に原子の運動方向の反対なので原子は常に減速されることになる．これはドップラー効果を利用しているのでドップラー冷却とも呼ばれる．
-
-周波数の離調を自然幅以下にすると，レーザーの照射方向に原子を加速させる効果を無視できなくなり，このときの限界温度をドップラー限界$T_D$といい$T_D= \frac{\hbar \Gamma}{2 k_B}$で表される．$^6$Liの場合，ドップラー限界は$140 \ \mathrm{\mu K}$である．
-
-\subsection{蒸発冷却}
-レーザー冷却では原子の温度をドップラー限界までしか冷やすことができない．この温度は量子縮退領域までには程遠い．よって光双極子トラップで捕獲した原子に蒸発冷却を行うことでフェルミ縮退の実現を試みた．蒸発冷却の原理を簡単に説明する．ある調和ポテンシャルによってトラップされている原子がボルツマン分布に従っているとする．この原子集団のうちある閾値$E_{\mathrm{th}}$以上のエネルギーをもつ原子のみ選択的に取り除くと，残った原子同士が弾性散乱によって熱緩和を起こし，再びボルツマン分布に従う（熱平衡）．このとき，原子集団の温度は下がり，冷却が起こる．本研究では，シングルビームトラップ中の原子に$s$波散乱を起こして熱緩和をさせた．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=12.0cm]{image./evap.png}
-	\caption{蒸発冷却の概念図．}
-	\label{fig2.3.3}
-\end{figure}
-
-\subsection{光双極子トラップ}
-電気双極子と電場との相互作用を利用して原子のトラップを作ることができる．冷却原子系の実験では主にレーザーを用いてこのトラップポテンシャルを作り，この手法を光双極子トラップという．
-
-光電場中では，原子は電場によって電気双極子$\bm{p}$が誘起される．$\alpha$は複素分極率である．
-\begin{equation}
-	\bm{p} = \alpha \bm{E}
-	\label{eq2.5.2}
-\end{equation}
-この誘電分極と外部電場の相互作用によりポテンシャル$U_{\mathrm{dip}}$が生じる．
-\begin{equation}
-	U_{\mathrm{dip}}=-\frac{1}{2}\langle \bm{p} \cdot \bm{E} \rangle=-\frac{1}{2 \epsilon_{0} c} \mathrm{Re}(\alpha) I
-	\label{eq2.5.3}
-\end{equation}
-ここで$I=2 \epsilon_{0} c|\bm{E}|^{2}$は光強度である．一方，原子によって吸収される光強度$P_{\mathrm{abs}}$は
-\begin{equation}
-	P_{\mathrm{abs}}=\langle \dot{\bm{p}} \cdot \bm{E} \rangle=\frac{\omega}{\epsilon_{0} c} \operatorname{Im}(\alpha) I
-	\label{eq2.5.4}
-\end{equation}
-となる．古典の振動子モデルを考えると分極率$\alpha$は
-\begin{equation}
-	\alpha=\frac{e^{2}}{m_{e}} \frac{1}{\omega_{0}^{2}-\omega^{2}-i \omega \Gamma(\omega)}
-	\label{eq2.5.5}
-\end{equation}
-と書ける．ここで$\Gamma(\omega)$は消衰定数であり
-\begin{equation}
-	\Gamma(\omega)=\frac{e^{2} \omega^{2}}{6 \pi \epsilon_{0} m_{e} c^{3}}
-	\label{eq2.5.6}
-\end{equation}
-である．原子の場合$\Gamma(\omega)$は自然放出レートに対応する．共鳴時の自然放出レート$\Gamma \equiv \Gamma\left(\omega_{0}\right)$を用いると\eq{eq2.5.5}は
-\begin{equation}
-	\alpha=6 \pi \epsilon_{0} c^{3} \frac{\Gamma / \omega_{0}^{2}}{\omega_{0}^{2}-\omega^{2}-i\left(\omega^{3} / \omega_{0}^{2}\right) \Gamma}
-	\label{eq2.5.7}
-\end{equation}
-と書ける．よって，レーザーの作るトラップポテンシャル$U_{\mathrm{dip}}$と散乱レート$\Gamma_{\mathrm{dip}}$は次のように表せる．
-\begin{align}
-	U_{\mathrm{dip}}(\bm{r})
-	& = -\frac{3 \pi c^{2}}{2 \omega_{0}^{3}}\left(\frac{\Gamma}{\omega_{0}-\omega}+\frac{\Gamma}{\omega_{0}+\omega}\right) I(\bm{r})
-	\label{eq2.5.8} \\
-	\Gamma_{\mathrm{dip}}(\bm{r})
-	& = -\frac{3 \pi c^{3}}{2 \hbar \omega_{0}^{3}}\left(\frac{\omega}{\omega_{0}}\right)^{3}\left(\frac{\Gamma}{\omega_{0}-\omega}+\frac{\Gamma}{\omega_{0}+\omega}\right)^{2} I(\bm{r})
-	\label{eq2.5.9}
-\end{align}
-離調$\delta=\omega_{0}-\omega$を大きくしていくと$\Gamma_{\mathrm{dip}}$は$U_{\mathrm{dip}}$に比べて早く減衰していくため，離調が大きく光強度の強いレーザーを用いれば原子のロスの少ないトラップを作れることがわかる．
-
-光双極子トラップに用いるレーザーとしてTEM$_{00}$モードのガウシアンビームを使用した場合を仮定する．このとき，レーザーの強度は
-\begin{equation}
-	I(\bm{r})=\frac{2 P}{\pi w^{2}(x)} \exp \left(-\frac{2 r^{2}}{w^{2}(x)}\right)
-	\label{eq2.5.10}
-\end{equation}
-となる．ここで$P$はパワー，$w^{2}(x)$はビームウエストである．
-
-原点（焦点位置）でのビームウエストを$w_{0}$とすると原点におけるトラップポテンシャルは\eq{eq2.5.8}，\eq{eq2.5.10}より次のようになる．
-\begin{equation}
-	U_{\mathrm{dip}}=-\frac{3 \pi c^{2}}{\omega_{0}^{2}} \frac{\Gamma}{\omega_{0}^{2}-\omega^{2}} \frac{2 P}{\pi w_{0}^{2}}
-	\label{eq2.5.11}
-\end{equation}
-
-また，TEM$_{00}$モードによる光双極子トラップのトラップ周波数はガウシアンビームの強度分布関数から求められる．入射する光の動径方向のトラップ周波数を$\omega_{\mathrm{rad}}$，軸方向のトラップ周波数を$\omega_{\mathrm{axi}}$とすると
-\begin{align}
-	\omega_{\mathrm{rad}}
-	& = \frac{2}{w_{0}} \sqrt{\frac{U_{\mathrm{dip}}}{m}}
-	\label{eq2.5.12} \\
-	\omega_{\mathrm{axi}}
-	& = \frac{1}{z_{\mathrm{R}}} \sqrt{\frac{U_{\mathrm{dip}}}{m}}
-	\label{eq2.5.13}
-\end{align}
-と書ける．
-
-\subsubsection{磁場の影響}
-曲率をもつ磁場が存在する場合，原子の磁気双極子は磁場によるポテンシャルの影響を受ける．磁場の曲率を$B$とするとトラップ周波数$\omega_{\operatorname{mag}}$は
-\begin{equation}
-	\omega_{\operatorname{mag}}(x)=\sqrt{\frac{\mu B}{m}}
-	\label{eq2.5.14}
-\end{equation}
-となる．$\mu$は原子の磁気モーメントである．磁場によるトラップ周波数$\omega_{\mathrm{mag}}$を考慮すると軸方向のトラップ周波数は以下のようになる．
-\begin{equation}
-	\omega_{\mathrm{axi}}=\sqrt{\omega_{\mathrm{opt}}^{2}+\omega_{\mathrm{mag}}^{2}}
-	\label{eq2.5.15}
-\end{equation}
-
-\chapter{実験装置・手法}
-実験に使用した真空装置や光学系，及び実験手法についての説明を行う．本研究で使用した装置は過去に電気通信大学で実際に使われていたものを一度解体し，今年度の春に大阪大学基礎工学部へと移設させたものである．\cite{InaD}\cite{YoshiJun}\cite{Miyato}\cite{Waseem}．
-
-\section{概略}
-使用した装置とその役割は大きく3つに分類される．
-\begin{enumerate}
-	\item 真空装置
+	1 qubitトモグラフィーのために、パウリ演算子を導入する。パウリ演算子は単位演算子$I$と$SU(2)$の$X,\ Y,\ Z$からなる。
+	\begin{equation}
+		\begin{aligned}
+			I \equiv \hat{\lambda}_0 = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}&,\ \ X \equiv \hat{\lambda}_1 = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}\\
+			Y \equiv \hat{\lambda}_2 = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}&,\ \ Z \equiv \hat{\lambda}_3 = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+		\end{aligned}
+		\label{eq2.3}
+	\end{equation}
+	これらを用いて、1 qubitの密度行列$\hat{\rho}_2$は次のように表される。
+	\begin{equation}
+		\hat{\rho}_2 = \frac{1}{2} \sum_{j=0}^3 r_j \hat{\lambda}_j, \ \ \ \ r_j \in Re
+		\label{eq2.4}
+	\end{equation}
+	$SU(2)$はトレースが0なので、密度行列$\hat{\rho}_2$は規格化のために$r_0 = 1$を満たす必要がある。また、ほかのパラメータ$r_{j=1,...,3}$は
+	\begin{equation}
+		r_1^2 + r_2^2 + r_3^2 \leq 1
+		\label{eq2.5}
+	\end{equation}
+	のみ満たす。また、$r_j$は$r_j = Tr[\hat{\rho}_2 \hat{\lambda}_j]$で得られる。\\
 	
-		室温の原子によって冷却されたLiが加熱されるのを防ぐために余分な原子や分子を取り除くのに必要．
-	\item 光学系
+	したがって、1 qubitの密度行列は
+	\begin{equation}
+		\hat{\rho}_2 = \frac{1}{2} \begin{pmatrix}
+			1 + \braket{\hat{\lambda}_3} &
+			\braket{\hat{\lambda}_1} - i \braket{\hat{\lambda}_2} \\
+			\braket{\hat{\lambda}_1} + i \braket{\hat{\lambda}_2} &
+			1 - \braket{\hat{\lambda}_3}
+			\end{pmatrix}
+	\end{equation}
+	で表される。
 	
-		原子のトラップや冷却に用いる．詳細は後述する．
-	\item コイル及びその他
-	
-		コイルはのちに述べるMOTやフェッシュバッハ共鳴に必要な外部磁場を作り出すなどの役割を果たす．
-\end{enumerate}
+	上式から、1 qubitの密度行列は3つの測定だけで求まりそうだが、実験的には4つ目の基底$\hat{\lambda}_0$の測定によって密度行列の規格化が必要である。また、$\langle \hat{\lambda}_j \rangle$の値によっては、$(2.1.2)$式を満たさないことがある。したがって、最尤推定などを用いて物理的に意味のある密度行列を見つける必要がある。
 
-\section{真空装置}
-実験の経験的には，真空度$1 \times 10^{-11} \ $Torrでトラップ寿命は$100$ sのオーダーであり，圧力が一桁上がると寿命がおよそ一桁下がる．よって本研究では真空度を$2 \times 10^{-11} \ $Torr程度に保って実験を行った.
+	$SU(2)$生成子は必ず物理的状態を示すとは限らないが、$\hat{\lambda}_{0,...,3}$は常に物理的に意味のある状態の密度行列の線形和で表すことができる。例えば、パウリ演算子は光学系での測定としては物理的意味がない。しかし、光子の測定を偏向基底で行う際に以下のようなものが用いられる。
+	\begin{equation}
+		\begin{aligned}
+			\ket{H} \bra{H} = \frac{1}{2}[\hat{\lambda}_0 + \hat{\lambda}_3] \ket{V} \bra{V} = \frac{1}{2}[\hat{\lambda}_0 - \hat{\lambda}_3]\\
+			\ket{D} \bra{D} = \frac{1}{2}[\hat{\lambda}_0 + \hat{\lambda}_1] \ket{L} \bra{L} = \frac{1}{2}[\hat{\lambda}_0 + \hat{\lambda}_2]
+		\end{aligned}
+	\end{equation}
+	ここで、$\ket{H} = \ket{0}, \ \ket{V} = \ket{1}, \ \ket{D} = (\ket{0} + \ket{1}) / \sqrt{2} , \ \ket{L} = (\ket{0} + i\ket{1}) / \sqrt{2}$
 
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=18.0cm]{image./chamber.png}
-	\caption{真空チャンバー付近の全体像．}
-	\label{fig3.2.1}
-\end{figure}
+	このようにどの直交した測定基底を選んでも他のいくつかの測定演算子$\hat{\Pi}_k$を用いて$\hat{\lambda}_j = \frac{1}{2} \sum_{k} a_{jk} \hat{\Pi}_k$と表すことができる。そして、トモグラフィーは測定結果$a_{jk} = \langle \hat{\Pi}_k \rangle = Tr[\hat{\rho}_2 \hat{\Pi}_k]$を測定することで行われる。
 
-\subsubsection{オーブン}
-$^6$Li原子の供給源として，固体のLiを$440\ ^{\circ}\mathrm{C}$に加熱して気体のLiを得た．この気体を原子線としてトラップを行うガラスセル側にむけて飛ばす．オーブンとソースチャンバーは細いノズルでつながっており，これは原子線の立体角を小さくして供給源のLiが枯れるまでの時間を長くするためのものである．また，ノズル部分で原子が詰まらないようにノズル部分は$500\ ^{\circ}\mathrm{C}$というより高い温度で加熱した．
+	\subsection{1 qubitトモグラフィー　(非直交基底)}
 
-\subsubsection{真空チャンバー}
-オーブンでLiの蒸気を発生させているため，オーブン側の圧力は高くなる．一方，ガラスセル側に設けたトラップで原子をより多く捕まえるためには，ガラスセル側の圧力を低く保つ必要がある．そのため，オーブン側とガラスセル側に仕切り板を入れ，チャンバーとゼーマンスロワーの間を細いノズルでつなげた．こうすることで，各領域間でのコンダクタンスを落とし，真空度を分離させた．
+	実際には、測定は測定装置側の基底を偏向せずに量子状態を変化させて測定する。そのため、1 qubitの状態を測定基底に合わせて、$| 0 \rangle + | 1 \rangle$や$| 0 \rangle + i | 1 \rangle$から$| 0 \rangle$へ量子状態を変化させることが難しい場合がある。その場合、測定基底を$| 0 \rangle$と
+	\begin{equation}
+		\begin{aligned}
+			\ket{\theta_+} &= \frac{1}{\sqrt{2}} [\cos \theta \ket{0} + \sin \theta \ket{1}]\\
+			\ket{\varphi_+} &= \frac{1}{\sqrt{2}} [\cos \varphi \ket{0} + i \sin \varphi \ket{1}]
+		\end{aligned}
+	\end{equation}
+	とすることができる。$\theta, \varphi$は小さい値でもよい。つまり、1 qubitトモグラフィーはある測定基底と少しの摂動があれば行える。実験系によってはこれは重要になることがある。
 
-\subsubsection{ゼーマンスロワー}
-原子の捕獲効率を上げるため，オーブンとガラスセルの間にゼーマンスロワーを設置し，原子を減速させた．ゼーマンスロワーは細長い管にコイルを巻いた構造をしているため，ヒーターで直接加熱することができず管内の壁面に付いた不純物を取り除き切れない．しかし，コイルに電流を流した際に生じる廃熱でいくらかベーキングできていることを想定して実験を進めた．
+	任意の基底$\ket{\psi_\nu}$での測定は射影子$\hat{\lambda}_\nu = \ket{\psi_\nu} \bra{\psi_\nu}$で表され、これらの基底による観測回数$n_\nu$は
+	\begin{equation}
+		n_\nu = \mathcal{N} \braket{\psi_\nu | \hat{\rho} | \psi_\nu}
+	\end{equation}
+	で表される。($\mathcal{N}$は定数)
 
-\subsubsection{ガラスセル}
-のちに詳細を述べるが，冷却原子気体を得るために共振器トラップとシングルビームトラップの2つの光トラップを用いた．その後，光格子を導入する予定であるが，そのためには原子をトラップする領域の周りに光学系を配置するスペースを確保する必要がある．よって，本研究ではトラップ領域として石英でできたガラスセルを採用した．
+	\subsection{Quditへの拡張}
 
-\section{光学系}
-実験で使用した2種類のレーザー光源と原子を冷却する光トラップについての説明を述べる．レーザーのパワーやパスは日々少しずつ変化するので，適切な光トラップを実現するためには毎日，光学系の最適化（アライメント）を行うことが欠かせない．
+	まず、$SU(d)$を準備する。($d$次元の$SU$群)
 
-\subsection{レーザー光源}
-本研究では，レーザー冷却と蒸発冷却という二つの冷却方法を用いて原子を冷やした．レーザー冷却はゼーマンスロワーと磁気光学トラップ（MOT）という方法で行い，原子の遷移に共鳴する波長の光を用いた．もう一つの蒸発冷却には光双極子トラップによる保存力を利用した．本節では，原子の冷却に用いた2種類のレーザーについて述べる．
+	$d$次元の要素行列$\{ e_j^k|k,j=1,...,d \}$は
+	\begin{equation}
+		\big( e_j^k \big) _{\mu \nu} = \delta_{\nu j} \delta_{\mu k}, \ \ \ \ 1 \leq \nu, \mu \leq d
+	\end{equation}
+	で表され、$\mu$行$\nu$列目の要素が1で他の要素すべてが0である行列である。
 
-\subsubsection{671 nm色素レーザー}
-ゼーマンスロワーやMOTには$^6$Liの$2^2$S$_{1/2}$から$2^2$P$_{3/2}$の遷移幅に対応する波長をもち，$100$ mWのオーダーの高いパワーを出力できるレーザーが必要となる．本研究では光源としてリング共振器色素レーザーを使用した．色素レーザーのパワーはおよそ$470\sim500$ mWであった．\tab{tab3.3.1}と\fig{fig3.3.1}にレーザー冷却に必要だったレーザーの周波数の離調と$^6$Liの超微細構造と周波数の離調の関係をそれぞれ示し，\fig{fig3.3.1.5}には$2^2$S$_{1/2}$の磁場依存性を示す．特に$\ket{1}$と$\ket{2}$は本研究で最も重要な状態である．また，\fig{fig3.3.2}には色素レーザー付近の光学系の配置図を示す．色素レーザーの周波数はゼーマスロワー光に使用する周波数で設定した．
+	これらの行列は交換関係を満たす。
+	\begin{equation}
+		\big[ e_j^i, e_l^k \big] = \delta_{kj} e_l^i - \delta_{il} e_j^k
+	\end{equation}
+	$d(d-1)$個のトレースが0の行列が存在する。
+	\begin{equation}
+		\begin{aligned}
+			\Theta_j^k = e_j^k + e_k^j, \ \ \beta_j^k = -i \big( e_j^k - e_k^j \big) \ \ \ \ \ \ \ \ 1 \leq k < j \leq d
+		\end{aligned}
+	\end{equation}
+	これらは$SU(d)$群の非対角生成子である。
 
-レーザー冷却のためには揺らぎの小さい周波数のレーザー光が必要となる．そのため，色素レーザーの周波数は飽和吸収分光法によって安定化させた\cite{YoshiJun}\cite{Miyato}．周波数の基準として$^6$LiのD$_2$共鳴線を利用した．
+	対角生成子として残り$d-1$個のトレースが0の行列を
+	\begin{equation}
+		\eta_r^r = \sqrt{\frac{2}{r(r-1)}} \Biggl[ \sum_{j=1}^r e_j^j - r e_{r+1}^{r+1} \Biggr]
+	\end{equation}
+	とすると、これで$d^2-1$個の生成子が得られる。\\
+	ここで$\lambda$行列を次のように定義する。
+	\begin{equation}
+		\begin{aligned}
+			\hat{\lambda}_{(j-1)^2 + 2(k-1)} &= \Theta_j^k\\
+			\hat{\lambda}_{(j-1)^2 + 2k-1} &= \beta_j^k\\
+			\hat{\lambda}_{j^2-1} &= \eta_{j-1}^{k-1}
+		\end{aligned}
+	\end{equation}
+	$d$次元に拡張してもこれらの形式は完全エルミート演算子基底である。つまり、$\hat{\lambda}$がエルミートかつ次式を満たす。
+	\begin{equation}
+		\sum_{j=0}^{d^2 - 1} \hat{\lambda}_j = \hat{1}
+	\end{equation}
 
-\subsubsection{1064 nmファイバーレーザー}
-本研究では共振器トラップとシングルビームトラップという$2$つの光トラップを用いた．共振器トラップでは共振器内で単一の周波数（シングルモード）のレーザー光を共振させる必要がある．よって共振器トラップ用の光源には先行研究で作られたDPSSを使用した\cite{Miyake}．もう一方のシングルビームにはKeopsys社製のマルチモードファイバーレーザーを用いた．
+	$d$次元に拡張しても$(2.1.4)$式はそのまま適用できる。つまり、密度行列$\hat{\rho}_d$は生成子の線形結合で表される。
+	\begin{equation}
+		\hat{\rho}_d = \frac{1}{d} \sum_{j=0}^{d^2 - 1} r_j \hat{\lambda}_j
+	\end{equation}
+	これは1 quditの密度行列である。規格化のために係数$r_0$は1とし、$Tr \big[ \hat{\rho}_d^2 \big] \leq 1$より$\sum_{j=1}^{d^2 - 1} r_j^2 \leq d(d-1)/2$を満たす。
 
-\clearpage
-\begin{table}[h]
-\centering
-	\caption{実験で用いた光の周波数}
-		\begin{tabular}{cc}
-		\hline
-		イメージング & 0 MHz \\
-		ゼーマンスロワー & -190 MHz \\
-		MOT & -27.5 MHz \\
-		リポンプ & +228 MHz \\
-		イメージングリポンプ & +228 MHz \\ \hline
-		\end{tabular}
-	\label{tab3.3.1}
-\end{table}
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=14.0cm]{image./hyperfine.png}
-	\caption{$^6$Liの超微細構造と周波数の離調の関係．}
-	\label{fig3.3.1}
-\end{figure}
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=14.0cm]{image./hyperfine-Zeeman.png}
-	\caption{基底状態$2^2$S$_{1/2}$のゼーマン分裂．}
-	\label{fig3.3.1.5}
-\end{figure}
+	\subsection{Multi quditsへの拡張}
 
-\clearpage
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=21.0cm,angle=90]{image./Dye.png}
-	\caption{色素レーザー周りの光学配置．}
-	\label{fig3.3.2}
-\end{figure}
-\clearpage
+	Multi qubitsでは、演算子のヒルベルト空間を規格化された単位行列$\hat{\lambda}_0$を含んだ$SU(2)$を生成子のテンソル積で定義する。
+	\begin{equation}
+		SU(2) \otimes SU(2) \otimes ・・・ \otimes SU(2)
+	\end{equation}
 
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=10.0cm]{image./SA.png}
-	\caption{飽和吸収分光の光学配置．}
-	\label{fig3.3.3}
-\end{figure}
+	2 quditsでは$d^2$の次元を持った密度行列$\hat{\rho}_{2 d}$は同様に拡張できる。\\
+	$\hat{\lambda}_0$を含む$\hat{\lambda}$行列のテンソル積$\hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}$のすべての組はそれぞれ線形独立なので、$\hat{\rho}_{2 d}$は次のように表される。
+	\begin{equation}
+		\hat{\rho}_{2 d} = \frac{1}{d^2} \sum_{j1,j2=0}^{d^2 - 1} r_{j 1, j 2} \hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}
+	\end{equation}
+	同様に、n quditsでは
+	\begin{equation}
+		\hat{\rho}_{n d} = \frac{1}{d^n} \sum_{j1,...,jn=0}^{d^2 - 1} r_{j 1,...,j n} \hat{\lambda}_{j 1} \otimes ・・・ \otimes \hat{\lambda}_{j n}
+	\end{equation}
 
-\subsection{磁気光学トラップ（MOT）}
-MOTとは原子を多く捕獲し，レーザー冷却するためによく使われる技術である．まず，アンチヘルムホルツコイルで四重極磁場を作り，空間に磁場勾配を生み出す．次に，磁場勾配の中心に，三方向で互い対向するように$6$本の光を入射する．このとき，レーザー光の周波数は共鳴から負に離調させ，偏光は$\sigma_-$の円偏光にする．このようにすると，中心から外に向かおうとする原子はドップラー冷却によって冷却されるだけでなく，中心から離れるにつれて大きくなる磁場によって原子の磁場副準位$m=-1$がエネルギー準位の低くくなる方へとゼーマンシフトを起こす．ゼーマンシフトした磁気副準位$m=-1$と基底状態の幅がレーザー光の周波数と一致したとき，遷移選択則により原子は$\sigma_-$の円偏光を吸収してサイクリックな遷移を起こす．遷移した原子はレーザーの輻射圧を受け，その結果として磁場勾配の中心に原子が集まるようになる．まとめると，MOTを用いることで原子を中心にトラップしながらレーザー冷却を行うことができる．\fig{fig3.3.4}にMOTの概念図を示す．
+	\subsection{密度行列の再構成}
 
-$^6$Liの場合，冷却に利用する磁場副準位は$\ket{F, m_F}=\ket{3/2, -3/2}$と$\ket{F', m_F}=\ket{5/2, -5/2}$の間のサイクリック遷移である．この遷移幅がおよそ波長$761$ nmに対応し，周波数を負に離調させた光をMOTに使用した．また，$^6$Liは準位$F=1/2$をもつため，完全にサイクリックな遷移を起こさない．自然放出で$F=1/2$に緩和してしまった原子を遷移サイクルに戻すため$F=1/2$から$F'=3/2$へ遷移させるリポンプ光も入射した．$^6$Liのドップラー限界は$140 \ \mathrm{\mu K}$であるため，この温度付近まで冷却させることができる．
+	簡単のために$\hat{\Gamma}_\nu = \hat{\lambda}_{j 1} \otimes ・・・ \otimes \hat{\lambda}_{j n}$とすると、密度行列は
+	\begin{equation}
+		\hat{\rho}_{n d} = \sum_{\nu = 0}^{d^n - 1} \tilde{r}_\nu \hat{\Gamma}_\nu
+	\end{equation}
+	で表される。$\tilde{r}_\nu$は$d^n$要素あるベクトルの$\nu$番目の要素で
+	\begin{equation}
+		\tilde{r}_\nu = Tr \big[ \hat{\Gamma}_\nu \hat{\rho}_{n d} \big]
+	\end{equation}
+	これを$(2.1.9)$式に代入して
+	\begin{equation}
+		n_\nu = \mathcal{N} \sum_{\mu = 0}^{d^n - 1} B_{\nu, \mu} \tilde{r}_\nu
+	\end{equation}
+	ここで、$B_{\nu, \mu}$は$d^n \times d^n$行列の$\nu$行$\mu$列番目の要素で
+	\begin{equation}
+		B_{\nu, \mu} = \braket{\psi_\nu | \hat{\Gamma}_\mu | \psi_\nu}
+	\end{equation}
+	$B_{\nu, \mu}$が可逆行列であれば
+	\begin{equation}
+		\tilde{r}_\nu = \mathcal{N}^{-1} \sum_{\nu = 0}^{d^n - 1} \hat{M}_\nu n_\nu = \sum_{\nu = 0}^{d^n - 1} \hat{M}_\nu s_\nu
+	\end{equation}
+	ここで、$\hat{M}_\nu$は$d \times d$行列で
+	\begin{equation}
+		\hat{M}_\nu = \sum_{\nu = 0}^{d^n - 1} \big( B^{-1} \big)_{\nu, \mu} \hat{\Gamma}_\nu
+	\end{equation}
+	$\hat{M}_\nu$の性質から
+	\begin{equation}
+		\sum_\nu Tr \big[ \hat{M}_\nu \big] \ket{\psi_\nu} \bra{\psi_\nu} \hat{\rho}_{n d} = \hat{\rho}_{n d}
+	\end{equation}
+	両辺でトレースをとると
+	\begin{equation}
+		\sum_\nu Tr \big[ \hat{M}_\nu \big] n_\nu = \mathcal{N}
+	\end{equation}
+	したがって、任意の密度行列$\hat{\rho}_{n d}$は次のように再構成される。
+	\begin{equation}
+		\hat{\rho}_{n d} = \frac{\sum_\nu \hat{M}_\nu n_\nu}{\sum_\nu Tr \big[ \hat{M}_\nu \big] n_\nu} 
+	\end{equation}
 
-実験を始めた頃，原子が全く捕まっていない状態からアライメントを行ったが，MOTを実現するのはたいへん困難であった．初めて原子がトラップされて発光が見えるまでに約一カ月かかった．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=15.5cm]{image./MOT.png}
-	\caption{MOTの概念図．}
-	\label{fig3.3.4}
-\end{figure}
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./MOT_real.png}
-	\caption{実際のMOTの写真．サイクリック遷移の自然放出により発光するLiが写っている．}
-	\label{fig3.3.5}
-\end{figure}
 
-\subsection{ゼーマンスロワー}
-ゼーマンスロワーとは，MOTによる原子の捕獲効率を上げるためにチャンバーから飛び出てきた高温の原子を減速させる装置である．オーブンで原子は$440\ ^{\circ}\mathrm{C}$まで加熱されているためチャンバーから出てくる原子線の運動エネルギーはおよそ$700k_B$であり速度に換算すると$1000$ m/sのオーダーである．このような高速で飛んでくる原子をそのままMOTでトラップするのは困難なため，原子線に対して正面からスロワー光を入射して光の輻射圧により原子を減速させた．輻射圧により原子は進行方向とは反対の方向に復元力$F = \Gamma \hbar k_l / 2$を得る．$\Gamma, k_l$はそれぞれ自然幅，光の波数である．しかし，減速するにつれて原子はドップラー効果により周波数シフトを起こし，スロワー光に対して共鳴しなくなる．そのため，原子線にコイルで磁場を印加し，磁場によるゼーマンシフトでドップラーシフトを打ち消して効率よく原子を減速させた．
+	\section{最尤推定}
 
-ゼーマンスロワーは長さ$40$ cm, 径$10$ mmの管に$10$個のコイルが巻かれた構造をしている．$10$個のコイルにはそれぞれ異なった値の電流が流れており，適切なゼーマンシフトを得るための磁場を作り出した．また，スロワーとガラスセルの間には，原子線の広がりを抑えるためのコリメート光を入射させた．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=12.0cm]{image./zeeman_slower.jpg}
-	\caption{実際のゼーマンスロワーの写真．}
-	\label{fig3.3.6}
-\end{figure}
 
-\subsection{Compressed MOT（CMOT）}
-本研究ではMOTを二段階に分けて行った．最初のMOTでは原子をできるだけ多く捕まえるようにアライメントを最適化した．二段目のMOTでは密度を上げて温度を下げるように最適化を行った．これをCompressed MOT（CMOT）という．CMOTを行うことで，次の光トラップへの以降効率を上げることができる．
 
-具体的に，CMOTは磁場勾配を大きく，レーザー光の離調を小さくし，光強度を下げることで実現する．これらのパラメータの変化は瞬間的に行うではなく，経時的に適切な値で少しずつ行った．トラップの密度が上がることで，原子間の衝突が増えて原子の温度やロスが大きくなることも考えられるので，CMOTの最適な条件を見つけるのは非常に困難であり，本研究でも試行錯誤が必要であった．
 
-\subsection{共振器トラップ}
-MOTでは原子をドップラー限界の温度までしか冷却することができず，これはフェルミ縮退領域には程遠い温度である．本研究ではシングルビームトラップという光双極子トラップを用いて蒸発冷却を行い，フェルミ縮退を試みた．シングルビームトラップに比べてMOTはトラップ体積が大きく密度が小さいため，MOTからシングルビームに直接原子を移すのは効率が悪い．よって，その移行効率を上げるため，共振器トラップという中くらいの大きさのトラップに原子を移し，その後シングルビームトラップに移行する措置を取った．共振器トラップは共振器によって光強度を増幅させてトラップを深くできる一方で多くの原子を捕獲することができる．
 
-共振器内で常に光が共振するためには，共振器長を波長以下の精度で安定化しなければならない．共振器長の制御は共振器ミラーに付けたピエゾ素子（PZT）に三角波を掃引することで行った．さらに共振器の安定化を，PDH法と呼ばれる反射光強度をエラー信号としてフィードバックに利用する方法で行った\cite{PDH}．本研究で実際に使用した共振器トラップを\fig{fig3.3.7}に示す．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=14.0cm]{image./cavity.png}
-	\caption{共振器トラップの略図．ミラーの曲率半径$r$と共振器長$l$が等しい共焦点型共振器を用いた．共振器内部にガラスセルがあると共振条件は複雑になるが，光をブリュースター角で入射させることでこの問題を解決した．}
-	\label{fig3.3.7}
-\end{figure}
 
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=14.0cm]{image./1064nm.png}
-	\caption{1064 nm系の光学配置．}
-	\label{fig3.3.8}
-\end{figure}
 
-この共振器による光強度の増幅度$A$は次のようになる．
-\begin{equation}
-	A \equiv \frac{I_{\text {cavity }}}{I_{\text {in }}}=\frac{\left(1-R_{1}\right)(1-L)^{1 / 2}}{(1-\sqrt{R_{1} R_{2}(1-L)})^{2}}
-	\label{eq3.3.0.5}
-\end{equation}
-$I_{\text {cavity }}, I_{\text {in }}, R_{1}, R_{2}, L$はそれぞれ共振器の光強度，共振器に入射する光強度，入射ミラーの反射率，出射ミラーの反射率，共振器内のロスである．設計値を\tab{tab3.3.2}に示す．
-\begin{table}[h]
-\centering
-	\caption{共振器の各設計値}
-		\begin{tabular}{cc}
-		\hline
-		反射率$R_{1}$ & $99\%$ \\
-		反射率$R_{1}$ & $99\%$ \\
-		共振器内のロス$L$ & $0.1\%$ \\
-		増幅率$A$ & 289 \\ \hline
-		\end{tabular}
-	\label{tab3.3.2}
-\end{table}
 
-\subsection{シングルビームトラップ}
-共振器トラップからシングルビームへと原子を移す際，移行効率をよくするには$2$つのトラップが空間的に重なっている必要がある．よって，シングルビームを共振器トラップに対して$10$度の角度で入射した．しかし，光双極子トラップは保存力によるトラップであることから，$2$つのビームを重ねただけでは共振器トラップからシングルビームトラップへの原子の移行効率は悪い．よって，シングルビームトラップに移す前に共振器トラップのポテンシャル深さを経時的に少しずつ小さくし，一種の蒸発冷却を行った．こうすることで共振器トラップ内の温度の高い原子だけ取り除き，よく冷却された原子だけをシングルビームトラップに移すことができ，冷却効率の向上にもつながる．
-シングルビームトラップは波長$1064$ nm，パワー$10$ Wのレーザー光をビームウエスト約$30\ \mathrm{\mu m}$に絞ることで，トラップ深さ約$k_B \times 300\ \mathrm{\mu K}$のトラップが得られた．
-\begin{figure}[h]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./rampdown.png}
-	\caption{共振器のランプダウン．}
-	\label{fig3.3.10}
-\end{figure}
 
-\subsection{吸収イメージング法}
-トラップされた原子の状態，すなわち原子の密度分布や運動量分布の測定を吸収イメージング法で行った．吸収イメージング法とは原子に共鳴光を照射し，その透過光の影をCCDカメラで撮像して吸収イメージを得る方法である．使用したCCDカメラのピクセル数は$512 \times 512$で$1$ピクセルの大きさは$16 \ \mathrm{\mu m} \times 16 \ \mathrm{\mu m}$である．得られるイメージはトラップされた原子を$1$次元に積分した，$2$次元密度分布である．イメージングに使用した遷移は$2^2$S$_{1/2}$の$F=3/2$から$2^2$P$_{3/2}$の$F'=5/2$への遷移である．その際，MOT同様サイクリックな遷移が必要なのでイメージング光のほかに，$F=1/2$から$F'=3/2$へ遷移させるイメージングリポンプ用の光も照射した．
 
-ランベルト・ベールの法則（Lambert-Beer law）より原子を透過した光の強度は次のようになる\cite{InaD}\cite{YoshiJun}．
-\begin{equation}
-	I(x, y)=I_{0} \exp (-D(x, y))
-	\label{eq3.3.1}
-\end{equation}
-ここで$D(x, y)$は光学濃度（OD:Optical Depth）と呼ばれるものである．$D(x, y)$は吸収微分断面積$\sigma$と原子密度$n \left(x, y, z \right)$を用いて次のように表せる．
-\begin{equation}
-	D(x, y)=\sigma \int_{-\infty}^{\infty} n \left(x, y, z \right) \mathrm{d} z 
-	\label{eq3.3.2}
-\end{equation}
 
-実際の実験では$D(x, y)$はイメージング光の透過率を測定することで得られる．具体的には，
-\begin{enumerate}
-\renewcommand{\labelenumi}{(\arabic{enumi})}
-	\item 原子がいるときにイメージング光を入射した場合
-	\item 原子がいないときにイメージング光を入射した場合
-	\item 原子もイメージング光もない場合
-\end{enumerate}
-の$3$パターンの写真を撮影し，得られ三枚の写真に対して$\frac{(1)-(3)}{(2)-(3)}$の計算を行い透過光の光強度を得た．そして，その対数を取ることで$D(x, y)$を得た．本研究では，原子数の見積もりの際，$D(x, y)$をCCDカメラの全面積で積算した$N_{\mathrm{count}}$という値を使った．
-\begin{equation}
-	N_{\mathrm{count}} = t^2 \sum_{i, j} D(x_i, y_j)
-	\label{eq3.3.4}
-\end{equation}
-ここで$t$はイメージング倍率である．ここから原子数$N$は
-\begin{equation}
-	N=\frac{A}{t^2 \sigma} N_{\mathrm{count}} 
-	\label{eq3.3.5}
-\end{equation}
-で得られる．$A$はCCDカメラ$1$ピクセルの面積である．
-
-吸収微分断面積は次のように表せる．
-\begin{equation}
-	\sigma=\frac{\sigma_{0}}{1+4(\delta / \Gamma)^{2}+\left(I / I_{s}\right)}
-	\label{eq3.3.6}
-\end{equation}
-イメージング光が共鳴で強度が弱い場合，これは$\sigma \approx \sigma_{0} = 3 \lambda^{2}/2 \pi$となる．
-
-イメージング光の周波数は理論値よりおおよその見当がつくが，実験装置の状況によっていくらか値が変化することが予想される．このため，イメージングをする際には周波数を変化させながら複数回撮像を行うことで周波数の最適化を行った．\fig{fig3.3.11}にCMOTのODとイメージング周波数の関係を示す．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=11.0cm]{image./imaging-frequency.jpg}
-	\caption{イメージング周波数とODの関係．イメージング周波数の最適値は日々状況によって変化するので，ODの低下が確認されたときは常に周波数を変化させることを意識した．}
-	\label{fig3.3.11}
-\end{figure}
-
-\subsubsection{Time of Flight（TOF）イメージ}
-トラップされた原子集団をそのまま撮像しても，高密度な黒い塊が写るだけで正確な運動量分布を測ることができない．そこで，イメージ光を入射する前にトラップから原子を解放させてその原子の広がりから運動量分布を測定する方法を取った．これをTOFイメージという．また，トラップを切ってからイメージング光を入射するまでの，原子が広がっている間の時間をTOF timeと呼ぶ．
-
-\subsubsection{イメージング倍率}
-本来イメージング倍率はCCDカメラ直前のレンズペアの焦点距離によって求められるが，より正確なイメージング倍率を測定するために，シングルビームトラップで蒸発冷却させた原子のTOFイメージから求めた．トラップから解放された原子はあらゆる方向に拡散するが，それと同時に重力落下もする．TOF timeを変えながらイメージングを行い，その座標をプロットすることで原子の落下運動が見え，そこからイメージングを導いた．\fig{fig3.3.12}に実際に測定したプロットを示す．
-
-\subsubsection{高磁場イメージング（High-Field imaging）}
-$p$波フェッシュバッハ共鳴が起こる高磁場では，ゼーマン効果により原子の超微細構造が分裂する．本研究では$\ket{m_J,m_I}=\ket{-1/2,1} \equiv \ket{1}$のフェッシュバッハ共鳴を取り扱うので，高磁場でのイメージングには$2^2$S$_{1/2}$の$m_{J}=-1 / 2, m_{I}=1$から$2^2$P$_{3/2}$の$m_{J}=-3 / 2, m_{I}=1$への遷移を利用した（\fig{fig3.3.1.5}）．この際，磁場の方向（量子化軸）と偏光の向きを十分考慮する必要があった\cite{YoshiJun}．イメージング光に，原子に非共鳴な偏光が半分含まれる場合，ODの見積もりは次のようになる．
-\begin{equation}
-	D'(x,y) = -\log \left(e^{-D(x,y)}-\frac{1}{2} \right)
-	\label{eq3.3.7}
-\end{equation}
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=13.0cm]{image./magnification.png}
-	\caption{イメージング倍率の測定．プロットをフィッティングすると重力落下の二次関数が得られる．}
-	\label{fig3.3.12}
-\end{figure}
-
-\section{コイル}
-MOTやフェッシュバッハ共鳴に必要となる外部磁場をどのように印加したかを説明する．
-
-\subsection{磁場の印加}
-MOTを行うときは四重極磁場による磁場勾配が必要なので$2$つのコイルはアンチヘルムホルツコイルの配置になっているが，フェッシュバッハ共鳴を起こすときには均一磁場が必要なので，コイルの配置をヘルムホルツコイルに切り替える必要がある．この切り替えを早く行うために本研究ではコイルに流れる電流の向きを絶縁ゲートバイポーラトランジスタ（IGBT）で制御することにした．\fig{fig3.4.1}に回路図を示す．赤がMOT IGBT，黄がHelmholtz IGBTとなっている．
-
-\subsection{磁場の安定化}
-$p$波フェッシュバッハ共鳴の共鳴点は$159$ G付近にあり，その共鳴幅は$100$ mG以下なのでコイルの外部磁場は高い分解能が要求される．つまり，高い電流の安定度が必要である．そこで本研究では\fig{fig3.4.2}のような磁場安定化回路を用いた．安定化の概略を述べる．コイルに電流が流れると，ホールプローブに電圧（電流に比例）がかかる．この電圧と，別に用意した制御電圧（Control voltage）との差分電圧を取ってコイルに並列に接続したMOSFETのゲートに返すとゲート電圧に応じてバイパス回路に流れる電流が変化し，電流のフィードバック制御が可能になる．
-
-安定化の結果，磁場の安定度は$110$ mGから$10$ mGに抑えられた．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=12.0cm]{image./IGBT.png}
-	\caption{コイルとIGBTの回路図．赤に電流を流せばアンチヘルムホルツコイル，黄に流せばヘルムホルツコイルになるように接続されている．}
-	\label{fig3.4.1}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=12.0cm]{image./stab.png}
-	\caption{磁場安定化回路．}
-	\label{fig3.4.2}
-\end{figure}
-
-\chapter{実験結果}
-
-\section{Stern-Gerlach測定}
-本研究では，$\ket{1}-\ket{1}$の$p$波フェッシュバッハ共鳴についての研究を行った．そのために純粋な$\ket{1}$状態のみの原子集団が必要となる．蒸発冷却後の原子集団の$\ket{1}$と$\ket{2}$の比を知るためにStern-Gerlach測定を行った．これはトラップ解放後の原子集団に，アンチヘルムホルツコイルで磁場勾配をかけることによって磁気副準位の異なる$\ket{1}$と$\ket{2}$の原子を分離させてイメージングを行う方法である．
-\begin{figure}[H]
-	\begin{tabular}{c}
-		\begin{minipage}[t]{1\hsize}
-			\centering
-				\includegraphics[clip,width=4.0cm,angle=270]{image./SG.png}
-			%\caption{}
-			%\label{}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			\centering
-				\includegraphics[clip,width=4.0cm,angle=270]{image./SG1.png}
-			%\caption{}
-			%\label{}
-		\end{minipage}
-	\end{tabular}
-	\caption{Stern-Gerlach測定の結果．TOF timeは6 ms.上図はRFあり，下図はRFなし．比較すると片方の状態に原子が偏極していることがわかる．}
-	\label{fig4.1.1}
-\end{figure}
-測定結果を\fig{fig4.1.1}に示す．$2$つの図はそれぞれ測定の際にRF:Radio Frequencyを照射した場合とそうでないもので分けてある．RFを照射しなかった場合，Stern-Gerlachによる分離が観測されなかった．これはシングルビームトラップ中の原子が一方の状態に偏極し，もう片方の状態がほとんどいなかったことを示している．この原因は，CMOTのときにMOT光やリポンプ光の強度を変化させる過程で起こると考えられるが，実際にどうパラメータを振れば偏極具合が変わるのか詳しいことはわかっていない．一方，適当な磁場を印加しているとき，その磁場でのゼーマンシフトに対応する周波数のRFを原子のデコヒーレンス時間より長い時間照射すると，偏極が解消されて占有比が$1:1$になる．よって下図のようにStern-Gerlachで分離された原子集団が観測された．$\ket{1}$と$\ket{2}$それぞれの$N_{\mathrm{count}}$はほぼ等しく占有比が$1:1$になったことも確認された．
-
-次に，どちらの原子集団が$\ket{1}$なのかを判別するために磁場勾配を印加する時間を変化させながらStern-Gerlach測定を行った．結果を\fig{fig4.1.2}に示す．数ガウスの磁場の領域では$\ket{1}$は磁場の強い方がエネルギーが低く，$\ket{2}$は弱い方がエネルギーが低く安定である．アンチヘルムホルツコイルが作る磁場勾配は中心から離れていくにつれて強くなっていくため，$\ket{1}$は遠くへ拡散し$\ket{2}$は中心に集まっていく．この結果と\fig{fig4.1.1}の結果を考慮すると，蒸発冷却後の原子はほとんど$\ket{1}$しか残っていないことがわかった．$\ket{1}-\ket{1}$の$p$波フェッシュバッハ共鳴を起こすのに$\ket{2}$は不要なのでこの状況は非常に都合がよかった．
-\begin{figure}[H]
-	\begin{tabular}{c}
-		\begin{minipage}[t]{1\hsize}
-			\centering
-				\includegraphics[clip,width=3.0cm,angle=270]{image./SG1.png}
-			%\caption{}
-			%\label{fig4.1.2.1}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			\centering
-				\includegraphics[clip,width=3.0cm,angle=270]{image./SG2.png}
-			%\caption{}
-			%\label{fig4.1.2.2}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			\centering
-				\includegraphics[clip,width=3.0cm,angle=270]{image./SG3.png}
-			%\caption{}
-			%\label{fig4.1.2.3}
-		\end{minipage}
-	\end{tabular}
-	\caption{磁場勾配をかける時間を変えながらの測定結果．いずれもTOF timeは6 ms．そのうち磁場勾配をかけた時間は上から1 ms, 2.3 ms, 2.5 msである.磁場勾配を長くかけていくと$\ket{1}$は広がり，$\ket{2}$は収縮していく様子が見える．}
-	\label{fig4.1.2}
-\end{figure}
-
-\section{$p$波フェッシュバッハ共鳴の観測}
-フェッシュバッハ共鳴点の近傍では原子が束縛状態と結合しているので，三体衝突により分子が生成されるレートが高くなる．よって三体衝突による原子のロスを観測することでフェッシュバッハ共鳴の起こる磁場の値を探すことができる\cite{JZhang}．
-
-これまで$^6$Liの$p$波フェッシュバッハ共鳴は$\ket{1} - \ket{1}$，$\ket{1} - \ket{2}$，$\ket{2} - \ket{2}$の三通りの組み合わせで観測されている\cite{Mukaiyama}．本研究では$\ket{1}-\ket{1}$のフェッシュバッハ共鳴を対象にした．$\ket{1}-\ket{1}$の$p$波フェッシュバッハ共鳴点はおよそ$159$ Gであるが，その線幅は$100$ mGとかなり狭い．後述する$p$波分子の生成の際には，あらかじめ正確な共鳴点を知っておく必要があり，外部磁場を変化させたときの原子のロスカーブから共鳴点を調べることができる．
-
-実際に観測した原子のロスを\fig{fig4.2.1}に示す．これは，印加している磁場の大きさの変化に対する原子数の変化をプロットしたものである．原子数の急な減少が見られたのはフェッシュバッハ共鳴によるロスと考えられる．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=10.0cm]{image./loss.png}
-	\caption{$p$波フェッシュバッハ共鳴近傍の原子のロス．赤は左軸，青は右軸．原子の温度はそれぞれ$0.6 \  \mathrm{\mu K}, 0.9 \  \mathrm{\mu K}$であった．}
-	\label{fig4.2.1}
-\end{figure}
-
-\section{$p$波分子の生成}
-フェッシュバッハ共鳴点に対して磁場を断熱的に掃引することで分子の生成を試みた．実際に，断熱的に磁場を掃引したときの概念図を\fig{fig4.3.1}に示す．フェッシュバッハ共鳴が起こるとき，原子状態と分子状態の結合が起こる．高磁場からフェッシュバッハ共鳴をまたぐように磁場を下げていくと，トラップ中に分子と原子が両方いる状況を作り出せる．トラップから原子のみを取り除くため，原子に共鳴する光（ブラスト光）を入射した．ブラスト光を入射した時間は$400\ \mathrm{\mu s}$であり，原子を吹く飛ばすのに最小限必要な時間であった．さらに，下げた磁場を再度上げることで分子を原子に解離させ，磁場を大きくすると分子の解離が大きくなることを観測した．この結果から実際に分子が生成されたことがわかった．分子となった原子の割合は，トラップされた原子全体のうちおよそ一割程度であった．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./B_rampdown.png}
-	\caption{分子生成のための磁場の掃引の概念図．$B_0$はフェッシュバッハ共鳴での磁場．今回，$B_0=159.90$とおいた．上げる磁場の大きさは(a)から(e)の$5$パターン変化させて測定を行った．}
-	\label{fig4.3.1}
-\end{figure}
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./atom-molecule.png}
-	\caption{フェッシュバッハ共鳴を用いた分子生成の概念図．}
-	\label{fig4.3.2}
-\end{figure}
-\begin{figure}[H]
-	\begin{tabular}{c}
-		\begin{minipage}[t]{0.5\hsize}
-			\centering
-			(a)
-				\includegraphics[clip,width=2.5cm,angle=270]{image./terminal265.png}
-			%\subcaption{}
-			%\label{}
-		\end{minipage}
-		\begin{minipage}[t]{0.5\hsize}
-			\centering
-			(d)
-				\includegraphics[clip,width=2.5cm,angle=270]{image./terminal24.png}
-			%\subcaption{}
-			%\label{}
-		\end{minipage} \\
-		\begin{minipage}[t]{0.5\hsize}
-			\centering
-			(b)
-				\includegraphics[clip,width=2.5cm,angle=270]{image./terminal26.png}
-			%\subcaption{}
-			%\label{}
-		\end{minipage}
-		\begin{minipage}[t]{0.5\hsize}
-			\centering
-			(e)
-				\includegraphics[clip,width=2.5cm,angle=270]{image./terminal23.png}
-			%\subcaption{}
-			%\label{}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			%\centering
-			(c)
-				\includegraphics[clip,width=2.5cm,angle=270]{image./terminal25.png}
-			%\subcaption{}
-			%\label{}
-		\end{minipage} 
-	\end{tabular}
-	\caption{分子の生成結果．上げた磁場の大きさはそれぞれ(a)160.07 G(b)160.04 G(c)159.97 G(d)159.90 G(e)159.83 Gである．}
-	\label{fig4.3.3}
-\end{figure}
-
-\subsection{ブラスト光のタイミング}
-磁場の終端値を固定したまま，磁場の下げる値のみを変化させて分子の解離の観測を行った．\fig{fig4.3.4}に磁場の掃引の概念図を示し，測定結果を\fig{fig4.3.5}に示す．(a)の場合では磁場がフェッシュバッハ共鳴点をまたぐことなくブラスト光を入射したため，トラップ中の原子は分子になることなくすべて吹き飛ばされた．(b)の場合では分子の生成及びその解離が確認できた．(c)でフェッシュバッハ共鳴をまたいだにも関わらず分子の解離がほとんど見られなかった．これは，分子と原子の衝突によってロスが生じたからだと考えられる．このことから，分子の生成には磁場の掃引だけでなく，ブラスト光を入射させるタイミングをj磁場がフェッシュバッハ共鳴点をまたいで分子ができた瞬間に合わせる工夫が必要だと分かった．ブラスト光を入射させるタイミングを変えながら測定した結果を\fig{fig4.3.6}に示す．磁場がフェッシュバッハ共鳴を超えたあたりでブラスト光を入射したときに原子が観測された．この測定結果からフェッシュバッハ共鳴点を見積もると，およそ159.95 Gであり，分子生成のときと共鳴がずれていた．実験を行った時間帯が変わり，外部の環境が変化したことによってこのずれが生じたと考えられる．
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./B_down.png}
-	\caption{磁場の下げ方の概念図．}
-	\label{fig4.3.4}
-\end{figure}
-\begin{figure}[H]
-	\begin{tabular}{c}
-		\begin{minipage}[t]{1\hsize}
-			\centering
-			(a)
-				\includegraphics[clip,width=3.0cm,angle=270]{image./down235.png}
-			%\subcaption{}
-			%\label{fig4.1.2.1}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			\centering
-			(b)
-				\includegraphics[clip,width=3.0cm,angle=270]{image./down24.png}
-			%\subcaption{}
-			%\label{fig4.1.2.2}
-		\end{minipage} \\
-		\begin{minipage}[t]{1\hsize}
-			\centering
-			(c)
-				\includegraphics[clip,width=3.0cm,angle=270]{image./down242.png}
-			%\subcaption{}
-			%\label{fig4.1.2.3}
-		\end{minipage}
-	\end{tabular}
-	\caption{測定結果．(a)から(c)の3パターンでそれぞれ(a)159.91 G(b)159.90 G(c)159.87 Gまで磁場を下げた．}
-	\label{fig4.3.5}
-\end{figure}
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=9.0cm]{image./blast_timing.png}
-	\caption{ブラスト光のタイミングの変化の概念図．}
-	\label{fig4.3.5.5}
-\end{figure}
-\begin{figure}[H]
-	\centering
-		\includegraphics[clip,width=10.0cm]{image./blast_search.png}
-	\caption{ブラスト光のタイミングを変えながらの測定結果．}
-	\label{fig4.3.6}
-\end{figure}
-
-\chapter{まとめと展望}
-\section{まとめと展望}
-本研究では，$^6$Liを用いた冷却原子系で$p$波相互作用の制御，及び$p$波フェッシュバッハ共鳴を用いた$p$波分子の生成を試み，そして成功した．実際に得られた分子は最大で$6\times10^3$程であった．縮退度の大きさや原子温度などのパラメータを変化させて分子を増やせるか検討する必要がある．また，ほとんどいなかったとはいえ$\ket{2}$がトラップ内にいくらか存在しておりこれが$\ket{1}-\ket{1}$フェッシュバッハ共鳴に与えられる影響を考慮して$\ket{2}$を取り除くためのブラスト光を用意する必要もあったと考えられる．ボゾンである$p$波分子がBECを起こすには位相空間密度が$2.6$であることが必要であり，そのためには分子数を増やしたり冷却効率の改善など試み検討する必要があると考えられる\cite{InaD}．
-
-また，$p$波分子生成のメカニズムはまだ解明できていない点が多く，初期の原子温度や磁場の掃引速度が分子の生成にどう依存しているのか詳しくはわかっていないのが現状である\cite{InaD}．
-
-ロスを抑えながら分子を生成する方法の一つには光格子を用いる方法があり，各サイト中に2つの原子が入った状態を実現すれば三体ロスを抑えながら分子を生成することができる．よって，今後の課題としては分子の生成効率の向上や光格子の導入について検討する必要があると思われる．
-
-\appendix
-
-\chapter{フェルミ・ディラック積分}
-\begin{align}
- 	\int_{0}^{\infty} \frac{\varepsilon^{n}}{e^{\beta(\varepsilon-\mu)}+1} \mathrm{d} \varepsilon
-	& = \beta^{ -( n+1 ) } \int_{0}^{\infty} \frac{ x^{n} }{ e^{ x - \eta } + 1 } \mathrm{d} x \  (x=\beta \varepsilon)
-	\notag \\
- 	& = \beta^{ -( n+1 ) } \int_{0}^{\infty} \frac{ x^{n}  e^{ - x + \eta } }{ 1 + e^{ - x + \eta } } \mathrm{d} x
- 	\notag \\
- 	& = \beta^{ -( n+1 ) } \int_{0}^{\infty} x^{n} \left( e^{ - x + \eta } - \frac{ e^{ (- x + \eta)2 } }{ 1 + e^{ - x + \eta } } \right) \mathrm{d} x
- 	\notag \\
- 	& = \beta^{ -( n+1 ) } \int_{0}^{\infty} x^{n} \left( e^{ - x + \eta } -  e^{ (- x + \eta)2 } + \frac{ e^{ (- x + \eta)3 } }{ 1 + e^{ - x + \eta } } \right) \mathrm{d} x = ...
- 	\notag \\
- 	& = \beta^{ -( n+1 ) } \int_{0}^{\infty} x^{n} \sum_{r=1}^{\infty} - (-1)^r e^{ (- x + \eta)r } \mathrm{d} x
- 	\notag \\
- 	& = - \beta^{ -( n+1 ) } \sum_{r=1}^{\infty} (-1)^r e^{ \eta r } \int_{0}^{\infty} x^{n} e^{ - x r } \mathrm{d} x
- 	\notag \\
- 	& = - \beta^{ -( n+1 ) } \sum_{r=1}^{\infty} (-1)^r e^{ \eta r } \frac{1}{r^{n+1}}\Gamma(n+1)
- 	\notag \\
- 	& = - \beta^{ -( n+1 ) } \Gamma(n+1) \sum_{r=1}^{\infty} \frac{ (- e^{ \eta })^r}{ r^{n+1} }
- 	\notag \\
- 	& = - \beta^{ -( n+1 ) } \Gamma(n+1) \mathrm{Li}_{n+1}(- e^{ \eta })
-	\label{eq:1}
-\end{align}
-$e^{ \eta }=\xi$とすると
-\begin{align}
- 	\int_{0}^{\infty} \frac{\varepsilon^{n}}{e^{\beta(\varepsilon-\mu)}+1} \mathrm{d} \varepsilon
- 	= \int_{0}^{\infty} \frac{\varepsilon^{n}}{e^{\beta \varepsilon }/\xi +1} \mathrm{d} \varepsilon
- 	= - \beta^{ -( n+1 ) } \Gamma(n+1) \mathrm{Li}_{n+1}(- \xi )
-	\label{eq:2}
-\end{align}
-
-\chapter{原子密度と運動量分布}
-\begin{align}
- 	\mathrm{w}(\bm{r}, \bm{p}) = \frac{1}{(2 \pi \hbar)^{3}} \frac{1}{e^{\beta(\mathcal{H}(\bm{r}, \bm{p})-\mu)}+1}
-	\label{eq:3}
-\end{align}
-\begin{align}
- 	\mathcal{H}(\bm{r}, \bm{p}) = \frac{1}{2m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)+\frac{m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)
- 	= \frac{1}{2m} p^2 + \frac{m \omega_{r}^{2}}{2} \rho^2
-	\label{eq:4}
-\end{align}
-\begin{align}
- 	n(\bm{r}) 
- 	& = \int_{-\infty}^{\infty} \mathrm{w}(\bm{r}, \bm{p}) \mathrm{d} \bm{p}
- 	\notag \\
- 	& = \iiint \mathrm{w}(\bm{r}, \bm{p}) \mathrm{d} p_x \mathrm{d} p_y \mathrm{d} p_z
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} \iiint \frac{1}{e^{\beta( \frac{1}{2 m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)+\frac{m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)-\mu)}+1} \mathrm{d} p_x \mathrm{d} p_y \mathrm{d} p_z
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} \iiint \frac{1}{e^{\beta \frac{1}{2 m}\left(p_{x}^{2}+p_{y}^{2}+p_{z}^{2}\right)} / \Xi+1} \mathrm{d} p_x \mathrm{d} p_y \mathrm{d} p_z
- 	\notag \\
- 	 & = \frac{1}{(2 \pi \hbar)^{3}} \int \frac{1}{e^{ \beta \frac{1}{2 m} p^2 } / \Xi+1} 4\pi p^2 \mathrm{d} p
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} 4\pi \int \frac{\gamma}{e^{\frac{\beta}{2 m} \gamma } / \Xi+1} \frac{1}{2\sqrt{\gamma}}\mathrm{d} \gamma
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} 4\pi \frac{1}{2} \int \frac{\sqrt{\gamma}}{e^{\frac{\beta}{2m} \gamma } / \Xi+1} \mathrm{d} \gamma
- 	\notag \\
- 	& = \frac{1}{(2 \pi \hbar)^{3}} 4\pi \frac{1}{2} \left[ - \left(\frac{\beta}{2m} \right)^{-3/2} \Gamma \left(\frac{3}{2}\right) \mathrm{Li}_{3/2}(- \Xi )\right]
- 	\notag \\
- 	& = - \frac{1}{(2 \pi \hbar)^{3}} 4\pi \frac{1}{2} (2mk_{B}T)^{3/2} \frac{\sqrt{\pi}}{2} \mathrm{Li}_{3/2}(- \Xi )
- 	\notag \\
- 	& = - \left( \frac{mk_{B}T}{2 \pi \hbar^2} \right)^{3/2} \mathrm{Li}_{3/2}(- \Xi )
-	\label{eq:5}
-\end{align}
-$\Xi=\xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B}T}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right) }$より
-\begin{align}
- 	n(\bm{r}) 
- 	= - \left( \frac{mk_{B}T}{2 \pi \hbar^2} \right)^{3/2} \mathrm{Li}_{3/2}(- \xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B} T}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right) } )
-	\label{eq:6}
-\end{align}
-ここでPolyLog関数の各項を1次元で積分すると
-\begin{align}
- 	\frac{1}{r^{3/2}}\int( - \xi e^{- \frac{\beta m \omega_{r}^{2}}{2}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right)} )^r \mathrm{d} x
- 	& = \frac{1}{r^{3/2}} ( - \xi e^{- \frac{\beta m \omega_{r}^{2}}{2}\left(y^{2}+\lambda^{2} z^{2}\right)} )^r \int e^{- \frac{ \beta m \omega_{r}^{2}}{2} rx^{2} } \mathrm{d} x
- 	\notag \\
- 	& = \frac{1}{r^{3/2}} ( - \xi e^{- \frac{\beta m \omega_{r}^{2}}{2}\left(y^{2}+\lambda^{2} z^{2}\right)} )^r \sqrt{ \frac{2}{ \beta m \omega_{r}^{2}} } \sqrt{\frac{\pi}{r}}
- 	\notag \\
- 	& = \sqrt{ \frac{2\pi k_{B}T}{ m \omega_{r}^{2}} } \frac{1}{r^2} ( - \xi e^{- \frac{ m \omega_{r}^{2}}{2k_{B}T}\left(y^{2}+\lambda^{2} z^{2}\right)} )^r
-	\label{eq:7}
-\end{align}
-よって
-\begin{align}
- 	\mathrm{OD}(y,z) 
- 	& = \int n(\bm{r}) \mathrm{d} x
- 	\notag \\
- 	& = - \left( \frac{mk_{B}T}{2 \pi \hbar^2} \right)^{3/2} \int \mathrm{Li}_{3/2}(- \xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B} T}\left(x^{2}+y^{2}+\lambda^{2} z^{2}\right) } ) \mathrm{d} x
- 	\notag \\
- 	& = - \left( \frac{mk_{B}T}{2 \pi \hbar^2} \right)^{3/2}\sqrt{ \frac{2\pi k_{B}T}{ m \omega_{r}^{2}} } \sum_{r=1}^{\infty} \frac{1}{r^2} ( - \xi e^{- \frac{ m \omega_{r}^{2}}{2k_{B}T}\left(y^{2}+\lambda^{2} z^{2}\right)} )^r
- 	\notag \\
- 	& = - \frac{m(k_{B}T)^2}{2 \pi \hbar^3 \omega_{r} } \mathrm{Li}_{2}(- \xi e^{ - \frac{m \omega_{r}^{2}}{2k_{B} T}\left(y^{2}+\lambda^{2} z^{2}\right) } )
-	\label{eq:8}
-\end{align}
-
-%参考文献
-\begin{thebibliography}{99}
-\bibitem{JZhang}J. Hang, E.G.M van Kempen, T. Bourdel, L. Khaykovich, J. Cubizolles, F. Chevy, M. Teichmann, L. Tarruel, S. J. J. M. F. Kokkelmans, and C. Salomon, ``P-wave Feschbach resonances of ultracold 6Li'', Phys. Rev. A, 70, 030702(R) (2004)
-\bibitem{Mukaiyama}Yasuhisa Inada, Munekazu Horikoshi, Shuta Nakajima, Makoto Kuwata-Gonokami, Masahito Ueda, and Takashi Mukaiyama, ``Collisional Properties of $p$-Wave Feshbach Molecules'', PRL 101, 100401 (2008)
-\bibitem{InaD} 稲田安寿，極低温フェルミオン原子$^{6}$Liにおける$s$波及び$p$波対形成，博士論文，平成30年，電気通信大学
-\bibitem{YoshiJun} 吉田純，極低温$^{6}$Li原子気体を用いた同種フェルミ粒子系における$p$波三体再結合に関する研究，博士論文，平成30年，電気通信大学
-\bibitem{Miyato} 宮戸泰三，強相関系シミュレーションに向けた縮退フェルミ原子気体の生成，修士論文，平成19年2月，東京大学
-\bibitem{Waseem}Muhammad Waseem. ``Collisional properties of Fermi gases with $p$-wave interactions'', September, 2018, The University of Electro-Communications
-\bibitem{J.J. Sakurai} J. J. Sakurai，San Fu Tuan編，桜井明夫 訳，現代の量子力学，吉岡書店
-\bibitem{igikawa} 猪木慶治・河合光/著，量子力学
-\bibitem{Kuga} 久我隆弘，レーザー冷却とボーズ凝縮
-\bibitem{demarco} Brian DeMarco, ``Quantum Behavior of an Atomic Fermi Gas'', B. A. Physics, SUNY Geneseo, 1996
-\bibitem{Bjorkholm}J. E. Bjorkholm. ``Collision-Limited lifetimes of atom traps'', PRA,38,1599(1988)
-\bibitem{Miyake}三明祐大．リチウム原子冷却のための半導体レーザー励起Nd:YVO$_4$レーザーの開発，卒業論文，平成25年，電気通信大学
-\bibitem{PDH}R. W. P. Drever, J. L. Hall, F. V. Kowalski, J. Hough, G. M. Ford, A. J. Munley and H. Ward, ``Laser phase and frequency stabilization using an resonator'', Appl. Phys. B, 31, 97(1983)
-\end{thebibliography}
-
-\chapter*{謝辞}
-\addcontentsline{toc}{chapter}{謝辞}
-\begin{spacing}{1.2}
-本論文は大阪大学基礎工学部電子物理科学科エレクトロニクスコース向山研究室において約一年間かけて行われた卒業研究の成果をまとめたものです．本研究を行う上で研究室の多くの方々のご指導及びご協力に与りましたこと，深く御礼申し上げます．
-指導教員である向山敬教授にはこの一年間，たいへん厚い御指導，御鞭撻をいただきました．研究や実験内容のみならず，科学者として必要になる論理的な思考の方法についてたいへん参考になる意見をご教授くださいましたこと，深く感謝申し上げます．
-
-また，ゼミや発表などで適切なご指導をくださいました齋藤了一助教，新城亜美特任助教の両名に感謝申し上げます．
-
-同じ研究グループのメンバーとして日々苦楽を共にして実験を行った南谷広海氏，永瀬健太氏の両名にお礼申し上げます．
-研究室生活を共にした児島匠氏，馬場誠人氏，大山泰成氏，久米祥太氏，東山浩也氏，藤井竣平氏，内藤優介氏，大澤泰平氏に感謝申し上げます．
-向山研究室の皆様，本当にありがとうございました．
-\end{spacing}
- 
-\begin{flushright}
-2020年2月12日\\
-向山研究室学部4年\\
-長野時京
-\end{flushright}
 
 \end{document}

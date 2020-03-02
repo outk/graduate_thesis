@@ -285,6 +285,178 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\section{最尤推定}
 
+	これで密度行列は実験の測定基底と観測回数によって一意に求まるが、これまでで求まる密度行列は必ずしも密度行列の性質をすべて満たしているとは限らない。
+
+	この問題を避けるために最尤推定を利用する。手順は以下の通りである。
+
+	\begin{enumerate}
+		\item \underline{密度行列の性質を満たす密度行列を生成する}
+		\item \underline{１で求めた密度行列が非物理的であれば尤度関数を導入し、次の最尤推定を行う}
+		\item \underline{Iterativeなアルゴリズムを用いて尤度関数を最大化させもっとも確からしい密度行列を求める}
+	\end{enumerate}
+
+
+	\subsection{密度行列の確認}
+
+	まず、密度行列の性質を満たす行列を生成する。
+
+	半正定値行列$\hat{G}$は次の式を満たすとする。
+	\begin{equation}
+		\braket{\psi | \hat{G} | \psi} \geq 0,\ \ \ \ \ ^\forall \ket{\psi}
+	\end{equation}
+	$\hat{G} = \hat{T}^\dagger \hat{T}$と書けるどんな行列$\hat{G}$も必ず半正定値行列となる。実際、
+	\begin{equation}
+		\braket{\psi | \hat{T}^\dagger \hat{T} | \psi} = \braket{\psi' | \psi'} \geq 0
+	\end{equation}
+	ここで、$\ket{\psi'} = \hat{T} \ket{\psi}$である。さらに、$(\hat{T}^\dagger \hat{T})^\dagger = \hat{T}^\dagger (\hat{T}^\dagger)^\dagger = \hat{T}^\dagger \hat{T}$、すなわち$\hat{G}$はエルミートである。
+
+	規格化のために
+	\begin{equation}
+		\hat{g} = \frac{\hat{T}^\dagger \hat{T}}{Tr \big[ \hat{T}^\dagger \hat{T} \big] } 
+	\end{equation}
+	とすると、$\hat{g}$は密度行列の数学的条件をすべて満たす。
+
+	この性質を利用するために、$\hat{T}$を$d^2$個の実数変数$t$を用いて、
+	\begin{equation}
+		\hat{T}_{(t)} = \begin{pmatrix}
+			t_1 & 0 & & \cdots & 0 \\
+			t_{d+1} + it_{d+2} & t_2 & & & \\
+			\vdots & & \ddots &  & \vdots \\
+			& & & t_{d-1} & 0 \\
+			t_{d^2 - d + 1} + it_{d^2 - d + 2} & & \cdots & t_{d^2 - 1} + it_{d^2} & t_d
+		\end{pmatrix}
+	\end{equation}
+	とすると、
+	\begin{equation}
+		\hat{\rho}_p = \frac{\hat{T}^\dagger_{(t)} \hat{T}_{(t)}}{Tr \big[ \hat{T}^\dagger_{(t)} \hat{T}_{(t)} \big] }
+	\end{equation}
+	は明らかに密度行列の性質を持つ。
+	つまり、この複素行列$\hat{T}_{(t)}$を実験値から適切に求めることで最も確からしい密度行列が求められる。
+
+	そこで、$(2.1.28)$式で実験値から求めた密度行列が$(2.2.5)$式となっているかを確認する。
+	$(2.2.5)$式は複素数のCholesky分解そのものであるので、確認するのは容易である。(Appendix A)
+	ここで求めた複素行列$\hat{T}_{(t)}$が上述の条件を満たしていれば、以降の最尤推定は必要ない。
+
+	最尤推定が必要な場合、得られた密度行列は非物理的な値になっているので、最尤推定の初期値としてそのまま利用することはできない。
+	実験的なデータ誤差や偏りに左右されないように最大混合状態$\hat{I}$を最尤推定の初期値とすることは合理的である。
+	しかし、今回は真の密度行列をある程度推測してから最尤推定を行うことで計算時間を短縮できる仮定のもとに、初期値を実験データを利用して求めた密度行列にする場合も考える。
+	つまり、$(2.2.4)$式の制約から対角項を実数のみ利用し求めた密度行列を初期値とする。
+	また、計算途中で0の除算が発生した場合は0の代わりに微小項を代入する。
+
+	\subsection{$\hat{R}\hat{\rho}\hat{R}アルゴリズム$}
+
+	まず、尤度関数$\mathcal{L} (\hat{\rho})$を導入する。
+
+	一般の測定$\hat{\Pi}$はPOVMで表されるので、$Tr \big[ \hat{\Pi}_i \hat{\rho} \big] \geq 0$を満たす。
+	ここで、総測定回数を$N$、それぞれの測定基底$\hat{\Pi}_i$における測定回数を$f_i$とする。
+	量子状態$\hat{\rho}$におけるある測定回数の集合{$f_i$}の尤度関数は$\mathcal{L} (\hat{\rho}) = \prod_i \Pr_i^{f_i}$で得られる。
+	$\Pr_i = Tr \big[ \hat{\Pi}_i \hat{\rho} \big]$はそれぞれの基底で得られる確率である。
+	最終的な目標はこの尤度関数を最大化させる密度行列$\hat{\rho}_0$を見つけることである。
+	ここで相対頻度を$\tilde{f}_i = \frac{f_i}{N}$とする。
+	$\ket{y_i}$は正規直交基底として、測定基底を$\hat{\Pi}_i = \ket{y_i} \bra{y_i}$とする。
+	また、POVMは完全関係を満たすので、
+	\begin{equation}
+		\sum_i \ket{y_i} \bra{y_i} = \hat{I}
+	\end{equation}
+
+	\subsection*{\underline{尤度関数の増加}}
+
+	対数尤度関数は$\log \mathcal{L} (\hat{\rho}) = \sum_i \tilde{f}_i \log \Pr_i$である。ここで、
+	\begin{equation}
+		\hat{R} = \sum_i \frac{\tilde{f}_i}{\Pr_i} \ket{y_i} \bra{y_i}
+	\end{equation}
+	とすると、$\hat{R} \hat{\rho}$の対数尤度関数は
+	\begin{equation}
+		\begin{aligned}
+			\log \mathcal{L} \big( \hat{R} \hat{\rho}) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i \hat{R} \hat{\rho} \big] \Big) \\
+			&=  \sum_i \tilde{f}_i \log \Bigg( Tr \Big[ \hat{\Pi}_i \sum_j \frac{\tilde{f}_j}{\Pr_j} \ket{y_j} \bra{y_j} \hat{\rho} \Big] \Big) \\
+			&= \sum_i \tilde{f}_i \log \Bigg( \sum_j \frac{\tilde{f}_j}{\Pr_j} \braket{y_i | y_j} \braket{y_j | \hat{\rho} | y_i} \Bigg) \\
+			&= \sum_i \tilde{f}_i \log \tilde{f}_i
+		\end{aligned}
+	\end{equation}
+	となる。したがって、$\hat{R}$による密度行列の更新前後の対数尤度関数の差は
+	\begin{equation}
+		\log \mathcal{L} \big( \hat{R} \hat{\rho} \big) - \log \mathcal{L} \big( \hat{\rho} \big) = \sum_i \tilde{f}_i \log \tilde{f}_i - \sum_i \tilde{f}_i \log \Pr_i = \sum_i \tilde{f}_i \log \frac{\tilde{f}_i}{\Pr_i}
+	\end{equation}
+	ここで、$\sum_i \tilde{f}_i = \sum_i \Pr_i = 1,\ \ 0 < \tilde{f},\ \ \Pr_i < 1$なので、Jensenの不等式
+	\begin{equation}
+		\prod_i \Big[ \frac{x_i}{a_i} \Big]^{\tilde{f}_i} \leq \sum_i \tilde{f}_i \frac{x_i}{a_i} \ \ \ \ \Big( \sum_i x_i = 1,\ x_i \geq 0,\ a_i > 0 \Big)
+	\end{equation}
+	を用いると、
+	\begin{equation}
+		\begin{aligned}
+			- \sum_i \tilde{f}_i \log \frac{\tilde{f}_i}{\Pr_i} &= \sum_i \tilde{f}_i \log \frac{\Pr_i}{\tilde{f}_i} \\
+			&= \log \Bigg( \prod_i \Big( \frac{\Pr_i}{\tilde{f}_i} \Big)^{\tilde{f}_i} \Bigg) \\
+			&\leq \log \Big( \sum_i \tilde{f}_i \frac{\Pr_i}{\tilde{f}_i} \Big) \\
+			&= \log 1 = 0
+		\end{aligned}
+	\end{equation}
+	したがって、$\hat{\rho}^{(k+1)} = \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)}$と密度行列を更新していけば尤度関数は必ず増加する。
+
+	\subsection*{\underline{尤度関数の収束性}}
+
+	Jensenの不等式から
+	\begin{equation}
+		\prod_i \Big[ \frac{x_i}{a_i} \Big]^{\tilde{f}_i} \leq \sum_i \tilde{f}_i \frac{x_i}{a_i} \Longleftrightarrow \prod_i x_i^{\tilde{f}_i} \leq \prod_i a_i^{\tilde{f}_i} \sum_k \tilde{f}_k \frac{x_k}{a_k}
+	\end{equation}
+	より、尤度関数は
+	\begin{equation}
+		\begin{aligned}
+			\mathcal{L} (\hat{\rho}) &= \prod_i Tr \big[ \ket{y_i} \bra{y_i} \hat{\rho} \big]^{\tilde{f}_i} \\
+			&\leq \prod_i a_i^{\tilde{f}_i} \sum_k \tilde{f}_k \frac{Tr [ \ket{y_i} \bra{y_i} \hat{\rho}]}{a_k} \\
+			&= \prod_i a_i^{\tilde{f}_i} Tr \big[ \hat{\rho} \hat{R} (a) \big]
+		\end{aligned}
+	\end{equation}
+	\begin{equation}
+		\hat{R} (a) = \sum_i \frac{\tilde{f}_i}{a_i} \ket{y_i} \bra{y_i}
+	\end{equation}
+	ここで、任意の半正定値演算子$\hat{R} = \sum_i \lambda_i \ket{y_i} \bra{y_i},\ \lambda_i \geq 0$の最大固有値を$\max_i \lambda_i$とすると、
+	\begin{equation}
+		Tr [\hat{\rho} \hat{R}] \leq \max_i \lambda_i
+	\end{equation}
+	よって、$\hat{R} (a)$の最大固有値を$\lambda (y, a)$として、
+	\begin{equation}
+		\mathcal{L} (\hat{\rho}) \leq \lambda (y, a) \prod_i a_i^{\tilde{f}_i}
+	\end{equation}
+	最大固有ベクトルを$\ket{\psi(y, a)}$とすると、等式が成立するのは
+	\begin{equation}
+		\frac{| \braket{y_i | \psi (y, a)} |^2}{a_i} = const
+	\end{equation}
+	これにより、尤度関数の上限が存在することがわかる。\\
+
+	これまでで、$\hat{\rho}^{(k+1)} = \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)}$は$\hat{R}$が対角行列または$\hat{\rho}$が対角行列であれば最尤推定が可能であることが示された。
+	しかし、密度行列は非対角項も考慮する必要があり、実験による測定もPOVMとは限らない。
+	そこで、密度行列の収束性を利用して$\hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) = \hat{\rho}_0$となる$\hat{\rho}_0$が存在すると仮定して、規格化定数$\mathcal{N}$を用いて
+	\begin{equation}
+		\hat{\rho}^{(k+1)} = \mathcal{N} \big[ \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)} \hat{R} (\hat{\rho}^{(k)}) \big]
+	\end{equation}
+	を$\hat{R} \hat{\rho} \hat{R}$アルゴリズムと呼ぶことにする。
+
+	一般に、$\hat{R} \hat{\rho} \hat{R}$アルゴリズムは尤度関数が常に増加するとは言えない。
+	そこで、非負の値$\epsilon$を導入することでこの問題を解決する。
+
+	\subsection{Duiluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズム}
+
+	Duiluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズムとは以下の式で表す。
+	\begin{equation}
+		\hat{\rho}^{(k+1)} = \mathcal{N} \Bigg[ \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \hat{\rho}^{(k)} \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \Bigg]
+	\end{equation}
+	$\epsilon \ll 1$であれば尤度関数は常に増加する。
+
+	\subsection*{\underline{尤度関数の増加}}
+
+	$\epsilon \ll 1$で$(2.2.19)$式の$\epsilon$の1次までの近似をとると、$(1 + \epsilon)^{-2} \approx 1 - 2\epsilon$より、
+	\begin{equation}
+		\hat{\rho}^{(k+1)} = \hat{\rho}^{(k)} + \Delta \hat{\rho}
+	\end{equation}
+	\begin{equation}
+		\Delta \hat{\rho} = \epsilon \big( \hat{R} \hat{\rho}^{(k)} + \hat{\rho}^{(k)} \hat{R} -2 \hat{\rho}^{(k)} \big)
+	\end{equation}
+	また、
+
+
+
+
 
 
 

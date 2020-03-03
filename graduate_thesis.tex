@@ -453,6 +453,143 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		\Delta \hat{\rho} = \epsilon \big( \hat{R} \hat{\rho}^{(k)} + \hat{\rho}^{(k)} \hat{R} -2 \hat{\rho}^{(k)} \big)
 	\end{equation}
 	また、
+	\begin{equation}
+		Tr \big[ \hat{R} \hat{\rho}^{(k)} \big] = Tr \big[ \hat{\rho}^{(k)} \hat{R} \big] = 1 
+	\end{equation}
+	簡単のために$\mathcal{N} = 1$とすると、$\hat{\rho}^{(k+1)}$の対数尤度関数は、
+	\begin{equation}
+		\begin{aligned}
+			\log \mathcal{L} \big( \hat{\rho}^{(k+1)} \big) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i \hat{\rho}^{(k+1)} \big] \Big) \\
+			&= \sum_i \tilde{f}_i \log \Big( \Pr_i Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \Big) \\
+			&= \sum_i \tilde{f}_i \Big\{ \log \Pr_i + \log \Big( 1 + \frac{1}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \Big) \Big\} \\
+			&\thickapprox \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + \sum_i \frac{\tilde{f}_i}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \\
+			&= \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + Tr \big[ \hat{R} \Delta \hat{\rho} \big] \\
+			&= \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + 2 \epsilon \Big( Tr \big[ \hat{R} \hat{\rho}^{(k)} \hat{R} \big] \Big)
+		\end{aligned}
+	\end{equation}
+	4式目の近似は$( \log (1 + a) \thickapprox a if a \ll 1 )$を用いた。\\
+
+	ここで、$Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] = Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big] = 1$を示す。\\
+	半正定値行列$\hat{\rho}$は$\hat{\rho} = \big( \hat{\rho}^{\frac{1}{2}} \big)^2$となる$\hat{\rho}^{\frac{1}{2}}$が存在するので、
+	\begin{equation}
+		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} = \Big( \hat{R} \hat{\rho}^{\frac{1}{2}},\ \hat{R} \hat{\rho}^{\frac{1}{2}} \Big) \Big( \hat{\rho}^{\frac{1}{2}},\ \hat{\rho}^{\frac{1}{2}} \Big)
+	\end{equation}
+	また、
+	\begin{equation}
+		Tr^2 \big[ \hat{R} \hat{\rho} \big] = \Big| \Big( \hat{R} \hat{\rho}^{\frac{1}{2}},\ \hat{\rho}^{\frac{1}{2}} \Big) \Big|^2
+	\end{equation}
+	ここで、$\big( \hat{A},\ \hat{B} \big) = \sum_{i,j} A*_{ij} B_{ji} = Tr \big[ \hat{A}^\dagger \hat{B} \big]$\\
+	Cauchy-Schwarzの不等式より、
+	\begin{equation}
+		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big]
+	\end{equation}
+	よって、
+	\begin{equation}
+		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] \geq 1
+	\end{equation}
+	$Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] = 1$が成り立つのは$\hat{R} \hat{\rho}^{\frac{1}{2}} = \hat{\rho}^{\frac{1}{2}}$、つまり$\hat{R} \hat{\rho} = \hat{\rho}$のときのみである。\\
+
+	これで尤度関数が常に増加することが言える。
+
+	\subsection*{\underline{非完全な測定基底の場合}}
+
+	これまで$\sum_i \hat{\Pi}_i = \hat{I}$の関係を満たす、つまり測定基底が完全関係を満たしていたが、満たさない場合の測定についても次のようにすることでこれまでのアルゴリズムは同様に適用することができる。\\
+
+	射影測定は一般に$\sum_i \ket{y_i} \bra{y_i} = \hat{H}$と表されるので、
+	\begin{equation}
+		\sum_i \hat{H}^{- \frac{1}{2}} \ket{y_i} \bra{y_i} \hat{H}^{- \frac{1}{2}} = \hat{I}
+	\end{equation}
+	と考えると、
+	\begin{equation*}
+		\begin{aligned}
+			\Pr_i &\to \frac{\Pr_i}{\sum \Pr_i} \\
+			\hat{R} &\to \hat{H}^{- \frac{1}{2}} \hat{R} \hat{H}^{- \frac{1}{2}} \\
+			\hat{\rho} &\to \hat{H}^{- \frac{1}{2}} \hat{\rho} \hat{H}^{- \frac{1}{2}} \\
+			\hat{H} &= \frac{\sum \ket{y_i} \bra{y_i}}{\sum \Pr_i}
+		\end{aligned}
+	\end{equation*}
+	とすれば、$\hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) = \hat{\rho}_0$は
+	\begin{equation}
+		\begin{aligned}
+			\hat{H}^{- \frac{1}{2}} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{- \frac{1}{2}} = \hat{H}^{- \frac{1}{2}} \hat{\rho}_0 \hat{H}^{- \frac{1}{2}} \\
+			\Longleftrightarrow \hat{H}^{-1} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{-1} = \hat{\rho}_0
+		\end{aligned}
+	\end{equation}
+	で収束する。
+
+	\chapter{実装と結果}
+
+	\section{計算環境}
+
+	計算環境は以下のとおりである。
+
+	\begin{table}[h]
+		\centering
+			\caption{計算環境}
+			\begin{tabular}{|c|c|}
+				\hline
+				OS & Windows 10 Pro \\ \hline
+				& Intel\ Core\ i9-9900K \\
+				CPU & 3.60\ GHz \\
+				& 8コア\ 16スレッド　\\ \hline
+				メモリ & 64\ GB \\ \hline
+				言語 & Python\ 3.8.1\ 32\ bit \\ \hline
+			\end{tabular}
+	\end{table}
+
+
+
+
+	\appendix
+
+	\chapter{Cholesky Decomposition}
+
+	直接計算する。\\
+
+	まず、対角項は
+	\begin{equation*}
+		\begin{gathered}
+			\hat{\rho}_{11} = \big| \hat{T}_{11} \big|^2 + \big| \hat{T}_{21} \big|^2 + \cdots + \big| \hat{T}_{d1} \big|^2 \\
+			\hat{\rho}_{22} = \big| \hat{T}_{22} \big|^2 + \big| \hat{T}_{32} \big|^2 + \cdots + \big| \hat{T}_{d2} \big|^2 \\
+			\vdots \\
+			\hat{\rho}_{ii} = \big| \hat{T}_{ii} \big|^2 + \big| \hat{T}_{i+1\ i} \big|^2 + \cdots + \big| \hat{T}_{di} \big|^2 = \sum_{j=1}^d \big| \hat{T}_{ji} \big|^2 \\
+			\vdots \\
+			\hat{\rho}_{dd} = \big| \hat{T}_{dd} \big|^2
+		\end{gathered}
+	\end{equation*}
+	非対角項は
+	\begin{equation*}
+		\begin{gathered}
+			\hat{\rho}_{12} = \hat{T}_{21}^\dagger \hat{T}_{22} + \hat{T}_{31}^\dagger \hat{T}_{32} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{d2} \\
+			\hat{\rho}_{13} = \hat{T}_{31}^\dagger \hat{T}_{33} + \hat{T}_{41}^\dagger \hat{T}_{43} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{d3} \\
+			\vdots \\
+			\hat{\rho}_{1i} = \hat{T}_{i1}^\dagger \hat{T}_{ii} + \hat{T}_{i+1\ 1}^\dagger \hat{T}_{i+1\ i} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{di} = \sum_{j=1}^d \hat{T}_{j1}^\dagger \hat{T}_{ji}\\
+			\vdots \\
+			\hat{\rho}_{1d} = \hat{T}_{d1}^\dagger \hat{T}_{dd} \\
+			\vdots \\
+			\hat{\rho}_{23} = \hat{T}_{32}^\dagger \hat{T}_{33} + \hat{T}_{42}^\dagger \hat{T}_{43} + \cdots + \hat{T}_{d2}^\dagger \hat{T}_{d3} \\
+			\hat{\rho}_{24} = \hat{T}_{42}^\dagger \hat{T}_{44} + \hat{T}_{52}^\dagger \hat{T}_{54} + \cdots + \hat{T}_{d2}^\dagger \hat{T}_{d4} \\
+			\vdots \\
+			\hat{\rho}_{ij} = \hat{T}_{ji}^\dagger \hat{T}_{jj} + \hat{T}_{j+1\ i}^\dagger \hat{T}_{j+1\ j} + \cdots + \hat{T}_{di}^\dagger \hat{T}_{dj} = \sum_{k=1}^d \hat{T}_{ki}^\dagger \hat{T}_{kj}\ \ \ (i<j)
+		\end{gathered}
+	\end{equation*}
+	より、
+	\begin{equation*}
+		\begin{gathered}
+			\hat{T}_{dd} = \sqrt{\hat{\rho}_{dd}} \\
+			\hat{T}_{d\ d-1} = \Big( \frac{\hat{\rho}_{d-1\ d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{d-1\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
+			\hat{T}_{d\ d-2} = \Big( \frac{\hat{\rho}_{d-2\ d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{d-2\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
+			\vdots \\
+			\hat{T}_{d1} = \Big( \frac{\hat{\rho}_{1d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{1d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
+			\hat{T}_{d-1\ d-1} = \sqrt{\hat{\rho}_{d-1\ d-1} - | \hat{T}_{d\ d-1} |^2} = \sqrt{\hat{\rho}_{d-1\ d-1} - \frac{(\hat{\rho}_{d-1\ d}^\dagger)^2}{\hat{\rho}_{dd}}} \\
+			\hat{T}_{d-1\ d-2} = \Bigg(\frac{\hat{\rho}_{d-2\ d-1} - \hat{T}_{d\ d-2}^\dagger \hat{T}_{d\ d-1}}{\hat{T}_{d-1\ d-1}} \Bigg)^\dagger = \left( \frac{\hat{\rho}_{d-2\ d-1} - \frac{\hat{\rho}_{d-2\ d}}{\sqrt{\hat{\rho}_{dd}}} \frac{\hat{\rho}_{d-1\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}}}{\sqrt{\hat{\rho}_{d-1\ d-1} - \frac{(\hat{\rho}_{d-1\ d}^\dagger)^2 }{\hat{\rho}_{dd}}}} \right)^\dagger \\
+			\vdots
+		\end{gathered}
+	\end{equation*}
+
+	このようにして、$\hat{T}_{(t)}$は求まる。
+	
+		
 
 
 

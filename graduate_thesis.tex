@@ -115,7 +115,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 
 
-	\subsection{1 qubitトモグラフィー　(直交基底)}
+	\subsection{1 qubitトモグラフィー　(直交基底測定)}
 
 	qubitは$2$次元の密度行列で表される。
 
@@ -163,7 +163,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	このようにどの直交した測定基底を選んでも他のいくつかの測定演算子$\hat{\Pi}_k$を用いて$\hat{\lambda}_j = \frac{1}{2} \sum_{k} a_{jk} \hat{\Pi}_k$と表すことができる。そして、トモグラフィーは測定結果$a_{jk} = \langle \hat{\Pi}_k \rangle = Tr[\hat{\rho}_2 \hat{\Pi}_k]$を測定することで行われる。
 
-	\subsection{1 qubitトモグラフィー　(非直交基底)}
+	\subsection{1 qubitトモグラフィー　(非直交基底測定)}
 
 	実際には、測定は測定装置側の基底を偏向せずに量子状態を変化させて測定する。そのため、1 qubitの状態を測定基底に合わせて、$| 0 \rangle + | 1 \rangle$や$| 0 \rangle + i | 1 \rangle$から$| 0 \rangle$へ量子状態を変化させることが難しい場合がある。その場合、測定基底を$| 0 \rangle$と
 	\begin{equation}
@@ -334,7 +334,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	つまり、この複素行列$\hat{T}_{(t)}$を実験値から適切に求めることで最も確からしい密度行列が求められる。
 
 	そこで、$(2.1.28)$式で実験値から求めた密度行列が$(2.2.5)$式となっているかを確認する。
-	$(2.2.5)$式は複素数のCholesky分解そのものであるので、確認するのは容易である。(Appendix A)
+	$(2.2.5)$式は複素数のCholesky分解そのものであるので、確認するのは容易である。[\autoref{chap:Cholesky}]
 	ここで求めた複素行列$\hat{T}_{(t)}$が上述の条件を満たしていれば、以降の最尤推定は必要ない。
 
 	最尤推定が必要な場合、得られた密度行列は非物理的な値になっているので、最尤推定の初期値としてそのまま利用することはできない。
@@ -537,12 +537,193 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 			\end{tabular}
 	\end{table}
 
+	今回計算に用いた模擬実験データはそれぞれの理想状態の密度行列から理想実験データを作成し、密度行列の各要素の値を期待値としたポアソン分布に沿ってランダムに各データを変化させたものをそれぞれ100パターン用意しました。
+	また、終了条件は$\log \mathcal{L} \big( \hat{\rho}^{(k+1)} \big) - \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) < 10^{-11}$としています。
 
+
+	\section{Multi qubitsの結果}
+
+	今回、光子における測定であると仮定して、実験的制約から測定基底は次のようにしています。\\
+
+	N qubit目の測定基底を
+	\begin{equation*}
+		\begin{gathered}
+			\ket{H} \to \ket{V} \to \ket{R} \to \ket{D} \to \\
+			(N-1 qubit目の測定基底を同様に一つ動かす)　\\
+			\to \ket{D} \to \ket{R} \to \ket{V} \to \ket{H}
+		\end{gathered}
+	\end{equation*}
+
+	このように測定基底を動かすことで、それぞれの測定において波長板を一つ動かすだけで済む。
+	また、測定するqubitがいくつになっても同様にして拡張できる。\\
+	今回は4 qubitsで確認します。
+
+	\subsection*{純粋状態}
+
+	\begin{description}
+		\item[Case 1:] 理想状態が$\ket{\psi} = \frac{1}{\sqrt{2}} (\ket{0000} + \ket{1111})$の場合 
+	\end{description}
+	
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/1111ed.png}
+			\caption{Case 1}
+	\end{figure}
+	
+	\newpage
+
+	\begin{description}
+		\item[Case 2:] 理想状態が$\ket{\psi} = \frac{1}{4} (\ket{0000} + \ket{0001} + \ket{0010} + \ket{0011} + \ket{0100} + \ket{0101} + \ket{0110} + \ket{0111} + \ket{1000} + \ket{1001} + \ket{1010} + \ket{1011} + \ket{1100} + \ket{1101} + \ket{1110} + \ket{1111})$の場合 
+	\end{description}
+	
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/all.png}
+			\caption{Case 2}
+	\end{figure}
+
+	\newpage
+	\subsection*{混合状態}
+
+	\begin{description}
+		\item[Case 3:] 理想状態が$\hat{\rho} = \frac{1}{6} \{ (\ket{0000} + \ket{1111}) (\bra{0000} + \bra{1111}) + (\ket{0001} + \ket{0010} + \ket{0100} + \ket{1000}) (\bra{0001} + \bra{0010} + \bra{0100} + \bra{1000})\}$の場合 
+	\end{description}
+	
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/mixed.png}
+			\caption{Case 3}
+	\end{figure}
+
+	\newpage
+
+	\subsection*{計算量・計算時間}
+
+	上記3パターンの計算量は次のとおりである。
+	また、最尤推定の初期値を最大混合状態$\hat{I}$にした場合と比較している。
+
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/cg.png}
+			\caption{最尤推定の計算量}
+	\end{figure}
+
+	データセットによって計算時間、計算量に大きな違いがあった。
+
+	\newpage
+
+	\subsection*{並列化}
+
+	100個の同じデータセットに対して並列化処理を加えたことで、高速化されました。
+
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/parallel.png}
+			\caption{並列化した場合の計算時間}
+	\end{figure}
+
+	\newpage
+
+	\subsection*{fidelityの推移}
+
+	fidelityとは次の式で求まる二つの量子状態の近さを表す量である。
+
+	\begin{equation}
+		F \equiv Tr \sqrt{\sqrt{\hat{\sigma}} \hat{\rho} \sqrt{\hat{\sigma}}}
+	\end{equation}
+
+	\begin{figure}[htbp]
+		\centering
+			\begin{tabular}{c}
+	  
+			% 1
+				\begin{minipage}{0.5\hsize}
+				\begin{center}
+					\includegraphics[clip, width=8cm]{./picture/fp1111ed.png}
+				\end{center}
+				\end{minipage}
+	  
+			% 2
+				\begin{minipage}{0.5\hsize}
+				\begin{center}
+					\includegraphics[clip, width=8cm]{./picture/fp1111edextended.png}
+				\end{center}
+				\end{minipage}
+			
+			\end{tabular}
+		\caption{Case 1}
+	\end{figure}
+
+	\begin{figure}[htbp]
+	\centering
+		\begin{tabular}{c}
+	  
+			% 1
+			\begin{minipage}{0.5\hsize}
+			\begin{center}
+				\includegraphics[clip, width=8cm]{./picture/fpall.png}
+			\end{center}
+			\end{minipage}
+	  
+			% 2
+			\begin{minipage}{0.5\hsize}
+			\begin{center}
+				\includegraphics[clip, width=8cm]{./picture/fpallextended.png}
+			\end{center}
+			\end{minipage}
+			
+		\end{tabular}
+		\caption{Case 2}
+	\end{figure}
+
+	\newpage
+
+	\begin{figure}[htbp]
+		\centering
+			\begin{tabular}{c}
+	  
+			% 1
+			\begin{minipage}{0.5\hsize}
+			\begin{center}
+				\includegraphics[clip, width=8cm]{./picture/fpmixed.png}
+			\end{center}
+			\end{minipage}
+	  
+			% 2
+			\begin{minipage}{0.5\hsize}
+			\begin{center}
+				\includegraphics[clip, width=8cm]{./picture/fpmixedextended.png}
+			\end{center}
+			\end{minipage}
+			
+		\end{tabular}
+		\caption{Case 3}
+	\end{figure}
+
+	それぞれのCaseで、初期値を推定した場合の方が初期fidelityは高くなっているが、いずれの場合にもその後の更新でfidelityの減少が見られた。
+	そのために初期の優位性を保ったまま密度行列が更新することができず、総計算量は完全混合状態から始めた場合とあまり変わらなかった。
+	また、Case 3においては計算量に大きな差が現れた。
+	原因として、初期値を予想した場合、初期の更新で尤度関数が減少、つまり密度行列の更新に失敗したために$\epsilon$を小さくして更新が続けられたためである。
+	したがって、初期の優位性を保ったまま密度行列を更新することができれば計算量を減らすことができるかもしれないが、そのためには更新ごとに適切な$\epsilon$を見つける必要がある。
+	その計算が負担となり総計算時間が減少するとは限らない。
+
+
+	\section{quditの結果}
+
+	今回は$d=3$の2 qutritsを実装しました。
+	測定基底は\ref{}と同じものを使用しました。
+
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics[clip,width=12.0cm]{./picture/qutrit.png}
+			\caption{Case 1}
+	\end{figure}
 
 
 	\appendix
 
 	\chapter{Cholesky Decomposition}
+	\label{chap:Cholesky}
 
 	直接計算する。\\
 

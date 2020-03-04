@@ -92,7 +92,13 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\chapter{序論}
 	\section{研究の背景と目的}
-	近年注目を増している量子情報、量子コンピューティング研究・開発において実験的に生成された量子状態を正確に認識することは極めて重要である。しかしながら、量子的制約により、量子状態を直接観測することは現時点では不可能である。そこで、量子状態トモグラフィーが用いられる。量子状態トモグラフィーとは、同じ量子状態を複数生成し、それぞれを測定基底を変えて測定をすることで得られた観測データから、最尤推定などを用いて真の量子状態を推定することである。本論文では、量子状態トモグラフィーの一般的理論を説明した後、実験的誤りに対する耐性があるアルゴリズムを紹介する。最後に、これらのアルゴリズムを実装し確認する。
+
+	近年注目を増している量子情報、量子コンピューティング研究・開発において実験的に生成された量子状態を正確に認識することは極めて重要である。
+	しかし、任意の量子状態を特定するには有限回の測定では不可能であり、実験的に真の量子状態を知ることは困難である。
+	そこで、量子状態トモグラフィーが用いられる。
+	量子状態トモグラフィーとは、同じ量子状態を複数生成し、それぞれを測定基底を変えて測定をすることで得られた観測データから、最尤推定などを用いて真の量子状態を推定することである。
+	本論文では、量子状態トモグラフィーの一般的理論を説明した後、実験的誤りに対する耐性があるアルゴリズムを紹介する。
+	最後に、これらのアルゴリズムを疑似実験データを利用して、4 qubitsや2 qutritsの場合についてPythonで実装する。
 
 
 	\chapter{理論}
@@ -101,7 +107,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\subsection{密度行列}
 
-	量子状態は密度行列によって表される。密度行列$\hat{\rho}$とは以下の性質を満たす行列である。
+	量子状態は密度行列によって表される。密度行列$\hat{\rho}$とは以下二つの性質を満たす正方行列である。
 	\begin{equation}
 		Tr[\hat{\rho}]=1
 		\label{eq2.1}
@@ -111,7 +117,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		0 \leq \lambda \leq 1, \ \ \ \  ^\forall \lambda
 		\label{eq2.2}
 	\end{equation}
-	$d$次元の密度行列を$\hat{\rho}_d$と表記する。
+	本論文では$d$次元の密度行列を$\hat{\rho}_d$と表記する。
 
 
 
@@ -435,9 +441,9 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	一般に、$\hat{R} \hat{\rho} \hat{R}$アルゴリズムは尤度関数が常に増加するとは言えない。
 	そこで、非負の値$\epsilon$を導入することでこの問題を解決する。
 
-	\subsection{Duiluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズム}
+	\subsection{Diluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズム}
 
-	Duiluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズムとは以下の式で表す。
+	Diluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズムとは以下の式で表す。
 	\begin{equation}
 		\hat{\rho}^{(k+1)} = \mathcal{N} \Bigg[ \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \hat{\rho}^{(k)} \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \Bigg]
 	\end{equation}
@@ -609,6 +615,10 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{figure}
 
 	データセットによって計算時間、計算量に大きな違いがあった。
+	また、Case 3においては計算量に大きな差が現れた。
+	原因として、初期値を予想した場合、初期の更新で尤度関数が減少、つまり密度行列の更新に失敗したために$\epsilon$を小さくして更新が続けられたためである。
+	したがって、初期の優位性を保ったまま密度行列を更新することができれば計算量を減らすことができるかもしれないが、そのためには更新ごとに適切な$\epsilon$を見つける必要がある。
+	その計算が負担となり総計算時間が減少するとは限らない。
 
 	\newpage
 
@@ -700,24 +710,50 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		\caption{Case 3}
 	\end{figure}
 
-	それぞれのCaseで、初期値を推定した場合の方が初期fidelityは高くなっているが、いずれの場合にもその後の更新でfidelityの減少が見られた。
+	それぞれのCaseで、初期値を推定した場合の方が初期fidelityは高くなっているが、fidelityの収束値に大きな差はなかった。
+	また、いずれの場合にもその後の更新でfidelityの減少が見られた。
 	そのために初期の優位性を保ったまま密度行列が更新することができず、総計算量は完全混合状態から始めた場合とあまり変わらなかった。
-	また、Case 3においては計算量に大きな差が現れた。
-	原因として、初期値を予想した場合、初期の更新で尤度関数が減少、つまり密度行列の更新に失敗したために$\epsilon$を小さくして更新が続けられたためである。
-	したがって、初期の優位性を保ったまま密度行列を更新することができれば計算量を減らすことができるかもしれないが、そのためには更新ごとに適切な$\epsilon$を見つける必要がある。
-	その計算が負担となり総計算時間が減少するとは限らない。
 
 
+	\newpage
 	\section{quditの結果}
 
 	今回は$d=3$の2 qutritsを実装しました。
-	測定基底は\ref{}と同じものを使用しました。
+	測定基底は~\cite{qutrit}と同じものを使用しました。
 
 	\begin{figure}[htbp]
 		\centering
 			\includegraphics[clip,width=12.0cm]{./picture/qutrit.png}
 			\caption{Case 1}
 	\end{figure}
+
+	\chapter{まとめ}
+
+	まず初めに1 qubitの量子トモグラフィーを理論的に説明し、その後Multi qubits、1 quditそしてMulti quditsへと拡張していった。
+	また、再構成した密度行列が非物理的な値である場合に利用する最尤推定のアルゴリズム($\hat{R} \hat{\rho} \hat{R}$アルゴリズム)を説明し、微小項$\epsilon$を導入することで尤度関数の増加を証明した。
+
+	アルゴリズムの実装では、Multi qubitsでは4 qubitsに対して疑似実験データを生成し、アルゴリズムの有用性を確認した。
+	一方、Multi quditsでは$d=3$の2 qutritsに対して同様にシミュレーションで有用性を確認した。
+	計算時間の短縮を並列化することで達成した。
+	また計算量については、シミュレーション結果から初期値を変えた場合と比較してfidelityの推移からアルゴリズムの改善の必要があることが推察された。
+
+
+	\chapter*{謝辞}
+
+
+
+
+	\begin{thebibliography}{99}
+		\bibitem{}  Michael A. Nielsen, Isaac L. Chuang, Quantum Computation and Quantum Information 10th Aniversary Edition (CAMBRIDGE UNIVERSITY PRESS 2010)
+		\bibitem{}  R. T. Thew et al., Qudit quantum-state tomography, Phys. Rev. A 66, 012303 (2002)
+		\bibitem{}  Daniel F. V. James et al., Measurement of qubits, Phys. Rev. A 64, 052312 (2001)
+		\bibitem{}  J. Rehacek, Z. Hrakil, and M.Jesek, Iterative algorithm for reconstruction of entangled states, Rev. A VOL. 63, 040303 (2001)
+		\bibitem{}  Jaroslav Rehacek and Sdenek Hradil et al., Diluted maximum-likelihood algorithm for quantum tomography, Phys. Rev. A 75, 042108 (2007)                                
+		\bibitem{}  Z. Hradil, Quantum-state estimation, Phys. Rev. A THIRD VOL. 55, NUMBER 3, R1561 (1996)
+		\bibitem{}  Jaromir Fiurasek, Maximum-likelihood estimation of quantum measurement, Phys. Rev. A 64, 024102 (2001)
+		\bibitem{qutrit}  Michael Kues et al., On-chip generation of high-dimensional entangled quantum states and their coherent control, Nature 546, pages622–626 (2017) 
+	\end{thebibliography}
+	
 
 
 	\appendix

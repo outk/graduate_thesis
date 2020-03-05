@@ -306,8 +306,8 @@ def doIterativeSimulation(numberOfQubits, bases, pathOfExperimentalData, idealDe
     with open(resultIterationTimeFilePath, mode='a') as f:
         f.writelines(str(totalIterationTime) + '\n')
 
-    # """ Make 3D Plot """
-    # plotResult(numberOfQubits, estimatedDensityMatrix, baseNames)
+    """ Make 3D Plot """
+    plotResult(numberOfQubits, estimatedDensityMatrix, baseNames)
 
 
 
@@ -373,7 +373,7 @@ def plotResult(numberOfQubits, densityMatrix, baseNames):
     # plt.ylabel("Y") # y軸の内容表示
     plt.yticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
     # ax1.set_zlabel("Z") # z軸の内容表示
-    ax1.set_zlim(-0.1, 0.2)
+    ax1.set_zlim(-0.1, 0.6)
     
     ax2 = fig.add_subplot(122, projection="3d") # 3Dの軸を作成
     ax2.bar3d(xpos,ypos,zpos,dx,dy,np.imag(dz), edgecolor='black') # ヒストグラムを3D空間に表示
@@ -383,7 +383,7 @@ def plotResult(numberOfQubits, densityMatrix, baseNames):
     # plt.ylabel("Y") # y軸の内容表示
     plt.yticks(np.arange(0, 2**numberOfQubits, 4), labels=baseNames)
     # ax2.set_zlabel("Z") # z軸の内容表示
-    ax2.set_zlim(-0.1, 0.2)
+    ax2.set_zlim(-0.1, 0.6)
     
     plt.show()
 
@@ -478,30 +478,30 @@ def getNameOfResultDirectory():
 
 
 
-# """ Whether Do Poisson Distributed Simulation """
+""" Whether Do Poisson Distributed Simulation """
 
-# def checkPoisson():
-#     """
-#     checkPoisson()
+def checkPoisson():
+    """
+    checkPoisson()
 
-#     """
+    """
 
-#     print("------------------------------------------------------------")
-#     print("PLEASE ENTER ANSWER WHETHER DO POISSON DISTRIBUTED SIMULATION")
-#     print("IF YOU DO, PLEASE ENTER 'yes'")
-#     print("IF YOU ENTER ANOTHER WORD OR EMPTY, YOUR ANSWER IS REGARED AS 'no'")
-#     print("------------------------------------------------------------")
-#     print(">>")
+    print("------------------------------------------------------------")
+    print("PLEASE ENTER ANSWER WHETHER DO POISSON DISTRIBUTED SIMULATION")
+    print("IF YOU DO, PLEASE ENTER 'yes'")
+    print("IF YOU ENTER ANOTHER WORD OR EMPTY, YOUR ANSWER IS REGARED AS 'no'")
+    print("------------------------------------------------------------")
+    print(">>")
 
-#     answer = input()
-#     if answer == "yes" or answer == "Yes" or answer == "YES":
-#         print("YOUR ANSWER IS: 'yes'")
-#         # poissonPaths = getExperimentalDataPaths()
-#         eachIterationTime = getEachIterationTime()
-#         return True, poissonPaths*eachIterationTime
-#     else:
-#         print("YOUR ANSWER IS: 'no'")
-#         return False, []
+    answer = input()
+    if answer == "yes" or answer == "Yes" or answer == "YES":
+        print("YOUR ANSWER IS: 'yes'")
+        poissonPaths = getExperimentalDataPaths()
+        eachIterationTime = getEachIterationTime()
+        return True, poissonPaths*eachIterationTime
+    else:
+        print("YOUR ANSWER IS: 'no'")
+        return False, []
 
 
 
@@ -555,31 +555,26 @@ def getNumberOfParallelComputing():
 
 
 
-
 if __name__ == "__main__":
 
     """ Get Number of Qubits """
-    # numberOfQubits = getNumberOfQubits()
-    numberOfQubits = 4
+    numberOfQubits = getNumberOfQubits()
 
     """ Make SU2 Bases """
     makeSU2Bases(numberOfQubits)   
     
     """ Get Path of Experimental Data Directory """
-    # directoryPath = getExperimentalDataDirectoryPath()
-    # paths = list(directoryPath.glob("*.txt"))
-    path = '/home/osboxes/graduate-thesis/testdata/plotdata/2.txt'
+    directoryPath = getExperimentalDataDirectoryPath()
+    paths = list(directoryPath.glob("*.txt"))
 
     """ Get Name of Result Directory """
-    # resultDirectoryName = getNameOfResultDirectory()
-    resultDirectoryName = 'plottest'
+    resultDirectoryName = getNameOfResultDirectory()
 
     """ Check Poisson Distributed Simulation """
-    # check, poissonPaths = checkPoisson()
+    check, poissonPaths = checkPoisson()
 
     """ Get Number of Parallel Computing """
-    # numberOfParallelComputing = getNumberOfParallelComputing()
-    numberOfParallelComputing = 1
+    numberOfParallelComputing = getNumberOfParallelComputing()
 
     """ Make Bases """
     basesOfQubits, baseNames = makeBases(numberOfQubits)
@@ -591,13 +586,14 @@ if __name__ == "__main__":
     baseVecter = np.zeros([1, 2**numberOfQubits])
     baseVecter[0][0] = 1 / sqrt(2)
     baseVecter[0][2**numberOfQubits-1] = 1 / sqrt(2)
+    idealDensityMatrix = baseVecter.T @ baseVecter
+
     # baseVecter[0][1] = 1 / 2
     # baseVecter[0][2] = 1 / 2
     # baseVecter[0][4] = 1 / 2
     # baseVecter[0][8] = 1 / 2
-
     # baseVecter = np.full([1, 2**numberOfQubits], 1/np.sqrt(2**numberOfQubits), dtype=np.complex)
-    idealDensityMatrix = baseVecter.T @ baseVecter
+    # idealDensityMatrix = baseVecter.T @ baseVecter
 
     # matrix = np.zeros([2**numberOfQubits, 2**numberOfQubits]) # (|0000>+|1111>)(<0000|+<1111|) + |0001><0001| + |0010><0010| + |0100><0100| + |1000><1000|
     # baseVecter = np.zeros([1, 2**numberOfQubits])
@@ -612,43 +608,34 @@ if __name__ == "__main__":
     # baseVecter = np.zeros([1, 2**numberOfQubits])
     # baseVecter[0][8] = 1
     # matrix += baseVecter.T @ baseVecter
+    # idealDensityMatrix = baseVecter.T @ baseVecter
 
     # baseVecter = np.zeros([1, 2**numberOfQubits])
     # baseVecter[0][0] = 1
     # baseVecter[0][2**numberOfQubits-1] = 1
     # matrix += baseVecter.T @ baseVecter
-
     # matrix = matrix/np.trace(matrix)
-
     # idealDensityMatrix = matrix
 
-    # start_time = datetime.now() #time stamp
-
     """ Make Result Directory """
-    # if not os.path.exists('.\\result\\qubit\\iterative\\' + resultDirectoryName):
-    #     os.makedirs('.\\result\\qubit\\iterative\\' + resultDirectoryName)
+    if not os.path.exists('.\\result\\qubit\\iterative\\' + resultDirectoryName):
+        os.makedirs('.\\result\\qubit\\iterative\\' + resultDirectoryName)
 
     """ Start Tomography """
-    # with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
-    #     for path in paths:
-    #         executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
+    with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+        for path in paths:
+            executor.submit(fn=doIterativeSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
 
-    doIterativeSimulation(numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M, baseNames=baseNames)
+    """ Start Poisson Distributed Simulation """
+    if check:
+        """ Make Result Directory for Poisson Distributed Simulation """
+        if not os.path.exists('.\\result\\qubit\\poisson\\' + resultDirectoryName):
+            os.makedirs('.\\result\\qubit\\poisson\\' + resultDirectoryName)
 
-    # """ Start Poisson Distributed Simulation """
-    # if check:
-    #     """ Make Result Directory for Poisson Distributed Simulation """
-    #     if not os.path.exists('.\\result\\qubit\\poisson\\' + resultDirectoryName):
-    #         os.makedirs('.\\result\\qubit\\poisson\\' + resultDirectoryName)
+        with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
+            for poissonPath in poissonPaths:
+                executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
 
-    #     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
-    #         for poissonPath in poissonPaths:
-    #             executor.submit(fn=doPoissonDistributedSimulation, numberOfQubits=numberOfQubits, bases=basesOfQubits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName, MMatrix=M)
-
-
-    # end_time = datetime.now() #time stamp
-
-    # print("Total Calculation Time was " + str(end_time - start_time))
 
     # if not os.path.exists('.\\result\\4qubit\\poisson\\benchmark'):
     #         os.makedirs('.\\result\\4qubit\\poisson\\benchmark')

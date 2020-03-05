@@ -229,10 +229,9 @@ def doIterativeSimulation(numberOfQutrits, bases, pathOfExperimentalData, idealD
 
     """ Save Result """
     with open(resultFilePath, mode='a') as f:
-        f.write(str(fidelity) + '\n')
+        f.writelines(str(fidelity) + '\n')
 
     """ Make 3D Plot """
-    print(estimatedDensityMatrix)
     plotResult(numberOfQutrits, estimatedDensityMatrix)
 
 
@@ -263,7 +262,7 @@ def doPoissonDistributedSimulation(numberOfQutrits, bases, pathOfExperimentalDat
             l = len(pathOfExperimentalData)-i
             break
     resultFileName = pathOfExperimentalData[l:r]
-    resultFilePath = '.\\result\\qutrit\\poisson\\' + resultDirectoryName + "\\" + resultFileName + '_result' + '.txt'
+    resultFilePath = '.\\result\\qutrit\\iterative\\' + resultDirectoryName + "\\" + resultFileName + '_result' + '.txt'
 
     """ Save Result """
     with open(resultFilePath, mode='a') as f:
@@ -292,11 +291,8 @@ def plotResult(numberOfQutrits, densityMatrix):
     ypos = ypos.ravel() # y座標を3D用の形式に変換（その２)
 
     fig = plt.figure() # 描画領域を作成
-    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成
-    # ax1 = plt.axes(projection="3d")
-    
+    ax1 = fig.add_subplot(121, projection="3d") # 3Dの軸を作成    
     ax1.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black') # ヒストグラムを3D空間に表示
-    # fig.bar3d(xpos,ypos,zpos,dx,dy,np.real(dz), edgecolor='black')
     plt.title("Real Part") # タイトル表示
     # plt.xlabel("X") # x軸の内容表示
     plt.xticks(np.arange(0, 3**numberOfQutrits, 1), labels=baseNames)
@@ -316,8 +312,6 @@ def plotResult(numberOfQutrits, densityMatrix):
     ax2.set_zlim(-0.1, 0.5)
 
     plt.show()
-
-    # print(baseNames)
 
     with open('qutritplottest'+'_plot.pkl', mode='wb') as f:
         pickle.dump(fig, f)
@@ -343,26 +337,22 @@ def getNumberOfQutrits():
 
 
 
-""" Get Paths of Experimental Data """
+""" Get Path of Experimental Data Directory """
 
-def getExperimentalDataPaths():
+def getExperimentalDataDirectoryPath():
     """
-    getExperimentalDataPaths()
+    getExperimentalDataDirectoryPath()
 
     """
 
     print("------------------------------------------------------------")
-    print("PLEASE ENTER PATHS OF EXPERIMENTAL DATA")
+    print("PLEASE ENTER PATH OF EXPERIMENTAL DATA DIRECTORY")
     print("")
-    print("IF THERE ARE MULTIPLE DATA FILE YOU WANT TO TOMOGRAPHY,")
-    print("ENTER ALL PATHS SEPARATED WITH SPACE.")
-    print("LIKE THIS >> .\\datadirectory\\ex1.txt .\\datadirectory\\ex2.txt ...")
+    print("LIKE THIS >> .\\datadirectory")
     print("------------------------------------------------------------")
     print(">>")
 
-    paths = list(input().split())
-
-    return paths
+    return Path(input())
 
 
 
@@ -459,10 +449,13 @@ def getNumberOfParallelComputing():
     print("------------------------------------------------------------")
     print(">>")
     
-    numberOfParallelComputing = int(input())
+    n = input()
+    if n != '':
+        numberOfParallelComputing = int(n)
+    else:
+        numberOfParallelComputing = 1
 
     return numberOfParallelComputing
-
 
 
 
@@ -471,8 +464,9 @@ if __name__ == "__main__":
     """ Get Number of Qutrits """
     numberOfQutrits = getNumberOfQutrits()
     
-    """ Get Paths of Experimental Data """
-    paths = getExperimentalDataPaths()
+    """ Get Paths of Experimental Data Directory """
+    directoryPath = getExperimentalDataDirectoryPath()
+    paths = list(directoryPath.glob("*.txt"))
 
     """ Get Name of Result Directory """
     resultDirectoryName = getNameOfResultDirectory()
@@ -493,8 +487,6 @@ if __name__ == "__main__":
     baseVecter[0][3**numberOfQutrits-1] = 1 / sqrt(3)
     idealDensityMatrix = baseVecter.T @ baseVecter
 
-    start_time = datetime.now() #time stamp
-
     """ Make Result Directory """
     if not os.path.exists('.\\result\\qutrit\\iterative\\' + resultDirectoryName):
         os.makedirs('.\\result\\qutrit\\iterative\\' + resultDirectoryName)
@@ -502,7 +494,7 @@ if __name__ == "__main__":
     """ Start Tomography """
     with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
         for path in paths:
-            executor.submit(fn=doIterativeSimulation, numberOfQutrits=numberOfQutrits, bases=basesOfQutrits, pathOfExperimentalData=path, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
+            executor.submit(fn=doIterativeSimulation, numberOfQutrits=numberOfQutrits, bases=basesOfQutrits, pathOfExperimentalData=str(path), idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
 
     """ Start Poisson Distributed Simulation """
     if check:
@@ -513,10 +505,6 @@ if __name__ == "__main__":
         with futures.ProcessPoolExecutor(max_workers=numberOfParallelComputing) as executor:
             for poissonPath in poissonPaths:
                 executor.submit(fn=doPoissonDistributedSimulation, numberOfQutrits=numberOfQutrits, bases=basesOfQutrits, pathOfExperimentalData=poissonPath, idealDensityMatrix=idealDensityMatrix, resultDirectoryName=resultDirectoryName)
-
-
-    end_time = datetime.now() #time stamp
-    print("Total Calculation Time was " + str(end_time - start_time))
 
     
 

@@ -109,12 +109,12 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	量子状態は密度行列によって表される。密度行列$\rho$とは$d$次元ヒルベルト空間上の正規直交規定を$\{ \ket{y_i} \}$とすると、
 	\begin{equation}
-		\rho = \sum_{i,j = 0}^d \ket{y_i} \bra{y_j}
+		\rho = \sum_{i,j = 0}^d a_{ij} \ket{y_i} \bra{y_j}\ \ \ \ a_{ij} \in \mathbb{C}
 	\end{equation}
 	で表される。
 	ここで、$\ket{y_i}$は$d$次元列ベクトルである。
 	一方、$\bra{y_i}$を$d$次元行ベクトルとする。\\
-	また、密度行列の固有値を$\lambda$とすると、密度行列$\rho$は以下二つの性質を満たす。
+	また、密度行列$\rho$の固有値を$\lambda$とすると、密度行列$\rho$は以下二つの性質を満たす。
 	\begin{equation}
 		\begin{gathered}
 			Tr[\rho]=1 \\
@@ -139,7 +139,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation}
 	これらを用いて、1 qubitの密度行列$\rho_2$は次のように表される。
 	\begin{equation}
-		\rho_2 = \frac{1}{2} \sum_{j=0}^3 r_j \hat{\lambda}_j, \ \ \ \ r_j \in Re
+		\rho_2 = \frac{1}{2} \sum_{j=0}^3 r_j \hat{\lambda}_j, \ \ \ \ r_j \in \mathbb{R}
 		\label{eq2.4}
 	\end{equation}
 	$SU(2)$はトレースが0なので、密度行列$\rho_2$は規格化のために$r_0 = 1$を満たす必要がある。また、ほかのパラメータ$r_{j=1,...,3}$は
@@ -505,17 +505,17 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	これまで$\sum_i \hat{\Pi}_i = \hat{I}$の関係を満たす、つまり測定基底が完全関係を満たす場合を考えていたが、満たさない場合の測定についても次のようにすることでこれまでのアルゴリズムは同様に適用することができる。\\
 
-	射影測定は一般に$\sum_i \ket{y_i} \bra{y_i} = \hat{H}$と表されるので、
+	射影測定は一般に$\sum_i \ket{\tilde{y}_i} \bra{\tilde{y}_i} = \hat{H}$と表されるので、
 	\begin{equation}
-		\sum_i \hat{H}^{- \frac{1}{2}} \ket{y_i} \bra{y_i} \hat{H}^{- \frac{1}{2}} = \hat{I}
+		\sum_i \hat{H}^{- \frac{1}{2}} \ket{\tilde{y}_i} \bra{\tilde{y}_i} \hat{H}^{- \frac{1}{2}} = \hat{I}
 	\end{equation}
 	と考えると、
 	\begin{equation*}
 		\begin{aligned}
-			\Pr_i &\to \frac{\Pr_i}{\sum \Pr_i} \\
+			{\Pr}_i &\to \frac{\Pr_i}{\sum \Pr_i} \\
 			R &\to \hat{H}^{- \frac{1}{2}} R \hat{H}^{- \frac{1}{2}} \\
 			\rho &\to \hat{H}^{- \frac{1}{2}} \rho \hat{H}^{- \frac{1}{2}} \\
-			\hat{H} &= \frac{\sum \ket{y_i} \bra{y_i}}{\sum \Pr_i}
+			\hat{H} &= \frac{\sum \ket{\tilde{y}_i} \bra{\tilde{y}_i}}{\sum \Pr_i}
 		\end{aligned}
 	\end{equation*}
 	とすれば、$R (\rho_0) \rho_0 R (\rho_0) = \rho_0$は

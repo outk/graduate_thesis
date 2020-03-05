@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.8.2-190131-2.6 (utf8.sjis) (TeX Live 2019/W32TeX) (preloaded format=platex 2020.2.27)  5 MAR 2020 23:22
+This is e-pTeX, Version 3.14159265-p3.8.2-190131-2.6 (utf8.sjis) (TeX Live 2019/W32TeX) (preloaded format=platex 2020.2.27)  5 MAR 2020 23:46
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -842,10 +842,10 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 825.
 Here is how much of TeX's memory you used:
  9730 strings out of 481529
  140510 string characters out of 5929220
- 417724 words of memory out of 5000000
+ 418724 words of memory out of 5000000
  25193 multiletter control sequences out of 15000+600000
  556880 words of font info for 123 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  48i,13n,46p,363b,992s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on graduate_thesis.dvi (28 pages, 92096 bytes).
+Output written on graduate_thesis.dvi (28 pages, 92204 bytes).

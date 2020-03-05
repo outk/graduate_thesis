@@ -107,17 +107,21 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\subsection{密度行列}
 
-	量子状態は密度行列によって表される。密度行列$\hat{\rho}$とは以下二つの性質を満たす正方行列である。
+	量子状態は密度行列によって表される。密度行列$\rho$とは$d$次元ヒルベルト空間上の正規直交規定を$\{ \ket{y_i} \}$とすると、
 	\begin{equation}
-		Tr[\hat{\rho}]=1
-		\label{eq2.1}
+		\rho = \sum_{i,j = 0}^d \ket{y_i} \bra{y_j}
 	\end{equation}
-	また、密度行列の固有値を$\lambda$とすると、
+	で表される。
+	ここで、$\ket{y_i}$は$d$次元列ベクトルである。
+	一方、$\bra{y_i}$を$d$次元行ベクトルとする。\\
+	また、密度行列の固有値を$\lambda$とすると、密度行列$\rho$は以下二つの性質を満たす。
 	\begin{equation}
-		0 \leq \lambda \leq 1, \ \ \ \  ^\forall \lambda
-		\label{eq2.2}
+		\begin{gathered}
+			Tr[\rho]=1 \\
+			0 \leq \lambda \leq 1, \ \ \ \  ^\forall \lambda
+		\end{gathered}
 	\end{equation}
-	本論文では$d$次元の密度行列を$\hat{\rho}_d$と表記する。
+	本論文では$d$次元の密度行列を$\rho_d$と表記する。
 
 
 
@@ -133,21 +137,21 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		\end{aligned}
 		\label{eq2.3}
 	\end{equation}
-	これらを用いて、1 qubitの密度行列$\hat{\rho}_2$は次のように表される。
+	これらを用いて、1 qubitの密度行列$\rho_2$は次のように表される。
 	\begin{equation}
-		\hat{\rho}_2 = \frac{1}{2} \sum_{j=0}^3 r_j \hat{\lambda}_j, \ \ \ \ r_j \in Re
+		\rho_2 = \frac{1}{2} \sum_{j=0}^3 r_j \hat{\lambda}_j, \ \ \ \ r_j \in Re
 		\label{eq2.4}
 	\end{equation}
-	$SU(2)$はトレースが0なので、密度行列$\hat{\rho}_2$は規格化のために$r_0 = 1$を満たす必要がある。また、ほかのパラメータ$r_{j=1,...,3}$は
+	$SU(2)$はトレースが0なので、密度行列$\rho_2$は規格化のために$r_0 = 1$を満たす必要がある。また、ほかのパラメータ$r_{j=1,...,3}$は
 	\begin{equation}
 		r_1^2 + r_2^2 + r_3^2 \leq 1
 		\label{eq2.5}
 	\end{equation}
-	のみ満たす。また、$r_j$は$r_j = Tr[\hat{\rho}_2 \hat{\lambda}_j]$で得られる。\\
+	のみ満たす。また、$r_j$は$r_j = Tr[\rho_2 \hat{\lambda}_j]$で得られる。\\
 	
 	したがって、1 qubitの密度行列は
 	\begin{equation}
-		\hat{\rho}_2 = \frac{1}{2} \begin{pmatrix}
+		\rho_2 = \frac{1}{2} \begin{pmatrix}
 			1 + \braket{\hat{\lambda}_3} &
 			\braket{\hat{\lambda}_1} - i \braket{\hat{\lambda}_2} \\
 			\braket{\hat{\lambda}_1} + i \braket{\hat{\lambda}_2} &
@@ -167,7 +171,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation}
 	ここで、$\ket{H} = \ket{0}, \ \ket{V} = \ket{1}, \ \ket{D} = (\ket{0} + \ket{1}) / \sqrt{2} , \ \ket{L} = (\ket{0} + i\ket{1}) / \sqrt{2}$
 
-	このようにどの直交した測定基底を選んでも他のいくつかの測定演算子$\hat{\Pi}_k$を用いて$\hat{\lambda}_j = \frac{1}{2} \sum_{k} a_{jk} \hat{\Pi}_k$と表すことができる。そして、トモグラフィーは測定結果$a_{jk} = \langle \hat{\Pi}_k \rangle = Tr[\hat{\rho}_2 \hat{\Pi}_k]$を測定することで行われる。
+	このようにどの直交した測定基底を選んでも他のいくつかの測定演算子$\hat{\Pi}_k$を用いて$\hat{\lambda}_j = \frac{1}{2} \sum_{k} a_{jk} \hat{\Pi}_k$と表すことができる。そして、トモグラフィーは測定結果$a_{jk} = \langle \hat{\Pi}_k \rangle = Tr[\rho_2 \hat{\Pi}_k]$を測定することで行われる。
 
 	\subsection{1 qubitトモグラフィー　(非直交基底測定)}
 
@@ -182,7 +186,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	任意の基底$\ket{\psi_\nu}$での測定は射影子$\hat{\lambda}_\nu = \ket{\psi_\nu} \bra{\psi_\nu}$で表され、これらの基底による観測回数$n_\nu$は
 	\begin{equation}
-		n_\nu = \mathcal{N} \braket{\psi_\nu | \hat{\rho} | \psi_\nu}
+		n_\nu = \mathcal{N} \braket{\psi_\nu | \rho | \psi_\nu}
 	\end{equation}
 	で表される。($\mathcal{N}$は定数)
 
@@ -226,11 +230,11 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		\sum_{j=0}^{d^2 - 1} \hat{\lambda}_j = \hat{1}
 	\end{equation}
 
-	$d$次元に拡張しても$(2.1.4)$式はそのまま適用できる。つまり、密度行列$\hat{\rho}_d$は生成子の線形結合で表される。
+	$d$次元に拡張しても$(2.1.4)$式はそのまま適用できる。つまり、密度行列$\rho_d$は生成子の線形結合で表される。
 	\begin{equation}
-		\hat{\rho}_d = \frac{1}{d} \sum_{j=0}^{d^2 - 1} r_j \hat{\lambda}_j
+		\rho_d = \frac{1}{d} \sum_{j=0}^{d^2 - 1} r_j \hat{\lambda}_j
 	\end{equation}
-	これは1 quditの密度行列である。規格化のために係数$r_0$は1とし、$Tr \big[ \hat{\rho}_d^2 \big] \leq 1$より$\sum_{j=1}^{d^2 - 1} r_j^2 \leq d(d-1)/2$を満たす。
+	これは1 quditの密度行列である。規格化のために係数$r_0$は1とし、$Tr \big[ \rho_d^2 \big] \leq 1$より$\sum_{j=1}^{d^2 - 1} r_j^2 \leq d(d-1)/2$を満たす。
 
 	\subsection{Multi quditsへの拡張}
 
@@ -239,25 +243,25 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 		SU(2) \otimes SU(2) \otimes ・・・ \otimes SU(2)
 	\end{equation}
 
-	2 quditsでは$d^2$の次元を持った密度行列$\hat{\rho}_{2 d}$は同様に拡張できる。\\
-	$\hat{\lambda}_0$を含む$\hat{\lambda}$行列のテンソル積$\hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}$のすべての組はそれぞれ線形独立なので、$\hat{\rho}_{2 d}$は次のように表される。
+	2 quditsでは$d^2$の次元を持った密度行列$\rho_{2 d}$は同様に拡張できる。\\
+	$\hat{\lambda}_0$を含む$\hat{\lambda}$行列のテンソル積$\hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}$のすべての組はそれぞれ線形独立なので、$\rho_{2 d}$は次のように表される。
 	\begin{equation}
-		\hat{\rho}_{2 d} = \frac{1}{d^2} \sum_{j1,j2=0}^{d^2 - 1} r_{j 1, j 2} \hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}
+		\rho_{2 d} = \frac{1}{d^2} \sum_{j1,j2=0}^{d^2 - 1} r_{j 1, j 2} \hat{\lambda}_{j 1} \otimes \hat{\lambda}_{j 2}
 	\end{equation}
 	同様に、n quditsでは
 	\begin{equation}
-		\hat{\rho}_{n d} = \frac{1}{d^n} \sum_{j1,...,jn=0}^{d^2 - 1} r_{j 1,...,j n} \hat{\lambda}_{j 1} \otimes ・・・ \otimes \hat{\lambda}_{j n}
+		\rho_{n d} = \frac{1}{d^n} \sum_{j1,...,jn=0}^{d^2 - 1} r_{j 1,...,j n} \hat{\lambda}_{j 1} \otimes ・・・ \otimes \hat{\lambda}_{j n}
 	\end{equation}
 
 	\subsection{密度行列の再構成}
 
 	簡単のために$\hat{\Gamma}_\nu = \hat{\lambda}_{j 1} \otimes ・・・ \otimes \hat{\lambda}_{j n}$とすると、密度行列は
 	\begin{equation}
-		\hat{\rho}_{n d} = \sum_{\nu = 0}^{d^n - 1} \tilde{r}_\nu \hat{\Gamma}_\nu
+		\rho_{n d} = \sum_{\nu = 0}^{d^n - 1} \tilde{r}_\nu \hat{\Gamma}_\nu
 	\end{equation}
 	で表される。$\tilde{r}_\nu$は$d^n$要素あるベクトルの$\nu$番目の要素で
 	\begin{equation}
-		\tilde{r}_\nu = Tr \big[ \hat{\Gamma}_\nu \hat{\rho}_{n d} \big]
+		\tilde{r}_\nu = Tr \big[ \hat{\Gamma}_\nu \rho_{n d} \big]
 	\end{equation}
 	これを$(2.1.9)$式に代入して
 	\begin{equation}
@@ -269,23 +273,23 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation}
 	$B_{\nu, \mu}$が可逆行列であれば
 	\begin{equation}
-		\tilde{r}_\nu = \mathcal{N}^{-1} \sum_{\nu = 0}^{d^n - 1} \hat{M}_\nu n_\nu = \sum_{\nu = 0}^{d^n - 1} \hat{M}_\nu s_\nu
+		\tilde{r}_\nu = \mathcal{N}^{-1} \sum_{\nu = 0}^{d^n - 1} M_\nu n_\nu = \sum_{\nu = 0}^{d^n - 1} M_\nu s_\nu
 	\end{equation}
-	ここで、$\hat{M}_\nu$は$d \times d$行列で
+	ここで、$M_\nu$は$d \times d$行列で
 	\begin{equation}
-		\hat{M}_\nu = \sum_{\nu = 0}^{d^n - 1} \big( B^{-1} \big)_{\nu, \mu} \hat{\Gamma}_\nu
+		M_\nu = \sum_{\nu = 0}^{d^n - 1} \big( B^{-1} \big)_{\nu, \mu} \hat{\Gamma}_\nu
 	\end{equation}
-	$\hat{M}_\nu$の性質から
+	$M_\nu$の性質から
 	\begin{equation}
-		\sum_\nu Tr \big[ \hat{M}_\nu \big] \ket{\psi_\nu} \bra{\psi_\nu} \hat{\rho}_{n d} = \hat{\rho}_{n d}
+		\sum_\nu Tr \big[ M_\nu \big] \ket{\psi_\nu} \bra{\psi_\nu} \rho_{n d} = \rho_{n d}
 	\end{equation}
 	両辺でトレースをとると
 	\begin{equation}
-		\sum_\nu Tr \big[ \hat{M}_\nu \big] n_\nu = \mathcal{N}
+		\sum_\nu Tr \big[ M_\nu \big] n_\nu = \mathcal{N}
 	\end{equation}
-	したがって、任意の密度行列$\hat{\rho}_{n d}$は次のように再構成される。
+	したがって、任意の密度行列$\rho_{n d}$は次のように再構成される。
 	\begin{equation}
-		\hat{\rho}_{n d} = \frac{\sum_\nu \hat{M}_\nu n_\nu}{\sum_\nu Tr \big[ \hat{M}_\nu \big] n_\nu} 
+		\rho_{n d} = \frac{\sum_\nu M_\nu n_\nu}{\sum_\nu Tr \big[ M_\nu \big] n_\nu} 
 	\end{equation}
 
 
@@ -306,25 +310,25 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	まず、密度行列の性質を満たす行列を生成する。
 
-	半正定値行列$\hat{G}$は次の式を満たすとする。
+	半正定値行列$G$は次の式を満たすとする。
 	\begin{equation}
-		\braket{\psi | \hat{G} | \psi} \geq 0,\ \ \ \ \ ^\forall \ket{\psi}
+		\braket{\psi | G | \psi} \geq 0,\ \ \ \ \ ^\forall \ket{\psi}
 	\end{equation}
-	$\hat{G} = \hat{T}^\dagger \hat{T}$と書けるどんな行列$\hat{G}$も必ず半正定値行列となる。実際、
+	$G = T^\dagger T$と書けるどんな行列$G$も必ず半正定値行列となる。実際、
 	\begin{equation}
-		\braket{\psi | \hat{T}^\dagger \hat{T} | \psi} = \braket{\psi' | \psi'} \geq 0
+		\braket{\psi | T^\dagger T | \psi} = \braket{\psi' | \psi'} \geq 0
 	\end{equation}
-	ここで、$\ket{\psi'} = \hat{T} \ket{\psi}$である。さらに、$(\hat{T}^\dagger \hat{T})^\dagger = \hat{T}^\dagger (\hat{T}^\dagger)^\dagger = \hat{T}^\dagger \hat{T}$、すなわち$\hat{G}$はエルミートである。
+	ここで、$\ket{\psi'} = T \ket{\psi}$である。さらに、$(T^\dagger T)^\dagger = T^\dagger (T^\dagger)^\dagger = T^\dagger T$、すなわち$G$はエルミートである。
 
 	規格化のために
 	\begin{equation}
-		\hat{g} = \frac{\hat{T}^\dagger \hat{T}}{Tr \big[ \hat{T}^\dagger \hat{T} \big] } 
+		G = \frac{T^\dagger T}{Tr \big[ T^\dagger T \big] } 
 	\end{equation}
-	とすると、$\hat{g}$は密度行列の数学的条件をすべて満たす。
+	とすると、$G$は密度行列の数学的条件をすべて満たす。
 
-	この性質を利用するために、$\hat{T}$を$d^2$個の実数変数$t$を用いて、
+	この性質を利用するために、$T$を$d^2$個の実数変数$t$を用いて、
 	\begin{equation}
-		\hat{T}_{(t)} = \begin{pmatrix}
+		T_{(t)} = \begin{pmatrix}
 			t_1 & 0 & & \cdots & 0 \\
 			t_{d+1} + it_{d+2} & t_2 & & & \\
 			\vdots & & \ddots &  & \vdots \\
@@ -334,30 +338,30 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation}
 	とすると、
 	\begin{equation}
-		\hat{\rho}_p = \frac{\hat{T}^\dagger_{(t)} \hat{T}_{(t)}}{Tr \big[ \hat{T}^\dagger_{(t)} \hat{T}_{(t)} \big] }
+		\rho_p = \frac{T^\dagger_{(t)} T_{(t)}}{Tr \big[ T^\dagger_{(t)} T_{(t)} \big] }
 	\end{equation}
 	は明らかに密度行列の性質を持つ。
-	つまり、この複素行列$\hat{T}_{(t)}$を実験値から適切に求めることで最も確からしい密度行列が求められる。
+	つまり、この複素行列$T_{(t)}$を実験値から適切に求めることで最も確からしい密度行列が求められる。
 
 	そこで、$(2.1.28)$式で実験値から求めた密度行列が$(2.2.5)$式となっているかを確認する。
 	$(2.2.5)$式は複素数のCholesky分解そのものであるので、確認するのは容易である。[\autoref{chap:Cholesky}]
-	ここで求めた複素行列$\hat{T}_{(t)}$が上述の条件を満たしていれば、以降の最尤推定は必要ない。
+	ここで求めた複素行列$T_{(t)}$が上述の条件を満たしていれば、以降の最尤推定は必要ない。
 
 	最尤推定が必要な場合、得られた密度行列は非物理的な値になっているので、最尤推定の初期値としてそのまま利用することはできない。
-	実験的なデータ誤差や偏りに左右されないように最大混合状態$\hat{I}$を最尤推定の初期値とすることは合理的である。
+	実験的なデータ誤差や偏りに左右されないように最大混合状態$I$を最尤推定の初期値とすることは合理的である。
 	しかし、今回は真の密度行列をある程度推測してから最尤推定を行うことで計算時間を短縮できる仮定のもとに、初期値を実験データを利用して求めた密度行列にする場合も考える。
 	つまり、$(2.2.4)$式の制約から対角項を実数のみ利用し求めた密度行列を初期値とする。
 	また、計算途中で0の除算が発生した場合は0の代わりに微小項を代入する。
 
-	\subsection{$\hat{R}\hat{\rho}\hat{R}アルゴリズム$}
+	\subsection{$R \rho Rアルゴリズム$}
 
-	まず、尤度関数$\mathcal{L} (\hat{\rho})$を導入する。
+	まず、尤度関数$\mathcal{L} (\rho)$を導入する。
 
-	一般の測定$\hat{\Pi}$はPOVMで表されるので、$Tr \big[ \hat{\Pi}_i \hat{\rho} \big] \geq 0$を満たす。
+	一般の測定$\hat{\Pi}$はPOVMで表されるので、$Tr \big[ \hat{\Pi}_i \rho \big] \geq 0$を満たす。
 	ここで、総測定回数を$N$、それぞれの測定基底$\hat{\Pi}_i$における測定回数を$f_i$とする。
-	量子状態$\hat{\rho}$におけるある測定回数の集合{$f_i$}の尤度関数は$\mathcal{L} (\hat{\rho}) = \prod_i \Pr_i^{f_i}$で得られる。
-	$\Pr_i = Tr \big[ \hat{\Pi}_i \hat{\rho} \big]$はそれぞれの基底で得られる確率である。
-	最終的な目標はこの尤度関数を最大化させる密度行列$\hat{\rho}_0$を見つけることである。
+	量子状態$\rho$におけるある測定回数の集合{$f_i$}の尤度関数は$\mathcal{L} (\rho) = \prod_i \Pr_i^{f_i}$で得られる。
+	$\Pr_i = Tr \big[ \hat{\Pi}_i \rho \big]$はそれぞれの基底で得られる確率である。
+	最終的な目標はこの尤度関数を最大化させる密度行列$\rho_0$を見つけることである。
 	ここで相対頻度を$\tilde{f}_i = \frac{f_i}{N}$とする。
 	$\ket{y_i}$は正規直交基底として、測定基底を$\hat{\Pi}_i = \ket{y_i} \bra{y_i}$とする。
 	また、POVMは完全関係を満たすので、
@@ -367,22 +371,22 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\subsection*{\underline{尤度関数の増加}}
 
-	対数尤度関数は$\log \mathcal{L} (\hat{\rho}) = \sum_i \tilde{f}_i \log \Pr_i$である。ここで、
+	対数尤度関数は$\log \mathcal{L} (\rho) = \sum_i \tilde{f}_i \log \Pr_i$である。ここで、
 	\begin{equation}
-		\hat{R} = \sum_i \frac{\tilde{f}_i}{\Pr_i} \ket{y_i} \bra{y_i}
+		R = \sum_i \frac{\tilde{f}_i}{\Pr_i} \ket{y_i} \bra{y_i}
 	\end{equation}
-	とすると、$\hat{R} \hat{\rho}$の対数尤度関数は
+	とすると、$R \rho$の対数尤度関数は
 	\begin{equation}
 		\begin{aligned}
-			\log \mathcal{L} \big( \hat{R} \hat{\rho}) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i \hat{R} \hat{\rho} \big] \Big) \\
-			&=  \sum_i \tilde{f}_i \log \Bigg( Tr \Big[ \hat{\Pi}_i \sum_j \frac{\tilde{f}_j}{\Pr_j} \ket{y_j} \bra{y_j} \hat{\rho} \Big] \Big) \\
-			&= \sum_i \tilde{f}_i \log \Bigg( \sum_j \frac{\tilde{f}_j}{\Pr_j} \braket{y_i | y_j} \braket{y_j | \hat{\rho} | y_i} \Bigg) \\
+			\log \mathcal{L} \big( R \rho) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i R \rho \big] \Big) \\
+			&=  \sum_i \tilde{f}_i \log \Bigg( Tr \Big[ \hat{\Pi}_i \sum_j \frac{\tilde{f}_j}{\Pr_j} \ket{y_j} \bra{y_j} \rho \Big] \Big) \\
+			&= \sum_i \tilde{f}_i \log \Bigg( \sum_j \frac{\tilde{f}_j}{\Pr_j} \braket{y_i | y_j} \braket{y_j | \rho | y_i} \Bigg) \\
 			&= \sum_i \tilde{f}_i \log \tilde{f}_i
 		\end{aligned}
 	\end{equation}
-	となる。したがって、$\hat{R}$による密度行列の更新前後の対数尤度関数の差は
+	となる。したがって、$R$による密度行列の更新前後の対数尤度関数の差は
 	\begin{equation}
-		\log \mathcal{L} \big( \hat{R} \hat{\rho} \big) - \log \mathcal{L} \big( \hat{\rho} \big) = \sum_i \tilde{f}_i \log \tilde{f}_i - \sum_i \tilde{f}_i \log \Pr_i = \sum_i \tilde{f}_i \log \frac{\tilde{f}_i}{\Pr_i}
+		\log \mathcal{L} \big( R \rho \big) - \log \mathcal{L} \big( \rho \big) = \sum_i \tilde{f}_i \log \tilde{f}_i - \sum_i \tilde{f}_i \log \Pr_i = \sum_i \tilde{f}_i \log \frac{\tilde{f}_i}{\Pr_i}
 	\end{equation}
 	ここで、$\sum_i \tilde{f}_i = \sum_i \Pr_i = 1,\ \ 0 < \tilde{f},\ \ \Pr_i < 1$なので、Jensenの不等式
 	\begin{equation}
@@ -397,7 +401,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 			&= \log 1 = 0
 		\end{aligned}
 	\end{equation}
-	したがって、$\hat{\rho}^{(k+1)} = \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)}$と密度行列を更新していけば尤度関数は必ず増加する。
+	したがって、$\rho^{(k+1)} = R (\rho^{(k)}) \rho^{(k)}$と密度行列を更新していけば尤度関数は必ず増加する。
 
 	\subsection*{\underline{尤度関数の収束性}}
 
@@ -408,21 +412,21 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	より、尤度関数は
 	\begin{equation}
 		\begin{aligned}
-			\mathcal{L} (\hat{\rho}) &= \prod_i Tr \big[ \ket{y_i} \bra{y_i} \hat{\rho} \big]^{\tilde{f}_i} \\
-			&\leq \prod_i a_i^{\tilde{f}_i} \sum_k \tilde{f}_k \frac{Tr [ \ket{y_i} \bra{y_i} \hat{\rho}]}{a_k} \\
-			&= \prod_i a_i^{\tilde{f}_i} Tr \big[ \hat{\rho} \hat{R} (a) \big]
+			\mathcal{L} (\rho) &= \prod_i Tr \big[ \ket{y_i} \bra{y_i} \rho \big]^{\tilde{f}_i} \\
+			&\leq \prod_i a_i^{\tilde{f}_i} \sum_k \tilde{f}_k \frac{Tr [ \ket{y_i} \bra{y_i} \rho]}{a_k} \\
+			&= \prod_i a_i^{\tilde{f}_i} Tr \big[ \rho R (a) \big]
 		\end{aligned}
 	\end{equation}
 	\begin{equation}
-		\hat{R} (a) = \sum_i \frac{\tilde{f}_i}{a_i} \ket{y_i} \bra{y_i}
+		R (a) = \sum_i \frac{\tilde{f}_i}{a_i} \ket{y_i} \bra{y_i}
 	\end{equation}
-	ここで、任意の半正定値演算子$\hat{R} = \sum_i \lambda_i \ket{y_i} \bra{y_i},\ \lambda_i \geq 0$の最大固有値を$\max_i \lambda_i$とすると、
+	ここで、任意の半正定値演算子$R = \sum_i \lambda_i \ket{y_i} \bra{y_i},\ \lambda_i \geq 0$の最大固有値を$\max_i \lambda_i$とすると、
 	\begin{equation}
-		Tr [\hat{\rho} \hat{R}] \leq \max_i \lambda_i
+		Tr [\rho R] \leq \max_i \lambda_i
 	\end{equation}
-	よって、$\hat{R} (a)$の最大固有値を$\lambda (y, a)$として、
+	よって、$R (a)$の最大固有値を$\lambda (y, a)$として、
 	\begin{equation}
-		\mathcal{L} (\hat{\rho}) \leq \lambda (y, a) \prod_i a_i^{\tilde{f}_i}
+		\mathcal{L} (\rho) \leq \lambda (y, a) \prod_i a_i^{\tilde{f}_i}
 	\end{equation}
 	最大固有ベクトルを$\ket{\psi(y, a)}$とすると、等式が成立するのは
 	\begin{equation}
@@ -430,22 +434,22 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation}
 	これにより、尤度関数の上限が存在することがわかる。\\
 
-	これまでで、$\hat{\rho}^{(k+1)} = \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)}$は$\hat{R}$が対角行列または$\hat{\rho}$が対角行列であれば最尤推定が可能であることが示された。
+	これまでで、$\rho^{(k+1)} = R (\rho^{(k)}) \rho^{(k)}$は$R$が対角行列または$\rho$が対角行列であれば最尤推定が可能であることが示された。
 	しかし、密度行列は非対角項も考慮する必要があり、実験による測定もPOVMとは限らない。
-	そこで、密度行列の収束性を利用して$\hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) = \hat{\rho}_0$となる$\hat{\rho}_0$が存在すると仮定して、規格化定数$\mathcal{N}$を用いて
+	そこで、密度行列の収束性を利用して$R (\rho_0) \rho_0 R (\rho_0) = \rho_0$となる$\rho_0$が存在すると仮定して、規格化定数$\mathcal{N}$を用いて
 	\begin{equation}
-		\hat{\rho}^{(k+1)} = \mathcal{N} \big[ \hat{R} (\hat{\rho}^{(k)}) \hat{\rho}^{(k)} \hat{R} (\hat{\rho}^{(k)}) \big]
+		\rho^{(k+1)} = \mathcal{N} \big[ R (\rho^{(k)}) \rho^{(k)} R (\rho^{(k)}) \big]
 	\end{equation}
-	を$\hat{R} \hat{\rho} \hat{R}$アルゴリズムと呼ぶことにする。
+	を$R \rho R$アルゴリズムと呼ぶことにする。
 
-	一般に、$\hat{R} \hat{\rho} \hat{R}$アルゴリズムは尤度関数が常に増加するとは言えない。
+	一般に、$R \rho R$アルゴリズムは尤度関数が常に増加するとは言えない。
 	そこで、非負の値$\epsilon$を導入することでこの問題を解決する。
 
-	\subsection{Diluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズム}
+	\subsection{Diluted $R \rho R$アルゴリズム}
 
-	Diluted $\hat{R} \hat{\rho} \hat{R}$アルゴリズムとは以下の式で表す。
+	Diluted $R \rho R$アルゴリズムとは以下の式で表す。
 	\begin{equation}
-		\hat{\rho}^{(k+1)} = \mathcal{N} \Bigg[ \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \hat{\rho}^{(k)} \frac{\hat{I} + \epsilon \hat{R} (\hat{\rho}^{(k)})}{1+\epsilon} \Bigg]
+		\rho^{(k+1)} = \mathcal{N} \Bigg[ \frac{I + \epsilon R (\rho^{(k)})}{1+\epsilon} \rho^{(k)} \frac{I + \epsilon R (\rho^{(k)})}{1+\epsilon} \Bigg]
 	\end{equation}
 	$\epsilon \ll 1$であれば尤度関数は常に増加する。
 
@@ -453,47 +457,47 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	$\epsilon \ll 1$で$(2.2.19)$式の$\epsilon$の1次までの近似をとると、$(1 + \epsilon)^{-2} \approx 1 - 2\epsilon$より、
 	\begin{equation}
-		\hat{\rho}^{(k+1)} = \hat{\rho}^{(k)} + \Delta \hat{\rho}
+		\rho^{(k+1)} = \rho^{(k)} + \Delta \rho
 	\end{equation}
 	\begin{equation}
-		\Delta \hat{\rho} = \epsilon \big( \hat{R} \hat{\rho}^{(k)} + \hat{\rho}^{(k)} \hat{R} -2 \hat{\rho}^{(k)} \big)
+		\Delta \rho = \epsilon \big( R \rho^{(k)} + \rho^{(k)} R -2 \rho^{(k)} \big)
 	\end{equation}
 	また、
 	\begin{equation}
-		Tr \big[ \hat{R} \hat{\rho}^{(k)} \big] = Tr \big[ \hat{\rho}^{(k)} \hat{R} \big] = 1 
+		Tr \big[ R \rho^{(k)} \big] = Tr \big[ \rho^{(k)} R \big] = 1 
 	\end{equation}
-	簡単のために$\mathcal{N} = 1$とすると、$\hat{\rho}^{(k+1)}$の対数尤度関数は、
+	簡単のために$\mathcal{N} = 1$とすると、$\rho^{(k+1)}$の対数尤度関数は、
 	\begin{equation}
 		\begin{aligned}
-			\log \mathcal{L} \big( \hat{\rho}^{(k+1)} \big) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i \hat{\rho}^{(k+1)} \big] \Big) \\
-			&= \sum_i \tilde{f}_i \log \Big( \Pr_i Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \Big) \\
-			&= \sum_i \tilde{f}_i \Big\{ \log \Pr_i + \log \Big( 1 + \frac{1}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \Big) \Big\} \\
-			&\thickapprox \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + \sum_i \frac{\tilde{f}_i}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \hat{\rho} \big] \\
-			&= \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + Tr \big[ \hat{R} \Delta \hat{\rho} \big] \\
-			&= \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + 2 \epsilon \Big( Tr \big[ \hat{R} \hat{\rho}^{(k)} \hat{R} \big] \Big)
+			\log \mathcal{L} \big( \rho^{(k+1)} \big) &= \sum_i \tilde{f}_i \log \Big( Tr \big[ \hat{\Pi}_i \rho^{(k+1)} \big] \Big) \\
+			&= \sum_i \tilde{f}_i \log \Big( \Pr_i Tr \big[ \hat{\Pi}_i \Delta \rho \big] \Big) \\
+			&= \sum_i \tilde{f}_i \Big\{ \log \Pr_i + \log \Big( 1 + \frac{1}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \rho \big] \Big) \Big\} \\
+			&\thickapprox \log \mathcal{L} \big( \rho^{(k)} \big) + \sum_i \frac{\tilde{f}_i}{\Pr_i} Tr \big[ \hat{\Pi}_i \Delta \rho \big] \\
+			&= \log \mathcal{L} \big( \rho^{(k)} \big) + Tr \big[ R \Delta \rho \big] \\
+			&= \log \mathcal{L} \big( \rho^{(k)} \big) + 2 \epsilon \Big( Tr \big[ R \rho^{(k)} R \big] \Big)
 		\end{aligned}
 	\end{equation}
 	4つ目の近似は$\log (1 + a) \thickapprox a\ \ \  if\ \  a \ll 1 $を用いた。\\
 
-	ここで、$Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] = Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big] = 1$を示す。\\
-	半正定値行列$\hat{\rho}$は$\hat{\rho} = \big( \hat{\rho}^{\frac{1}{2}} \big)^2$となる$\hat{\rho}^{\frac{1}{2}}$が存在するので、
+	ここで、$Tr \big[ R \rho R \big] = Tr \big[ R \rho R \big] Tr \rho \geq Tr^2 \big[ R \rho \big] = 1$を示す。\\
+	半正定値行列$\rho$は$\rho = \big( \rho^{\frac{1}{2}} \big)^2$となる$\rho^{\frac{1}{2}}$が存在するので、
 	\begin{equation}
-		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} = \Big( \hat{R} \hat{\rho}^{\frac{1}{2}},\ \hat{R} \hat{\rho}^{\frac{1}{2}} \Big) \Big( \hat{\rho}^{\frac{1}{2}},\ \hat{\rho}^{\frac{1}{2}} \Big)
+		Tr \big[ R \rho R \big] Tr \rho = \Big( R \rho^{\frac{1}{2}},\ R \rho^{\frac{1}{2}} \Big) \Big( \rho^{\frac{1}{2}},\ \rho^{\frac{1}{2}} \Big)
 	\end{equation}
 	また、
 	\begin{equation}
-		Tr^2 \big[ \hat{R} \hat{\rho} \big] = \Big| \Big( \hat{R} \hat{\rho}^{\frac{1}{2}},\ \hat{\rho}^{\frac{1}{2}} \Big) \Big|^2
+		Tr^2 \big[ R \rho \big] = \Big| \Big( R \rho^{\frac{1}{2}},\ \rho^{\frac{1}{2}} \Big) \Big|^2
 	\end{equation}
-	ここで、$\big( \hat{A},\ \hat{B} \big) = \sum_{i,j} A^*_{ij} B_{ji} = Tr \big[ \hat{A}^\dagger \hat{B} \big]$\\
+	ここで、$\big( A,\ B \big) = \sum_{i,j} A^*_{ij} B_{ji} = Tr \big[ A^\dagger B \big]$\\
 	Cauchy-Schwarzの不等式より、
 	\begin{equation}
-		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big]
+		Tr \big[ R \rho R \big] Tr \rho \geq Tr^2 \big[ R \rho \big]
 	\end{equation}
 	よって、
 	\begin{equation}
-		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] \geq 1
+		Tr \big[ R \rho R \big] \geq 1
 	\end{equation}
-	$Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] = 1$が成り立つのは$\hat{R} \hat{\rho}^{\frac{1}{2}} = \hat{\rho}^{\frac{1}{2}}$、つまり$\hat{R} \hat{\rho} = \hat{\rho}$のときのみである。\\
+	$Tr \big[ R \rho R \big] = 1$が成り立つのは$R \rho^{\frac{1}{2}} = \rho^{\frac{1}{2}}$、つまり$R \rho = \rho$のときのみである。\\
 
 	これで尤度関数が常に増加することが言える。
 
@@ -509,16 +513,16 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\begin{equation*}
 		\begin{aligned}
 			\Pr_i &\to \frac{\Pr_i}{\sum \Pr_i} \\
-			\hat{R} &\to \hat{H}^{- \frac{1}{2}} \hat{R} \hat{H}^{- \frac{1}{2}} \\
-			\hat{\rho} &\to \hat{H}^{- \frac{1}{2}} \hat{\rho} \hat{H}^{- \frac{1}{2}} \\
+			R &\to \hat{H}^{- \frac{1}{2}} R \hat{H}^{- \frac{1}{2}} \\
+			\rho &\to \hat{H}^{- \frac{1}{2}} \rho \hat{H}^{- \frac{1}{2}} \\
 			\hat{H} &= \frac{\sum \ket{y_i} \bra{y_i}}{\sum \Pr_i}
 		\end{aligned}
 	\end{equation*}
-	とすれば、$\hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) = \hat{\rho}_0$は
+	とすれば、$R (\rho_0) \rho_0 R (\rho_0) = \rho_0$は
 	\begin{equation}
 		\begin{aligned}
-			\hat{H}^{- \frac{1}{2}} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{- \frac{1}{2}} &= \hat{H}^{- \frac{1}{2}} \hat{\rho}_0 \hat{H}^{- \frac{1}{2}} \\
-			\Longleftrightarrow\ \ \ \  \hat{H}^{-1} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{-1} &= \hat{\rho}_0
+			\hat{H}^{- \frac{1}{2}} R (\rho_0) \rho_0 R (\rho_0) \hat{H}^{- \frac{1}{2}} &= \hat{H}^{- \frac{1}{2}} \rho_0 \hat{H}^{- \frac{1}{2}} \\
+			\Longleftrightarrow\ \ \ \  \hat{H}^{-1} R (\rho_0) \rho_0 R (\rho_0) \hat{H}^{-1} &= \rho_0
 		\end{aligned}
 	\end{equation}
 	となり、同様に考えられる。
@@ -545,7 +549,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	今回計算に用いた模擬実験データは、それぞれの理想状態の密度行列から理想実験データを作成し、密度行列の各要素の値を期待値としたポアソン分布に沿ってランダムに各データを変化させたものをそれぞれ100パターン用意しました。
 	計算アルゴリズムについては、計算時間短縮のために初めは$\epsilon = 1000$とし、もし密度行列の更新によって尤度関数が減少、つまり更新に失敗した場合は$\epsilon\ \times\ 0.1$としてひとつ前の更新からやり直すという計算にしています。
-	また、終了条件は$\log \mathcal{L} \big( \hat{\rho}^{(k+1)} \big) - \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) < 10^{-11}$としています。
+	また、終了条件は$\log \mathcal{L} \big( \rho^{(k+1)} \big) - \log \mathcal{L} \big( \rho^{(k)} \big) < 10^{-11}$としています。
 
 
 	\section{Multi qubitsの結果}
@@ -593,7 +597,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\subsection*{混合状態}
 
 	\begin{description}
-		\item[Case 3:] 理想状態が$\hat{\rho} = \frac{1}{6} \{ (\ket{0000} + \ket{1111}) (\bra{0000} + \bra{1111}) + (\ket{0001} + \ket{0010} + \ket{0100} + \ket{1000}) (\bra{0001} + \bra{0010} + \bra{0100} + \bra{1000})\}$の場合 
+		\item[Case 3:] 理想状態が$\rho = \frac{1}{6} \{ (\ket{0000} + \ket{1111}) (\bra{0000} + \bra{1111}) + (\ket{0001} + \ket{0010} + \ket{0100} + \ket{1000}) (\bra{0001} + \bra{0010} + \bra{0100} + \bra{1000})\}$の場合 
 	\end{description}
 	
 	\begin{figure}[htbp]
@@ -607,7 +611,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\subsection*{計算量・計算時間}
 
 	上記3パターンの計算量は次のとおりである。
-	また、最尤推定の初期値を最大混合状態$\hat{I}$にした場合と比較している。
+	また、最尤推定の初期値を最大混合状態$I$にした場合と比較している。
 
 	\begin{figure}[htbp]
 		\centering
@@ -640,7 +644,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	fidelityとは次の式で求まる二つの量子状態の近さを表す量である。
 
 	\begin{equation}
-		F \equiv Tr \sqrt{\sqrt{\hat{\sigma}} \hat{\rho} \sqrt{\hat{\sigma}}}
+		F \equiv Tr \sqrt{\sqrt{\hat{\sigma}} \rho \sqrt{\hat{\sigma}}}
 	\end{equation}
 
 	\begin{figure}[htbp]
@@ -731,7 +735,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\chapter{まとめ}
 
 	まず初めに1 qubitの量子トモグラフィーを理論的に説明し、その後Multi qubits、1 quditそしてMulti quditsへと拡張していった。
-	また、再構成した密度行列が非物理的な値である場合に利用する最尤推定のアルゴリズム($\hat{R} \hat{\rho} \hat{R}$アルゴリズム)を説明し、微小項$\epsilon$を導入することで尤度関数の増加を証明した。
+	また、再構成した密度行列が非物理的な値である場合に利用する最尤推定のアルゴリズム($R \rho R$アルゴリズム)を説明し、微小項$\epsilon$を導入することで尤度関数の増加を証明した。
 
 	アルゴリズムの実装では、Multi qubitsでは4 qubitsに対して疑似実験データを生成し、アルゴリズムの有用性を確認した。
 	一方、Multi quditsでは$d=3$の2 qutritsに対して同様にシミュレーションで有用性を確認した。
@@ -777,45 +781,45 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	まず、対角項は
 	\begin{equation*}
 		\begin{gathered}
-			\hat{\rho}_{11} = \big| \hat{T}_{11} \big|^2 + \big| \hat{T}_{21} \big|^2 + \cdots + \big| \hat{T}_{d1} \big|^2 \\
-			\hat{\rho}_{22} = \big| \hat{T}_{22} \big|^2 + \big| \hat{T}_{32} \big|^2 + \cdots + \big| \hat{T}_{d2} \big|^2 \\
+			\rho_{11} = \big| T_{11} \big|^2 + \big| T_{21} \big|^2 + \cdots + \big| T_{d1} \big|^2 \\
+			\rho_{22} = \big| T_{22} \big|^2 + \big| T_{32} \big|^2 + \cdots + \big| T_{d2} \big|^2 \\
 			\vdots \\
-			\hat{\rho}_{ii} = \big| \hat{T}_{ii} \big|^2 + \big| \hat{T}_{i+1\ i} \big|^2 + \cdots + \big| \hat{T}_{di} \big|^2 = \sum_{j=1}^d \big| \hat{T}_{ji} \big|^2 \\
+			\rho_{ii} = \big| T_{ii} \big|^2 + \big| T_{i+1\ i} \big|^2 + \cdots + \big| T_{di} \big|^2 = \sum_{j=1}^d \big| T_{ji} \big|^2 \\
 			\vdots \\
-			\hat{\rho}_{dd} = \big| \hat{T}_{dd} \big|^2
+			\rho_{dd} = \big| T_{dd} \big|^2
 		\end{gathered}
 	\end{equation*}
 	非対角項は
 	\begin{equation*}
 		\begin{gathered}
-			\hat{\rho}_{12} = \hat{T}_{21}^\dagger \hat{T}_{22} + \hat{T}_{31}^\dagger \hat{T}_{32} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{d2} \\
-			\hat{\rho}_{13} = \hat{T}_{31}^\dagger \hat{T}_{33} + \hat{T}_{41}^\dagger \hat{T}_{43} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{d3} \\
+			\rho_{12} = T_{21}^\dagger T_{22} + T_{31}^\dagger T_{32} + \cdots + T_{d1}^\dagger T_{d2} \\
+			\rho_{13} = T_{31}^\dagger T_{33} + T_{41}^\dagger T_{43} + \cdots + T_{d1}^\dagger T_{d3} \\
 			\vdots \\
-			\hat{\rho}_{1i} = \hat{T}_{i1}^\dagger \hat{T}_{ii} + \hat{T}_{i+1\ 1}^\dagger \hat{T}_{i+1\ i} + \cdots + \hat{T}_{d1}^\dagger \hat{T}_{di} = \sum_{j=1}^d \hat{T}_{j1}^\dagger \hat{T}_{ji}\\
+			\rho_{1i} = T_{i1}^\dagger T_{ii} + T_{i+1\ 1}^\dagger T_{i+1\ i} + \cdots + T_{d1}^\dagger T_{di} = \sum_{j=1}^d T_{j1}^\dagger T_{ji}\\
 			\vdots \\
-			\hat{\rho}_{1d} = \hat{T}_{d1}^\dagger \hat{T}_{dd} \\
+			\rho_{1d} = T_{d1}^\dagger T_{dd} \\
 			\vdots \\
-			\hat{\rho}_{23} = \hat{T}_{32}^\dagger \hat{T}_{33} + \hat{T}_{42}^\dagger \hat{T}_{43} + \cdots + \hat{T}_{d2}^\dagger \hat{T}_{d3} \\
-			\hat{\rho}_{24} = \hat{T}_{42}^\dagger \hat{T}_{44} + \hat{T}_{52}^\dagger \hat{T}_{54} + \cdots + \hat{T}_{d2}^\dagger \hat{T}_{d4} \\
+			\rho_{23} = T_{32}^\dagger T_{33} + T_{42}^\dagger T_{43} + \cdots + T_{d2}^\dagger T_{d3} \\
+			\rho_{24} = T_{42}^\dagger T_{44} + T_{52}^\dagger T_{54} + \cdots + T_{d2}^\dagger T_{d4} \\
 			\vdots \\
-			\hat{\rho}_{ij} = \hat{T}_{ji}^\dagger \hat{T}_{jj} + \hat{T}_{j+1\ i}^\dagger \hat{T}_{j+1\ j} + \cdots + \hat{T}_{di}^\dagger \hat{T}_{dj} = \sum_{k=1}^d \hat{T}_{ki}^\dagger \hat{T}_{kj}\ \ \ (i<j)
+			\rho_{ij} = T_{ji}^\dagger T_{jj} + T_{j+1\ i}^\dagger T_{j+1\ j} + \cdots + T_{di}^\dagger T_{dj} = \sum_{k=1}^d T_{ki}^\dagger T_{kj}\ \ \ (i<j)
 		\end{gathered}
 	\end{equation*}
 	より、
 	\begin{equation*}
 		\begin{gathered}
-			\hat{T}_{dd} = \sqrt{\hat{\rho}_{dd}} \\
-			\hat{T}_{d\ d-1} = \Big( \frac{\hat{\rho}_{d-1\ d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{d-1\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
-			\hat{T}_{d\ d-2} = \Big( \frac{\hat{\rho}_{d-2\ d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{d-2\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
+			T_{dd} = \sqrt{\rho_{dd}} \\
+			T_{d\ d-1} = \Big( \frac{\rho_{d-1\ d}}{T_{dd}} \Big)^\dagger = \frac{\rho_{d-1\ d}^\dagger}{\sqrt{\rho_{dd}}} \\
+			T_{d\ d-2} = \Big( \frac{\rho_{d-2\ d}}{T_{dd}} \Big)^\dagger = \frac{\rho_{d-2\ d}^\dagger}{\sqrt{\rho_{dd}}} \\
 			\vdots \\
-			\hat{T}_{d1} = \Big( \frac{\hat{\rho}_{1d}}{\hat{T}_{dd}} \Big)^\dagger = \frac{\hat{\rho}_{1d}^\dagger}{\sqrt{\hat{\rho}_{dd}}} \\
-			\hat{T}_{d-1\ d-1} = \sqrt{\hat{\rho}_{d-1\ d-1} - | \hat{T}_{d\ d-1} |^2} = \sqrt{\hat{\rho}_{d-1\ d-1} - \frac{(\hat{\rho}_{d-1\ d}^\dagger)^2}{\hat{\rho}_{dd}}} \\
-			\hat{T}_{d-1\ d-2} = \Bigg(\frac{\hat{\rho}_{d-2\ d-1} - \hat{T}_{d\ d-2}^\dagger \hat{T}_{d\ d-1}}{\hat{T}_{d-1\ d-1}} \Bigg)^\dagger = \left( \frac{\hat{\rho}_{d-2\ d-1} - \frac{\hat{\rho}_{d-2\ d}}{\sqrt{\hat{\rho}_{dd}}} \frac{\hat{\rho}_{d-1\ d}^\dagger}{\sqrt{\hat{\rho}_{dd}}}}{\sqrt{\hat{\rho}_{d-1\ d-1} - \frac{(\hat{\rho}_{d-1\ d}^\dagger)^2 }{\hat{\rho}_{dd}}}} \right)^\dagger \\
+			T_{d1} = \Big( \frac{\rho_{1d}}{T_{dd}} \Big)^\dagger = \frac{\rho_{1d}^\dagger}{\sqrt{\rho_{dd}}} \\
+			T_{d-1\ d-1} = \sqrt{\rho_{d-1\ d-1} - | T_{d\ d-1} |^2} = \sqrt{\rho_{d-1\ d-1} - \frac{(\rho_{d-1\ d}^\dagger)^2}{\rho_{dd}}} \\
+			T_{d-1\ d-2} = \Bigg(\frac{\rho_{d-2\ d-1} - T_{d\ d-2}^\dagger T_{d\ d-1}}{T_{d-1\ d-1}} \Bigg)^\dagger = \left( \frac{\rho_{d-2\ d-1} - \frac{\rho_{d-2\ d}}{\sqrt{\rho_{dd}}} \frac{\rho_{d-1\ d}^\dagger}{\sqrt{\rho_{dd}}}}{\sqrt{\rho_{d-1\ d-1} - \frac{(\rho_{d-1\ d}^\dagger)^2 }{\rho_{dd}}}} \right)^\dagger \\
 			\vdots
 		\end{gathered}
 	\end{equation*}
 
-	このようにして、$\hat{T}_{(t)}$は求まる。
+	このようにして、$T_{(t)}$は求まる。
 
 
 \end{document}

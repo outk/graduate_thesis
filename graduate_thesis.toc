@@ -12,8 +12,8 @@
 \contentsline {subsection}{\numberline {2.1.6}密度行列の再構成}{5}{subsection.2.1.6}%
 \contentsline {section}{\numberline {2.2}最尤推定}{6}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}密度行列の確認}{6}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}$\hat {R}\hat {\rho }\hat {R}アルゴリズム$}{7}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Diluted $\hat {R} \hat {\rho } \hat {R}$アルゴリズム}{9}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.2}$R \rho Rアルゴリズム$}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Diluted $R \rho R$アルゴリズム}{9}{subsection.2.2.3}%
 \contentsline {chapter}{\numberline {第3章}実装と結果}{12}{chapter.3}%
 \contentsline {section}{\numberline {3.1}計算環境}{12}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Multi qubitsの結果}{12}{section.3.2}%

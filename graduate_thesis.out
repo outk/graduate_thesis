@@ -12,8 +12,8 @@
 \BOOKMARK [2][-]{subsection.2.1.6}{密度行列の再構成}{section.2.1}% 12
 \BOOKMARK [1][-]{section.2.2}{最尤推定}{chapter.2}% 13
 \BOOKMARK [2][-]{subsection.2.2.1}{密度行列の確認}{section.2.2}% 14
-\BOOKMARK [2][-]{subsection.2.2.2}{アルゴリズム}{section.2.2}% 15
-\BOOKMARK [2][-]{subsection.2.2.3}{Diluted \040 アルゴリズム}{section.2.2}% 16
+\BOOKMARK [2][-]{subsection.2.2.2}{R Rアルゴリズム}{section.2.2}% 15
+\BOOKMARK [2][-]{subsection.2.2.3}{Diluted R Rアルゴリズム}{section.2.2}% 16
 \BOOKMARK [0][-]{chapter.3}{実装と結果}{}% 17
 \BOOKMARK [1][-]{section.3.1}{計算環境}{chapter.3}% 18
 \BOOKMARK [1][-]{section.3.2}{Multi qubitsの結果}{chapter.3}% 19

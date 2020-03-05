@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.8.2-190131-2.6 (utf8.sjis) (TeX Live 2019/W32TeX) (preloaded format=platex 2020.2.26)  4 MAR 2020 20:37
+This is e-pTeX, Version 3.14159265-p3.8.2-190131-2.6 (utf8.sjis) (TeX Live 2019/W32TeX) (preloaded format=platex 2020.2.26)  5 MAR 2020 14:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -665,15 +665,15 @@ LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
 
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 550.
+(Font)              using `JY1/hmc/bx/n' instead on input line 551.
 
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 567.
+(Font)              using `JY1/hmc/bx/n' instead on input line 568.
 
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 570.
+(Font)              using `JY1/hmc/bx/n' instead on input line 571.
 
 [12
 
@@ -683,75 +683,75 @@ File: ./picture/1111ed.png Graphic file (type bmp)
  [13]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 582.
+(Font)              using `JY1/hmc/bx/n' instead on input line 583.
 
 File: ./picture/all.png Graphic file (type bmp)
 <./picture/all.png>
 [14]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 592.
+(Font)              using `JY1/hmc/bx/n' instead on input line 593.
 
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 595.
+(Font)              using `JY1/hmc/bx/n' instead on input line 596.
 
 File: ./picture/mixed.png Graphic file (type bmp)
 <./picture/mixed.png>
 [15]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 606.
+(Font)              using `JY1/hmc/bx/n' instead on input line 607.
 
 File: ./picture/cg.png Graphic file (type bmp)
 <./picture/cg.png>
 [16]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 625.
+(Font)              using `JY1/hmc/bx/n' instead on input line 626.
 
 File: ./picture/parallel.png Graphic file (type bmp)
 <./picture/parallel.png>
 [17]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 637.
+(Font)              using `JY1/hmc/bx/n' instead on input line 638.
 
 File: ./picture/fp1111ed.png Graphic file (type bmp)
 <./picture/fp1111ed.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 652--653
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 653--654
  [] 
  []
 
 File: ./picture/fp1111edextended.png Graphic file (type bmp)
 <./picture/fp1111edextended.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 659--660
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 660--661
  [] 
  []
 
 
-Overfull \hbox (14.7375pt too wide) in paragraph at lines 647--664
+Overfull \hbox (14.7375pt too wide) in paragraph at lines 648--665
  [][][][] 
  []
 
 File: ./picture/fpall.png Graphic file (type bmp)
 <./picture/fpall.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 674--675
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 675--676
  [] 
  []
 
 File: ./picture/fpallextended.png Graphic file (type bmp)
 <./picture/fpallextended.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 681--682
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 682--683
  [] 
  []
 
 
-Overfull \hbox (14.7375pt too wide) in paragraph at lines 669--686
+Overfull \hbox (14.7375pt too wide) in paragraph at lines 670--687
  [][][][] 
  []
 
@@ -759,26 +759,26 @@ Overfull \hbox (14.7375pt too wide) in paragraph at lines 669--686
 File: ./picture/fpmixed.png Graphic file (type bmp)
 <./picture/fpmixed.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 698--699
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 699--700
  [] 
  []
 
 File: ./picture/fpmixedextended.png Graphic file (type bmp)
 <./picture/fpmixedextended.png>
 
-Overfull \hbox (18.62204pt too wide) in paragraph at lines 705--706
+Overfull \hbox (18.62204pt too wide) in paragraph at lines 706--707
  [] 
  []
 
 
-Overfull \hbox (14.7375pt too wide) in paragraph at lines 693--710
+Overfull \hbox (14.7375pt too wide) in paragraph at lines 694--711
  [][][][] 
  []
 
 [19]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 719.
+(Font)              using `JY1/hmc/bx/n' instead on input line 720.
 
 File: ./picture/qutrit.png Graphic file (type bmp)
 <./picture/qutrit.png>
@@ -786,21 +786,21 @@ File: ./picture/qutrit.png Graphic file (type bmp)
 第 4 章
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 730.
+(Font)              using `JY1/hmc/bx/n' instead on input line 731.
 
 [21
 
 ]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 741.
+(Font)              using `JY1/hmc/bx/n' instead on input line 742.
 
 [22
 
 ]
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 746.
+(Font)              using `JY1/hmc/bx/n' instead on input line 757.
 
 [23
 
@@ -808,7 +808,7 @@ LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
 付 録 A  
 
 LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
-(Font)              using `JY1/hmc/bx/n' instead on input line 761.
+(Font)              using `JY1/hmc/bx/n' instead on input line 772.
 
 [24
 
@@ -816,20 +816,20 @@ LaTeX Font Warning: Font shape `JY1/hmc/b/n' undefined
 
 Package natbib Warning: There were multiply defined citations.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 825.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 821.
 [25]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 825.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 821.
  (./graduate_thesis.aux
 
 Package natbib Warning: Citation(s) may have changed.
 (natbib)                Rerun to get citations correct.
 
 )
-Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 825.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 825.
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 821.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 821.
 Package rerunfilecheck Info: File `graduate_thesis.out' has not changed.
 (rerunfilecheck)             Checksum: 58BF3FA7B3CCCD43E5BAE536B556E365;1530.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 825.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 821.
  ) 
 Here is how much of TeX's memory you used:
  9732 strings out of 481760
@@ -840,4 +840,4 @@ Here is how much of TeX's memory you used:
  929 hyphenation exceptions out of 8191
  48i,13n,46p,428b,992s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on graduate_thesis.dvi (28 pages, 95560 bytes).
+Output written on graduate_thesis.dvi (28 pages, 97840 bytes).

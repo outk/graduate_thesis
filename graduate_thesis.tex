@@ -473,7 +473,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 			&= \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) + 2 \epsilon \Big( Tr \big[ \hat{R} \hat{\rho}^{(k)} \hat{R} \big] \Big)
 		\end{aligned}
 	\end{equation}
-	4式目の近似は$( \log (1 + a) \thickapprox a if a \ll 1 )$を用いた。\\
+	4つ目の近似は$\log (1 + a) \thickapprox a\ \ \  if\ \  a \ll 1 $を用いた。\\
 
 	ここで、$Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] = Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big] = 1$を示す。\\
 	半正定値行列$\hat{\rho}$は$\hat{\rho} = \big( \hat{\rho}^{\frac{1}{2}} \big)^2$となる$\hat{\rho}^{\frac{1}{2}}$が存在するので、
@@ -484,7 +484,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\begin{equation}
 		Tr^2 \big[ \hat{R} \hat{\rho} \big] = \Big| \Big( \hat{R} \hat{\rho}^{\frac{1}{2}},\ \hat{\rho}^{\frac{1}{2}} \Big) \Big|^2
 	\end{equation}
-	ここで、$\big( \hat{A},\ \hat{B} \big) = \sum_{i,j} A*_{ij} B_{ji} = Tr \big[ \hat{A}^\dagger \hat{B} \big]$\\
+	ここで、$\big( \hat{A},\ \hat{B} \big) = \sum_{i,j} A^*_{ij} B_{ji} = Tr \big[ \hat{A}^\dagger \hat{B} \big]$\\
 	Cauchy-Schwarzの不等式より、
 	\begin{equation}
 		Tr \big[ \hat{R} \hat{\rho} \hat{R} \big] Tr \hat{\rho} \geq Tr^2 \big[ \hat{R} \hat{\rho} \big]
@@ -499,7 +499,7 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\subsection*{\underline{非完全な測定基底の場合}}
 
-	これまで$\sum_i \hat{\Pi}_i = \hat{I}$の関係を満たす、つまり測定基底が完全関係を満たしていたが、満たさない場合の測定についても次のようにすることでこれまでのアルゴリズムは同様に適用することができる。\\
+	これまで$\sum_i \hat{\Pi}_i = \hat{I}$の関係を満たす、つまり測定基底が完全関係を満たす場合を考えていたが、満たさない場合の測定についても次のようにすることでこれまでのアルゴリズムは同様に適用することができる。\\
 
 	射影測定は一般に$\sum_i \ket{y_i} \bra{y_i} = \hat{H}$と表されるので、
 	\begin{equation}
@@ -517,11 +517,11 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	とすれば、$\hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) = \hat{\rho}_0$は
 	\begin{equation}
 		\begin{aligned}
-			\hat{H}^{- \frac{1}{2}} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{- \frac{1}{2}} = \hat{H}^{- \frac{1}{2}} \hat{\rho}_0 \hat{H}^{- \frac{1}{2}} \\
-			\Longleftrightarrow \hat{H}^{-1} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{-1} = \hat{\rho}_0
+			\hat{H}^{- \frac{1}{2}} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{- \frac{1}{2}} &= \hat{H}^{- \frac{1}{2}} \hat{\rho}_0 \hat{H}^{- \frac{1}{2}} \\
+			\Longleftrightarrow\ \ \ \  \hat{H}^{-1} \hat{R} (\hat{\rho}_0) \hat{\rho}_0 \hat{R} (\hat{\rho}_0) \hat{H}^{-1} &= \hat{\rho}_0
 		\end{aligned}
 	\end{equation}
-	で収束する。
+	となり、同様に考えられる。
 
 	\chapter{実装と結果}
 
@@ -543,7 +543,8 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 			\end{tabular}
 	\end{table}
 
-	今回計算に用いた模擬実験データはそれぞれの理想状態の密度行列から理想実験データを作成し、密度行列の各要素の値を期待値としたポアソン分布に沿ってランダムに各データを変化させたものをそれぞれ100パターン用意しました。
+	今回計算に用いた模擬実験データは、それぞれの理想状態の密度行列から理想実験データを作成し、密度行列の各要素の値を期待値としたポアソン分布に沿ってランダムに各データを変化させたものをそれぞれ100パターン用意しました。
+	計算アルゴリズムについては、計算時間短縮のために初めは$\epsilon = 1000$とし、もし密度行列の更新によって尤度関数が減少、つまり更新に失敗した場合は$\epsilon\ \times\ 0.1$としてひとつ前の更新からやり直すという計算にしています。
 	また、終了条件は$\log \mathcal{L} \big( \hat{\rho}^{(k+1)} \big) - \log \mathcal{L} \big( \hat{\rho}^{(k)} \big) < 10^{-11}$としています。
 
 
@@ -740,6 +741,16 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 
 	\chapter*{謝辞}
 
+	山本先生をはじめ、先生方、先輩方、研究室メンバーの皆さんにはとてもお世話になりました。
+	山本先生は研究室ゼミでの鋭い質問から研究以外の談笑まで常に和やかに接してくださいました。
+	生田先生には研究において本質を追及する姿勢を学ばさせていただきました。
+	また、小林先生には量子情報分野以外の質問までいつも丁寧に答えてくださいました。
+	特に、M2の山崎さんには長い時間を割いていただき、自主ゼミを通して量子情報について1から教えていただきました。
+	M1の石崎さんとは同じ興味を持つIT系の話や就活の話をたくさんしていただきました。
+	B4の小林くん、村上くんとはとても長い時間、研究について議論(教えてもらうことが多かったが…)しました。
+	私自身、初めての研究生活でありましたし、この一年は個人的にもいろいろありました。
+	この先、違う分野に私は進みますが、山本研究室での研究生活を糧に精進していきたいと思います。
+	短い間でしたが、１年間ありがとうございました。
 
 
 
@@ -805,21 +816,6 @@ pdfsubject={Bachelor's thesis in 2020}]{hyperref}
 	\end{equation*}
 
 	このようにして、$\hat{T}_{(t)}$は求まる。
-	
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \end{document}
